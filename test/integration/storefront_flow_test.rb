@@ -9,7 +9,7 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
   test "homepage renders successfully with Australian rural branding and products" do
     get root_path
     assert_response :success
-    assert_select "h1", text: /Western Australia’s/i
+    assert_select "h1", text: /Trusted Animal Feeds/i
     assert_select "nav a", text: /Equine Feed & Nutrition/i
     assert_includes response.body, "48 619 284 921"
     assert_includes response.body, "Drive-Thru Bag Loading"

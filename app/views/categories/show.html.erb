@@ -92,6 +92,17 @@
 
     <!-- Products Grid -->
     <main class="lg:col-span-9">
+      <% if @category.coming_soon? %>
+        <div class="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-xs text-amber-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+          <div>
+            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-600 text-white tracking-wider mb-0.5">Phase 2 Expansion</span>
+            <strong class="block text-sm">Rural Hardware &amp; Supplies Coming Soon</strong>
+            <p class="text-stone-600 mt-0.5">These items are being staged for our upcoming warehouse yard launch. Advance enquiries &amp; contractor quotes are open.</p>
+          </div>
+          <%= link_to "Call for Quotes", "tel:0895718840", class: "px-4 py-2 bg-bush-800 text-white font-bold rounded-xl text-xs whitespace-nowrap hover:bg-bush-900 transition" %>
+        </div>
+      <% end %>
+
       <div class="flex items-center justify-between mb-6 pb-2 border-b border-stone-200">
         <span class="text-xs text-stone-500 font-medium">Showing <%= @products.count %> products in <%= @category.name %></span>
       </div>
@@ -99,15 +110,22 @@
       <% if @products.any? %>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <% @products.each do |product| %>
-            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group">
               <div>
-                <div class="relative h-48 bg-stone-200 overflow-hidden">
+                <div class="relative h-48 bg-stone-100 overflow-hidden">
                   <img src="<%= product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                   <div class="absolute top-2.5 left-2.5">
                     <span class="bg-bush-900 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded shadow">
                       <%= product.brand %>
                     </span>
                   </div>
+                  <% if product.coming_soon? %>
+                    <div class="absolute top-2.5 right-2.5">
+                      <span class="bg-amber-500 text-stone-900 text-[9px] font-black uppercase px-2 py-0.5 rounded shadow">
+                        Phase 2
+                      </span>
+                    </div>
+                  <% end %>
                 </div>
 
                 <div class="p-4">
@@ -124,13 +142,13 @@
                     <span class="block text-base font-black text-bush-900"><%= product.price_display %></span>
                     <span class="block text-[10px] text-stone-400">AUD inc. 10% GST</span>
                   </div>
-                  <span class="text-[11px] font-bold <%= product.in_stock? ? 'text-emerald-700' : 'text-rose-600' %>">
-                    <%= product.in_stock? ? "In Stock" : "Backorder" %>
+                  <span class="text-[11px] font-bold <%= product.coming_soon? ? 'text-amber-600' : (product.in_stock? ? 'text-emerald-700' : 'text-rose-600') %>">
+                    <%= product.coming_soon? ? "Arriving Soon" : (product.in_stock? ? "In Stock" : "Backorder") %>
                   </span>
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <%= link_to "Select Size & Buy", product_path(product), class: "flex-1 py-2 text-center text-xs font-bold bg-bush-800 hover:bg-bush-900 text-white rounded-lg transition" %>
+                  <%= link_to (product.coming_soon? ? "Preview Specs" : "Select Size & Buy"), product_path(product), class: "flex-1 py-2 text-center text-xs font-bold #{product.coming_soon? ? 'bg-stone-800 hover:bg-stone-900' : 'bg-bush-800 hover:bg-bush-900'} text-white rounded-xl transition" %>
                 </div>
               </div>
             </div>

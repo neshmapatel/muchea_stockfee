@@ -1,9 +1,11 @@
 class StorefrontController < ApplicationController
   def index
-    @featured_products = Product.featured.includes(:category, :variants).limit(8)
-    @categories = Category.ordered
+    @live_categories = Category.live
+    @coming_soon_categories = Category.coming_soon
+    @featured_feed_products = Product.live.featured.includes(:category, :variants).limit(8)
+    @coming_soon_hardware_products = Product.coming_soon.includes(:category, :variants).limit(4)
     @delivery_zones = DeliveryZone.all
-    @recent_deliveries_count = Order.where("created_at > ?", 7.days.ago).count + 18
+    @recent_deliveries_count = Order.where("created_at > ?", 7.days.ago).count + 24
   end
 
   def delivery_schedule
@@ -19,4 +21,3 @@ class StorefrontController < ApplicationController
   def contact
   end
 end
-

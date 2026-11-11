@@ -10,6 +10,8 @@ class Product < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :featured, -> { active.where(featured: true) }
+  scope :live, -> { joins(:category).where(categories: { department: "Stockfeed & Animal Nutrition" }) }
+  scope :coming_soon, -> { joins(:category).where(categories: { department: "Rural Hardware & Farm Supplies" }) }
   scope :by_brand, ->(brand) { where(brand: brand) if brand.present? }
   scope :search, ->(term) {
     if term.present?
@@ -50,6 +52,14 @@ class Product < ApplicationRecord
 
   def in_stock?
     variants.any?(&:in_stock?)
+  end
+
+  def live?
+    category&.live?
+  end
+
+  def coming_soon?
+    category&.coming_soon?
   end
 
   def total_stock

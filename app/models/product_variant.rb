@@ -12,7 +12,19 @@ class ProductVariant < ApplicationRecord
   scope :low_stock, -> { where("stock_quantity <= low_stock_threshold") }
 
   def price_dollars
-    price_cents / 100.0
+    price_cents.present? ? price_cents / 100.0 : nil
+  end
+
+  def price_dollars=(val)
+    self.price_cents = (val.to_f * 100).round if val.present?
+  end
+
+  def compare_at_price_dollars
+    compare_at_price_cents.present? ? compare_at_price_cents / 100.0 : nil
+  end
+
+  def compare_at_price_dollars=(val)
+    self.compare_at_price_cents = val.present? ? (val.to_f * 100).round : nil
   end
 
   def formatted_price
@@ -38,6 +50,19 @@ class ProductVariant < ApplicationRecord
       inventory_logs.create!(
         change_amount: delta,
         new_quantity: new_qty,
+        reason: reason
+      )
+    end
+  end
+
+  def set_stock!(new_qty, reason: "Stocktake Count")
+    transaction do
+      target_qty = [new_qty.to_i, 0].max
+      delta = target_qty - stock_quantity
+      update!(stock_quantity: target_qty)
+      inventory_logs.create!(
+        change_amount: delta,
+        new_quantity: target_qty,
         reason: reason
       )
     end

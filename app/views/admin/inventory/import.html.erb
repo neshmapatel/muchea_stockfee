@@ -1,0 +1,79 @@
+<% content_for :title, "Bulk CSV Stock & Product Import" %>
+
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-bush-900 text-white p-6 rounded-3xl shadow-sm border border-bush-800">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400 text-bush-950 text-xs font-black uppercase tracking-wider mb-2">
+        <span>📂 Bulk Spreadsheet Synchronization</span>
+      </div>
+      <h1 class="text-2xl font-black tracking-tight text-white">Bulk Stock & Product CSV Import</h1>
+      <p class="text-xs text-stone-300 mt-1 max-w-xl">
+        Import stock deliveries or your entire product catalogue directly from Microsoft Excel, Google Sheets, or supplier CSV files.
+      </p>
+    </div>
+
+    <%= link_to "← Back to Inventory", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 hover:bg-bush-700 text-stone-200 text-xs font-bold rounded-xl transition border border-bush-700" %>
+  </div>
+
+  <!-- Upload Form -->
+  <div class="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8">
+    <%= form_with url: process_import_admin_inventory_index_path, method: :post, multipart: true, local: true, class: "space-y-6" do |f| %>
+      <div class="border-2 border-dashed border-stone-300 rounded-2xl p-8 text-center hover:border-bush-800 transition bg-stone-50">
+        <div class="mx-auto w-12 h-12 text-stone-400 mb-3">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        </div>
+        <label for="csv_file_input" class="cursor-pointer block text-sm font-black text-bush-900 hover:underline">
+          Click to choose your .csv file
+        </label>
+        <p class="text-xs text-stone-500 mt-1">Accepts standard .csv exports from Excel, Xero, or suppliers</p>
+        <%= f.file_field :file, id: "csv_file_input", accept: ".csv,text/csv", required: true, class: "mt-4 text-xs text-stone-600 block mx-auto cursor-pointer" %>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
+        <%= link_to "Cancel", admin_inventory_index_path, class: "px-4 py-2.5 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition" %>
+        <%= f.submit "Upload & Process Stock Import 🚀", class: "px-6 py-2.5 bg-bush-800 hover:bg-bush-900 text-white text-xs font-black rounded-xl shadow cursor-pointer transition" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- CSV Format Guidelines & Templates -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Option 1: Quick Stock Count Adjustment -->
+    <div class="bg-white rounded-3xl border border-stone-200 p-6 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 font-black text-xs flex items-center justify-center">1</span>
+        <h3 class="text-sm font-black text-stone-900">Format A: Fast Restock / Count (Simple)</h3>
+      </div>
+      <p class="text-xs text-stone-600">
+        Use this when you just want to update stock levels for existing items already in your catalogue.
+      </p>
+
+      <div class="bg-stone-900 text-stone-100 p-3 rounded-xl font-mono text-[11px] overflow-x-auto">
+        <pre>sku,stock_quantity
+MIL-COOL-20KG,45
+MIL-EASY-20KG,30
+OAT-CHAFF-25KG,60</pre>
+      </div>
+      <p class="text-[11px] text-stone-400">Columns required: <code>sku</code> and either <code>stock_quantity</code> (replaces count) or <code>quantity</code> (adds to count).</p>
+    </div>
+
+    <!-- Option 2: Add New Products & Variants -->
+    <div class="bg-white rounded-3xl border border-stone-200 p-6 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full bg-bush-100 text-bush-800 font-black text-xs flex items-center justify-center">2</span>
+        <h3 class="text-sm font-black text-stone-900">Format B: Add Brand New Products</h3>
+      </div>
+      <p class="text-xs text-stone-600">
+        Use this when adding whole batches of new stockfeed, chaff, or pet food lines into the system.
+      </p>
+
+      <div class="bg-stone-900 text-stone-100 p-3 rounded-xl font-mono text-[11px] overflow-x-auto">
+        <pre>product_name,category,brand,sku,price,stock_quantity
+Alfalfa Hay Bale,Hay, Chaff & Bedding,Local WA,HAY-ALF-SQ,19.50,50
+Dog Kibble 15kg,Working Dog & Pet Food,Cobber,COB-WRK-15,42.00,20</pre>
+      </div>
+      <p class="text-[11px] text-stone-400">Any product names not already present will be automatically created under the designated category.</p>
+    </div>
+  </div>
+</div>

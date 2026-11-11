@@ -1,0 +1,126 @@
+<%= form_with model: [:admin, product], local: true, class: "space-y-8" do |f| %>
+  <% if product.errors.any? %>
+    <div class="p-4 bg-rose-50 border border-rose-300 rounded-2xl text-rose-800 text-xs">
+      <strong class="font-bold block mb-1">Please correct the following <%= pluralize(product.errors.count, "error") %>:</strong>
+      <ul class="list-disc pl-5 space-y-0.5">
+        <% product.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Section 1: Basic Product Information -->
+  <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4">
+      <h2 class="text-sm font-black text-bush-900 uppercase tracking-wider">1. Core Product Details</h2>
+      <p class="text-xs text-stone-500 mt-0.5">Basic information displayed on the online shop and search engines.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <%= f.label :name, "Product Name *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.text_field :name, required: true, placeholder: "e.g. Milne Feeds Pegasus Coolmax 20kg", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+
+      <div>
+        <%= f.label :category_id, "Department / Category *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.collection_select :category_id, @categories, :id, :name, { prompt: "Select a Category" }, { required: true, class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-bush-800 bg-white" } %>
+      </div>
+
+      <div>
+        <%= f.label :brand, "Manufacturer / Mill Brand", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.text_field :brand, placeholder: "e.g. Milne Feeds, Thompson & Redwood, Laucke Mills", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+
+      <div>
+        <%= f.label :hero_image_url, "Product Photo URL", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.text_field :hero_image_url, placeholder: "/images/milne_coolmax.jpg or web URL", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :short_description, "Short Summary (Seen on Category Cards)", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+      <%= f.text_area :short_description, rows: 2, placeholder: "Non-heating oat-free muesli pellet ideal for pleasure and competitive horses in WA.", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+    </div>
+
+    <div>
+      <%= f.label :full_description, "Detailed Nutritional Description & Feeding Guide", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+      <%= f.text_area :full_description, rows: 4, placeholder: "Complete breakdown of ingredients, minerals, vitamins, and recommended daily intake...", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+    </div>
+
+    <div class="flex items-center gap-6 pt-2">
+      <label class="flex items-center gap-2 text-xs font-bold text-stone-800 cursor-pointer">
+        <%= f.check_box :active, class: "w-4 h-4 rounded text-bush-800 focus:ring-bush-800" %>
+        <span>Active on Storefront (Live for sale)</span>
+      </label>
+
+      <label class="flex items-center gap-2 text-xs font-bold text-stone-800 cursor-pointer">
+        <%= f.check_box :featured, class: "w-4 h-4 rounded text-amber-500 focus:ring-amber-500" %>
+        <span>Featured on Home Page Carousel</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Section 2: Variant, Pricing & Stock Levels -->
+  <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-sm font-black text-bush-900 uppercase tracking-wider">2. Packaging Size, Barcode & Stock Inventory</h2>
+        <p class="text-xs text-stone-500 mt-0.5">Define SKUs, barcodes, retail price (AUD inc. GST), and current bags in warehouse.</p>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <%= f.fields_for :variants do |v_form| %>
+        <div class="p-6 bg-stone-50 rounded-2xl border border-stone-200 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <%= v_form.label :name, "Packaging Variant Name *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.text_field :name, required: true, placeholder: "e.g. 20kg Bag, Pallet (40 Bags)", class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none bg-white" %>
+            </div>
+
+            <div>
+              <%= v_form.label :sku, "Barcode / SKU Code *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.text_field :sku, required: true, placeholder: "e.g. 9312345001234 or MIL-COOL-20", class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-mono font-bold focus:outline-none bg-white" %>
+              <span class="text-[10px] text-stone-400">Can be scanned with barcode gun</span>
+            </div>
+
+            <div>
+              <%= v_form.label :weight_kg, "Weight (kg)", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.number_field :weight_kg, step: "0.1", value: v_form.object.weight_kg || 20.0, class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none bg-white" %>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-2">
+            <div>
+              <%= v_form.label :price_dollars, "Retail Price (AU$ inc. GST) *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.number_field :price_dollars, step: "0.01", min: "0", value: v_form.object.price_dollars, required: true, placeholder: "28.50", class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-black text-bush-900 focus:outline-none bg-white" %>
+            </div>
+
+            <div>
+              <%= v_form.label :compare_at_price_dollars, "RRP / Strikethrough Price (Optional)", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.number_field :compare_at_price_dollars, step: "0.01", min: "0", value: v_form.object.compare_at_price_dollars, placeholder: "32.00", class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none bg-white" %>
+            </div>
+
+            <div>
+              <%= v_form.label :stock_quantity, "Current Stock Quantity *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.number_field :stock_quantity, min: "0", value: v_form.object.stock_quantity || 0, required: true, class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-black text-emerald-900 focus:outline-none bg-white" %>
+            </div>
+
+            <div>
+              <%= v_form.label :low_stock_threshold, "Low Stock Warning Level", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+              <%= v_form.number_field :low_stock_threshold, min: "0", value: v_form.object.low_stock_threshold || 5, class: "w-full px-3 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none bg-white" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Form Submission Bar -->
+  <div class="flex items-center justify-end gap-3 pt-4">
+    <%= link_to "Cancel", admin_products_path, class: "px-5 py-2.5 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-200 transition" %>
+    <%= f.submit product.new_record? ? "Create Product & Add to Inventory 🚀" : "Save Changes to Product ✓", class: "px-6 py-2.5 bg-bush-800 hover:bg-bush-900 text-white text-xs font-black rounded-xl shadow cursor-pointer transition" %>
+  </div>
+<% end %>

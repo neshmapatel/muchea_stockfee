@@ -96,6 +96,92 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "PACKING SLIP"
   end
 
+  test "warehouse admin product creation and inventory management" do
+    category = Category.first
+    get new_admin_product_path
+    assert_response :success
+    assert_includes response.body, "Add New Product"
+
+    post admin_products_path, params: {
+      product: {
+        name: "Wesfeeds Golden Yolk Layer Pellets",
+        category_id: category.id,
+        brand: "Wesfeeds",
+        short_description: "Premium WA layer pellets for laying hens.",
+        active: "1",
+        variants_attributes: {
+          "0" => {
+            name: "20kg Bag",
+            sku: "WES-YOLK-20",
+            price_dollars: "24.50",
+            stock_quantity: 50,
+            low_stock_threshold: 10,
+            weight_kg: 20.0
+          }
+        }
+      }
+    }
+
+    assert_redirected_to admin_products_path
+    follow_redirect!
+    assert_includes response.body, "Wesfeeds Golden Yolk Layer Pellets"
+
+    created = Product.find_by(name: "Wesfeeds Golden Yolk Layer Pellets")
+    assert_not_nil created
+    assert_equal 1, created.variants.count
+    assert_equal 50, created.variants.first.stock_quantity
+  end
+
+  test "admin barcode scanner and quick restock flow" do
+    variant = ProductVariant.first
+    old_stock = variant.stock_quantity
+
+    get scanner_admin_inventory_index_path
+    assert_response :success
+    assert_includes response.body, "Handheld Barcode Restock"
+
+    post scan_adjust_admin_inventory_index_path, params: {
+      barcode: variant.sku,
+      quantity: 40,
+      mode: "add"
+    }
+
+    assert_redirected_to scanner_admin_inventory_index_path
+    follow_redirect!
+    assert_includes response.body, "Scanned: #{variant.product.name}"
+
+    variant.reload
+    assert_equal old_stock + 40, variant.stock_quantity
+  end
+
+  test "admin bulk csv import flow" do
+    variant = ProductVariant.first
+    get import_admin_inventory_index_path
+    assert_response :success
+    assert_includes response.body, "Bulk Stock & Product CSV Import"
+
+    # Create a temporary test CSV file
+    csv_file = Tempfile.new(["test_stock", ".csv"])
+    csv_file.write("sku,stock_quantity\n#{variant.sku},99\n")
+    csv_file.rewind
+
+    uploaded = Rack::Test::UploadedFile.new(csv_file.path, "text/csv")
+
+    post process_import_admin_inventory_index_path, params: {
+      file: uploaded
+    }
+
+    assert_redirected_to admin_inventory_index_path
+    follow_redirect!
+    assert_includes response.body, "Bulk Import Complete"
+
+    variant.reload
+    assert_equal 99, variant.stock_quantity
+
+    csv_file.close
+    csv_file.unlink
+  end
+
   test "sitemap.xml renders valid XML" do
     get "/sitemap.xml"
     assert_response :success

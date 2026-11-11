@@ -44,8 +44,12 @@ Rails.application.routes.draw do
     resources :inventory, only: [:index] do
       collection do
         post :quick_adjust
+        get :scanner
+        post :scan_adjust
+        get :import
+        post :process_import
       end
     end
-    resources :products, only: [:index, :show]
+    resources :products
   end
 end

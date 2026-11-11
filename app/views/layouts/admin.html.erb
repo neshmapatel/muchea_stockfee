@@ -45,11 +45,15 @@
             </div>
           <% end %>
 
-          <nav class="hidden md:flex items-center gap-1 ml-6 text-xs font-semibold">
-            <%= link_to "Dashboard", admin_root_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if current_page?(admin_root_path)}" %>
-            <%= link_to "Orders & Dispatch", admin_orders_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'orders'}" %>
-            <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'inventory'}" %>
-            <%= link_to "Products", admin_products_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'products'}" %>
+          <nav class="hidden lg:flex items-center gap-1 ml-6 text-xs font-semibold">
+            <%= link_to "Dashboard", admin_root_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if current_page?(admin_root_path)}" %>
+            <%= link_to "Orders & Dispatch", admin_orders_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'orders'}" %>
+            <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'inventory' && action_name == 'index'}" %>
+            <%= link_to scanner_admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition flex items-center gap-1 #{'bg-amber-500 text-bush-950 font-bold' if controller_name == 'inventory' && action_name == 'scanner'}" do %>
+              <span>⚡ Barcode Scanner</span>
+            <% end %>
+            <%= link_to "Bulk Import", import_admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'inventory' && action_name == 'import'}" %>
+            <%= link_to "Products", admin_products_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'products'}" %>
           </nav>
         </div>
 
@@ -60,6 +64,16 @@
           </span>
           <%= link_to "View Storefront →", root_path, target: "_blank", class: "text-xs text-stone-300 hover:text-white border border-stone-600 px-3 py-1 rounded hover:bg-bush-800 transition" %>
         </div>
+      </div>
+
+      <!-- Mobile/Tablet Secondary Nav Scroll -->
+      <div class="lg:hidden bg-bush-950 px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs border-t border-bush-800">
+        <%= link_to "Dashboard", admin_root_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{current_page?(admin_root_path) ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
+        <%= link_to "Orders", admin_orders_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'orders' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
+        <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'inventory' && action_name == 'index' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
+        <%= link_to "⚡ Barcode Scanner", scanner_admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap font-bold #{controller_name == 'inventory' && action_name == 'scanner' ? 'bg-amber-500 text-bush-950' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}" %>
+        <%= link_to "Bulk Import", import_admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'inventory' && action_name == 'import' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
+        <%= link_to "Products", admin_products_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'products' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
       </div>
     </header>
 

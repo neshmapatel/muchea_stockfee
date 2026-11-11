@@ -1,17 +1,36 @@
 <% content_for :title, "Live Warehouse Inventory Management" %>
 
 <div class="space-y-6">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-black text-bush-900 tracking-tight">Warehouse Inventory Management</h1>
       <p class="text-xs text-stone-500 mt-1">Real-time stock control across 20kg bags, chaff bales, lick blocks, fencing wire, and star pickets.</p>
     </div>
 
+    <!-- Quick Action Hub -->
+    <div class="flex flex-wrap items-center gap-2">
+      <%= link_to scanner_admin_inventory_index_path, class: "px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-bush-950 rounded-xl text-xs font-black flex items-center gap-1.5 shadow transition" do %>
+        <span>⚡ Barcode Scanner Restock</span>
+      <% end %>
+      <%= link_to import_admin_inventory_index_path, class: "px-3.5 py-2 bg-bush-800 hover:bg-bush-900 text-white rounded-xl text-xs font-bold transition shadow" do %>
+        <span>📂 Bulk CSV Import</span>
+      <% end %>
+      <%= link_to new_admin_product_path, class: "px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition shadow" do %>
+        <span>➕ Add Product</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Search & Category Filters -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <!-- Filter Form -->
     <div class="flex items-center gap-2">
       <%= form_with url: admin_inventory_index_path, method: :get, local: true, class: "flex gap-2" do |f| %>
-        <%= f.text_field :q, value: params[:q], placeholder: "Search SKU or product...", class: "px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white focus:outline-none" %>
+        <%= f.text_field :q, value: params[:q], placeholder: "Search SKU, barcode or product...", class: "px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white focus:outline-none w-64" %>
         <%= f.submit "Search", class: "px-3 py-1.5 bg-bush-800 text-white rounded-lg text-xs font-semibold cursor-pointer" %>
+        <% if params[:q].present? || params[:category_id].present? || params[:filter].present? %>
+          <%= link_to "Clear", admin_inventory_index_path, class: "px-2 py-1.5 text-xs text-stone-500 hover:text-stone-800" %>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -74,9 +93,17 @@
               </td>
               <td class="py-3 px-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
-                  <%= button_to "-1", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: -1, reason: "Store Sale / Breakage"), method: :post, class: "px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded font-bold cursor-pointer" %>
-                  <%= button_to "+10", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold cursor-pointer" %>
-                  <%= button_to "+50 (Pallet)", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 50, reason: "Direct Mill Pallet Delivery"), method: :post, class: "px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold cursor-pointer" %>
+                  <%= button_to "-1", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: -1, reason: "Store Sale / Breakage"), method: :post, class: "px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded font-bold cursor-pointer text-xs" %>
+                  <%= button_to "+10", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold cursor-pointer text-xs" %>
+                  <%= button_to "+40", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 40, reason: "Pallet Restock"), method: :post, class: "px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold cursor-pointer text-xs", title: "Add 1 Pallet (40 Bags)" %>
+
+                  <!-- Direct Exact Stock Setter -->
+                  <%= form_with url: quick_adjust_admin_inventory_index_path, method: :post, local: true, class: "inline-flex items-center ml-1" do |f| %>
+                    <%= f.hidden_field :variant_id, value: var.id %>
+                    <%= f.hidden_field :reason, value: "Manual Admin Stock Adjustment" %>
+                    <%= f.number_field :exact_quantity, placeholder: "=", min: 0, class: "w-12 px-1.5 py-1 text-center font-bold text-xs border border-stone-300 rounded-l focus:outline-none bg-stone-50" %>
+                    <%= f.submit "Set", class: "px-2 py-1 bg-stone-700 hover:bg-stone-800 text-white rounded-r text-[11px] font-bold cursor-pointer" %>
+                  <% end %>
                 </div>
               </td>
             </tr>

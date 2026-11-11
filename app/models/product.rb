@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   has_many :variants, class_name: "ProductVariant", dependent: :destroy
   has_many :order_items, through: :variants
 
+  accepts_nested_attributes_for :variants, allow_destroy: true, reject_if: :all_blank
+
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
 
@@ -96,7 +98,15 @@ class Product < ApplicationRecord
   private
 
   def generate_slug
-    self.slug = name.parameterize if slug.blank? && name.present?
+    return if slug.present? || name.blank?
+    base = name.parameterize
+    candidate = base
+    counter = 1
+    while Product.where.not(id: id).exists?(slug: candidate)
+      candidate = "#{base}-#{counter}"
+      counter += 1
+    end
+    self.slug = candidate
   end
 end
 

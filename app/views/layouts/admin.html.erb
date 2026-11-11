@@ -45,24 +45,33 @@
             </div>
           <% end %>
 
+          <% nav_items = admin_nav_items %>
           <nav class="hidden lg:flex items-center gap-1 ml-6 text-xs font-semibold">
-            <%= link_to "Dashboard", admin_root_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if current_page?(admin_root_path)}" %>
-            <%= link_to "Orders & Dispatch", admin_orders_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'orders'}" %>
-            <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'inventory' && action_name == 'index'}" %>
-            <%= link_to scanner_admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition flex items-center gap-1 #{'bg-amber-500 text-bush-950 font-bold' if controller_name == 'inventory' && action_name == 'scanner'}" do %>
-              <span>⚡ Barcode Scanner</span>
+            <% nav_items.each do |item| %>
+              <%
+                desktop_classes = if item[:highlight] && item[:active]
+                  "bg-amber-500 text-bush-950 font-bold"
+                elsif item[:active]
+                  "bg-bush-800 text-amber-400 font-bold"
+                else
+                  "hover:bg-bush-800"
+                end
+              %>
+              <%= link_to (item[:desktop_label] || item[:label]), item[:path], class: "px-2.5 py-1.5 rounded transition whitespace-nowrap #{desktop_classes}" %>
             <% end %>
-            <%= link_to "Bulk Import", import_admin_inventory_index_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'inventory' && action_name == 'import'}" %>
-            <%= link_to "Products", admin_products_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'products'}" %>
-            <%= link_to "Categories", admin_categories_path, class: "px-2.5 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400 font-bold' if controller_name == 'categories'}" %>
           </nav>
         </div>
 
         <div class="flex items-center gap-3">
           <% if admin_signed_in? %>
             <div class="hidden sm:flex flex-col text-right">
-              <span class="text-xs font-bold text-white"><%= current_admin.name %></span>
-              <span class="text-[10px] text-amber-400 font-mono"><%= current_admin.email %></span>
+              <div class="flex items-center justify-end gap-1.5">
+                <span class="text-xs font-bold text-white"><%= current_admin.name %></span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase <%= current_admin.super_admin? ? 'bg-amber-400 text-bush-950' : 'bg-bush-700 text-emerald-200' %>">
+                  <%= current_admin.role_name %>
+                </span>
+              </div>
+              <span class="text-[10px] text-amber-400/90 font-mono"><%= current_admin.email %></span>
             </div>
             <%= button_to "Sign Out", admin_logout_path, method: :delete, class: "text-xs text-rose-300 hover:text-white border border-rose-800 bg-rose-950/70 hover:bg-rose-900 px-2.5 py-1 rounded transition cursor-pointer" %>
           <% end %>
@@ -73,13 +82,20 @@
 
       <!-- Mobile/Tablet Secondary Nav Scroll -->
       <div class="lg:hidden bg-bush-950 px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs border-t border-bush-800">
-        <%= link_to "Dashboard", admin_root_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{current_page?(admin_root_path) ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
-        <%= link_to "Orders", admin_orders_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'orders' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
-        <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'inventory' && action_name == 'index' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
-        <%= link_to "⚡ Barcode Scanner", scanner_admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap font-bold #{controller_name == 'inventory' && action_name == 'scanner' ? 'bg-amber-500 text-bush-950' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}" %>
-        <%= link_to "Bulk Import", import_admin_inventory_index_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'inventory' && action_name == 'import' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
-        <%= link_to "Products", admin_products_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'products' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
-        <%= link_to "Categories", admin_categories_path, class: "px-2.5 py-1 rounded whitespace-nowrap #{controller_name == 'categories' ? 'bg-bush-800 text-amber-400 font-bold' : 'text-stone-300'}" %>
+        <% nav_items.each do |item| %>
+          <%
+            mobile_classes = if item[:highlight] && item[:active]
+              "bg-amber-500 text-bush-950 font-bold"
+            elsif item[:highlight]
+              "bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold"
+            elsif item[:active]
+              "bg-bush-800 text-amber-400 font-bold"
+            else
+              "text-stone-300"
+            end
+          %>
+          <%= link_to item[:label], item[:path], class: "px-2.5 py-1 rounded whitespace-nowrap #{mobile_classes}" %>
+        <% end %>
       </div>
     </header>
 

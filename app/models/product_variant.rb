@@ -43,29 +43,28 @@ class ProductVariant < ApplicationRecord
     stock_quantity <= low_stock_threshold
   end
 
-  def adjust_stock!(delta, reason: "Manual Adjustment")
-    transaction do
-      new_qty = [stock_quantity + delta, 0].max
-      update!(stock_quantity: new_qty)
-      inventory_logs.create!(
-        change_amount: delta,
-        new_quantity: new_qty,
-        reason: reason
-      )
-    end
+  def adjust_stock!(delta, reason: "Manual Adjustment", admin_user: nil)
+    target_qty = [ stock_quantity + delta, 0 ].max
+    apply_stock_change!(target_qty, delta, reason, admin_user)
   end
 
-  def set_stock!(new_qty, reason: "Stocktake Count")
+  def set_stock!(new_qty, reason: "Stocktake Count", admin_user: nil)
+    target_qty = [ new_qty.to_i, 0 ].max
+    delta = target_qty - stock_quantity
+    apply_stock_change!(target_qty, delta, reason, admin_user)
+  end
+
+  private
+
+  def apply_stock_change!(target_qty, delta, reason, admin_user)
     transaction do
-      target_qty = [new_qty.to_i, 0].max
-      delta = target_qty - stock_quantity
       update!(stock_quantity: target_qty)
       inventory_logs.create!(
         change_amount: delta,
         new_quantity: target_qty,
-        reason: reason
+        reason: reason,
+        admin_user: admin_user
       )
     end
   end
 end
-

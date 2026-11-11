@@ -10,16 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_000002) do
   create_table "admin_users", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
     t.string "password_digest", null: false
-    t.string "role", default: "admin", null: false
     t.datetime "last_sign_in_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role_id", null: false
+    t.boolean "active", default: true, null: false
+    t.string "phone"
+    t.integer "created_by_id"
+    t.index ["active"], name: "index_admin_users_on_active"
+    t.index ["created_by_id"], name: "index_admin_users_on_created_by_id"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["role_id"], name: "index_admin_users_on_role_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -52,6 +58,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_000001) do
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "admin_user_id"
+    t.index ["admin_user_id"], name: "index_inventory_logs_on_admin_user_id"
     t.index ["product_variant_id"], name: "index_inventory_logs_on_product_variant_id"
   end
 
@@ -132,6 +140,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_000001) do
     t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.text "permissions", default: "[]", null: false
+    t.boolean "is_super_admin", default: false, null: false
+    t.boolean "system_role", default: false, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["is_super_admin"], name: "index_roles_on_is_super_admin"
+    t.index ["slug"], name: "index_roles_on_slug", unique: true
+  end
+
+  add_foreign_key "admin_users", "roles"
+  add_foreign_key "inventory_logs", "admin_users", on_delete: :nullify
   add_foreign_key "inventory_logs", "product_variants"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "product_variants"

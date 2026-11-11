@@ -1,6 +1,8 @@
 module Admin
   class ProductsController < BaseController
-    before_action :set_product, only: [:show, :edit, :update, :destroy]
+    before_action -> { authorize_any!(:manage_products, :view_inventory, :manage_inventory) }, only: [ :index, :show ]
+    before_action -> { authorize!(:manage_products) }, only: [ :new, :create, :edit, :update, :destroy ]
+    before_action :set_product, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @products = Product.includes(:category, :variants).order(name: :asc)
@@ -14,6 +16,8 @@ module Admin
       end
 
       @categories = Category.ordered
+      @category_product_counts = Product.group(:category_id).count
+      @total_products_count = @category_product_counts.values.sum
     end
 
     def show
@@ -67,7 +71,8 @@ module Admin
     private
 
     def set_product
-      @product = Product.find_by(slug: params[:id]) || Product.find_by(id: params[:id])
+      @product = Product.includes(:category, :variants).find_by(slug: params[:id]) ||
+                 Product.includes(:category, :variants).find_by(id: params[:id])
       unless @product
         redirect_to admin_products_path, alert: "Product not found."
       end

@@ -56,5 +56,11 @@ Rails.application.routes.draw do
     end
     resources :products
     resources :categories, except: [:show]
+    resources :users, except: [:show, :destroy] do
+      member do
+        patch :toggle_active
+      end
+    end
+    resources :roles, except: [:show]
   end
 end

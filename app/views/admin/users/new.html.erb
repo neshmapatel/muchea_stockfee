@@ -1,0 +1,14 @@
+<% content_for :title, "Add Team Member or Super Admin" %>
+
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight">Add Staff Member or Admin</h1>
+      <p class="text-xs text-stone-500 mt-1">Assign role-based access (Super Admin, Store Admin, Inventory Manager, Accountant, or Warehouse Staff).</p>
+    </div>
+
+    <%= link_to "← Back to Team", admin_users_path, class: "px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold rounded-xl transition" %>
+  </div>
+
+  <%= render "form", admin_user: @admin_user, assignable_roles: @assignable_roles %>
+</div>

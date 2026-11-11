@@ -13,3 +13,4 @@ class CreateAdminUsers < ActiveRecord::Migration[8.1]
     add_index :admin_users, :email, unique: true
   end
 end
+

@@ -11,9 +11,11 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
-    def sign_in_admin(email = "neshmapatel1399@gmail.com", password = "neshma1331")
+    def sign_in_admin(email = "neshmapatel1399@gmail.com", password = "neshma1331", role_slug: "super_admin", name: "Neshma Patel")
+      Role.bootstrap_defaults!
+      role = Role.find_by!(slug: role_slug)
       admin = AdminUser.find_by(email: email)
-      admin ||= AdminUser.create!(name: "Neshma Patel", email: email, password: password, role: "super_admin")
+      admin ||= AdminUser.create!(name: name, email: email, password: password, role: role, active: true)
       post admin_login_path, params: { email: email, password: password }
       admin
     end

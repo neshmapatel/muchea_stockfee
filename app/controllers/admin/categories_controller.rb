@@ -1,9 +1,11 @@
 module Admin
   class CategoriesController < BaseController
-    before_action :set_category, only: [:edit, :update, :destroy]
+    before_action -> { authorize!(:manage_categories) }
+    before_action :set_category, only: [ :edit, :update, :destroy ]
 
     def index
-      @categories = Category.includes(:products).order(:department, :display_order, :name)
+      @categories = Category.order(:department, :display_order, :name)
+      @product_counts_by_category = Product.group(:category_id).count
     end
 
     def new
@@ -31,8 +33,8 @@ module Admin
     end
 
     def destroy
-      if @category.products.any?
-        redirect_to admin_categories_path, alert: "Cannot delete category '#{@category.name}' because it contains #{@category.products.count} products."
+      if @category.products.exists?
+        redirect_to admin_categories_path, alert: "Cannot delete category '#{@category.name}' while products are assigned to it."
       else
         @category.destroy
         redirect_to admin_categories_path, notice: "Category removed."

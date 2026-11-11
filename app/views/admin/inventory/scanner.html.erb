@@ -135,7 +135,10 @@
           <div class="px-6 py-3.5 flex items-center justify-between hover:bg-stone-50">
             <div>
               <strong class="text-stone-900 block"><%= log.product_variant.product.name %> (<%= log.product_variant.name %>)</strong>
-              <span class="text-[10px] text-stone-400 font-mono">SKU: <%= log.product_variant.sku %> • <%= log.created_at.strftime("%I:%M %p, %d %b") %> • <%= log.reason %></span>
+              <span class="text-[10px] text-stone-400 font-mono">
+                SKU: <%= log.product_variant.sku %> • <%= log.created_at.strftime("%I:%M %p, %d %b") %> • <%= log.reason %>
+                <% if log.admin_user %> • By <%= log.admin_user.name %><% end %>
+              </span>
             </div>
             <div class="text-right">
               <span class="inline-block px-2.5 py-1 rounded-lg text-xs font-black <%= log.change_amount.positive? ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' %>">

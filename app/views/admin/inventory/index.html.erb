@@ -9,14 +9,20 @@
 
     <!-- Quick Action Hub -->
     <div class="flex flex-wrap items-center gap-2">
-      <%= link_to scanner_admin_inventory_index_path, class: "px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-bush-950 rounded-xl text-xs font-black flex items-center gap-1.5 shadow transition" do %>
-        <span>⚡ Barcode Scanner Restock</span>
+      <% if can?(:use_barcode_scanner) %>
+        <%= link_to scanner_admin_inventory_index_path, class: "px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-bush-950 rounded-xl text-xs font-black flex items-center gap-1.5 shadow transition" do %>
+          <span>⚡ Barcode Scanner Restock</span>
+        <% end %>
       <% end %>
-      <%= link_to import_admin_inventory_index_path, class: "px-3.5 py-2 bg-bush-800 hover:bg-bush-900 text-white rounded-xl text-xs font-bold transition shadow" do %>
-        <span>📂 Bulk CSV Import</span>
+      <% if can?(:bulk_csv_import) %>
+        <%= link_to import_admin_inventory_index_path, class: "px-3.5 py-2 bg-bush-800 hover:bg-bush-900 text-white rounded-xl text-xs font-bold transition shadow" do %>
+          <span>📂 Bulk CSV Import</span>
+        <% end %>
       <% end %>
-      <%= link_to new_admin_product_path, class: "px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition shadow" do %>
-        <span>➕ Add Product</span>
+      <% if can?(:manage_products) %>
+        <%= link_to new_admin_product_path, class: "px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition shadow" do %>
+          <span>➕ Add Product</span>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -37,8 +43,8 @@
 
   <!-- Category & Quick Filter Pills -->
   <div class="flex items-center gap-2 overflow-x-auto pb-2 text-xs">
-    <%= link_to "All Inventory (#{ProductVariant.count})", admin_inventory_index_path, class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter].blank? && params[:category_id].blank? ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
-    <%= link_to "⚠️ Low Stock Warnings (#{ProductVariant.low_stock.count})", admin_inventory_index_path(filter: 'low_stock'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter] == 'low_stock' ? 'bg-rose-700 text-white' : 'bg-white text-rose-700 border border-rose-200'}" %>
+    <%= link_to "All Inventory (#{@total_variant_count})", admin_inventory_index_path, class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter].blank? && params[:category_id].blank? ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "⚠️ Low Stock Warnings (#{@low_stock_count})", admin_inventory_index_path(filter: 'low_stock'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter] == 'low_stock' ? 'bg-rose-700 text-white' : 'bg-white text-rose-700 border border-rose-200'}" %>
 
     <% @categories.each do |cat| %>
       <%= link_to cat.name, admin_inventory_index_path(category_id: cat.id), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:category_id].to_s == cat.id.to_s ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
@@ -57,7 +63,9 @@
             <th class="py-3 px-4">Price (inc. GST)</th>
             <th class="py-3 px-4 text-center">In Stock Level</th>
             <th class="py-3 px-4 text-center">Safety Alert</th>
-            <th class="py-3 px-4 text-right">Quick Stock Adjustment</th>
+            <% if can?(:manage_inventory) %>
+              <th class="py-3 px-4 text-right">Quick Stock Adjustment</th>
+            <% end %>
           </tr>
         </thead>
         <tbody class="divide-y divide-stone-100">
@@ -91,21 +99,23 @@
                   <span class="text-emerald-700 text-[11px] font-semibold">Healthy (Min: <%= var.low_stock_threshold %>)</span>
                 <% end %>
               </td>
-              <td class="py-3 px-4 text-right">
-                <div class="flex items-center justify-end gap-1.5">
-                  <%= button_to "-1", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: -1, reason: "Store Sale / Breakage"), method: :post, class: "px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded font-bold cursor-pointer text-xs" %>
-                  <%= button_to "+10", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold cursor-pointer text-xs" %>
-                  <%= button_to "+40", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 40, reason: "Pallet Restock"), method: :post, class: "px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold cursor-pointer text-xs", title: "Add 1 Pallet (40 Bags)" %>
+              <% if can?(:manage_inventory) %>
+                <td class="py-3 px-4 text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <%= button_to "-1", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: -1, reason: "Store Sale / Breakage"), method: :post, class: "px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded font-bold cursor-pointer text-xs" %>
+                    <%= button_to "+10", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold cursor-pointer text-xs" %>
+                    <%= button_to "+40", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 40, reason: "Pallet Restock"), method: :post, class: "px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold cursor-pointer text-xs", title: "Add 1 Pallet (40 Bags)" %>
 
-                  <!-- Direct Exact Stock Setter -->
-                  <%= form_with url: quick_adjust_admin_inventory_index_path, method: :post, local: true, class: "inline-flex items-center ml-1" do |f| %>
-                    <%= f.hidden_field :variant_id, value: var.id %>
-                    <%= f.hidden_field :reason, value: "Manual Admin Stock Adjustment" %>
-                    <%= f.number_field :exact_quantity, placeholder: "=", min: 0, class: "w-12 px-1.5 py-1 text-center font-bold text-xs border border-stone-300 rounded-l focus:outline-none bg-stone-50" %>
-                    <%= f.submit "Set", class: "px-2 py-1 bg-stone-700 hover:bg-stone-800 text-white rounded-r text-[11px] font-bold cursor-pointer" %>
-                  <% end %>
-                </div>
-              </td>
+                    <!-- Direct Exact Stock Setter -->
+                    <%= form_with url: quick_adjust_admin_inventory_index_path, method: :post, local: true, class: "inline-flex items-center ml-1" do |f| %>
+                      <%= f.hidden_field :variant_id, value: var.id %>
+                      <%= f.hidden_field :reason, value: "Manual Admin Stock Adjustment" %>
+                      <%= f.number_field :exact_quantity, placeholder: "=", min: 0, class: "w-12 px-1.5 py-1 text-center font-bold text-xs border border-stone-300 rounded-l focus:outline-none bg-stone-50" %>
+                      <%= f.submit "Set", class: "px-2 py-1 bg-stone-700 hover:bg-stone-800 text-white rounded-r text-[11px] font-bold cursor-pointer" %>
+                    <% end %>
+                  </div>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>
@@ -124,7 +134,13 @@
         <div class="p-3.5 flex justify-between items-center">
           <div>
             <strong class="text-stone-900"><%= log.product_variant.product.name %> (<%= log.product_variant.name %>)</strong>
-            <p class="text-stone-500 text-[11px] mt-0.5">Reason: <%= log.reason %> • <%= log.created_at.strftime("%d %b %Y at %I:%M %p") %></p>
+            <p class="text-stone-500 text-[11px] mt-0.5">
+              Reason: <%= log.reason %>
+              <% if log.admin_user %>
+                • By <strong><%= log.admin_user.name %></strong>
+              <% end %>
+              • <%= log.created_at.strftime("%d %b %Y at %I:%M %p") %>
+            </p>
           </div>
           <div class="text-right">
             <span class="inline-block px-2 py-0.5 rounded font-black text-xs <%= log.change_amount.positive? ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' %>">

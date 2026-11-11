@@ -387,12 +387,16 @@ order2.items.create!([
   { product_variant: p3.variants.first, quantity: 2, unit_price_cents: 2450, total_price_cents: 4900 }
 ])
 
-puts "== Seeding Default Warehouse Admin =="
-AdminUser.find_or_create_by!(email: "neshmapatel1399@gmail.com") do |u|
-  u.name = "Neshma Patel"
-  u.password = "neshma1331"
-  u.role = "super_admin"
-end
+puts "== Seeding RBAC Roles & Default Super Admin =="
+Role.bootstrap_defaults!
+super_admin_role = Role.find_by!(slug: "super_admin")
+
+admin = AdminUser.find_or_initialize_by(email: "neshmapatel1399@gmail.com")
+admin.name ||= "Neshma Patel"
+admin.role = super_admin_role
+admin.active = true
+admin.password = "neshma1331" if admin.new_record?
+admin.save!
 
 puts "== Seed Data Completed Successfully =="
-puts "Created #{Category.count} categories, #{Product.count} products, #{ProductVariant.count} variants, #{DeliveryZone.count} delivery zones, #{Order.count} sample orders, and default admin (#{AdminUser.count})."
+puts "Created #{Category.count} categories, #{Product.count} products, #{ProductVariant.count} variants, #{DeliveryZone.count} delivery zones, #{Order.count} sample orders, #{Role.count} roles, and #{AdminUser.count} admin(s)."

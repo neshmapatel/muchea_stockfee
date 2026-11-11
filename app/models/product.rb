@@ -27,15 +27,27 @@ class Product < ApplicationRecord
   end
 
   def default_variant
-    variants.find_by(is_default: true) || variants.order(price_cents: :asc).first
+    if variants.loaded?
+      variants.find(&:is_default?) || variants.min_by(&:price_cents)
+    else
+      variants.find_by(is_default: true) || variants.order(price_cents: :asc).first
+    end
   end
 
   def min_price_cents
-    variants.minimum(:price_cents) || 0
+    if variants.loaded?
+      variants.map(&:price_cents).min || 0
+    else
+      variants.minimum(:price_cents) || 0
+    end
   end
 
   def max_price_cents
-    variants.maximum(:price_cents) || 0
+    if variants.loaded?
+      variants.map(&:price_cents).max || 0
+    else
+      variants.maximum(:price_cents) || 0
+    end
   end
 
   def min_price_dollars
@@ -43,7 +55,8 @@ class Product < ApplicationRecord
   end
 
   def price_display
-    if variants.count > 1 && min_price_cents != max_price_cents
+    variant_count = variants.loaded? ? variants.size : variants.count
+    if variant_count > 1 && min_price_cents != max_price_cents
       "From AU$ #{format('%.2f', min_price_cents / 100.0)} inc. GST"
     elsif default_variant
       "AU$ #{format('%.2f', default_variant.price_cents / 100.0)} inc. GST"
@@ -65,7 +78,7 @@ class Product < ApplicationRecord
   end
 
   def total_stock
-    variants.sum(:stock_quantity)
+    variants.loaded? ? variants.sum(&:stock_quantity) : variants.sum(:stock_quantity)
   end
 
   def low_stock?
@@ -77,7 +90,7 @@ class Product < ApplicationRecord
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": name,
-      "image": [hero_image_url.presence || "/images/muchea_logo.jpg"],
+      "image": [ hero_image_url.presence || "/images/muchea_logo.jpg" ],
       "description": short_description,
       "brand": {
         "@type": "Brand",
@@ -109,4 +122,3 @@ class Product < ApplicationRecord
     self.slug = candidate
   end
 end
-

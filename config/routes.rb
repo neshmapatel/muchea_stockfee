@@ -32,7 +32,11 @@ Rails.application.routes.draw do
   get "tracking", to: "tracking#index", as: :tracking_lookup
   get "tracking/:code", to: "tracking#show", as: :tracking
 
-  # Warehouse Admin Portal
+  # Warehouse Admin Authentication & Portal
+  get "admin/login", to: "admin/sessions#new", as: :admin_login
+  post "admin/login", to: "admin/sessions#create"
+  delete "admin/logout", to: "admin/sessions#destroy", as: :admin_logout
+
   namespace :admin do
     root to: "dashboard#index"
     resources :orders, only: [:index, :show, :update] do
@@ -51,5 +55,6 @@ Rails.application.routes.draw do
       end
     end
     resources :products
+    resources :categories, except: [:show]
   end
 end

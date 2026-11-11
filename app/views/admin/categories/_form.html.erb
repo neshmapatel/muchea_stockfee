@@ -1,0 +1,39 @@
+<%= form_with model: [:admin, category], local: true, class: "space-y-6" do |f| %>
+  <% if category.errors.any? %>
+    <div class="p-4 bg-rose-50 border border-rose-300 rounded-2xl text-rose-800 text-xs">
+      <strong class="font-bold block mb-1">Please fix the following:</strong>
+      <ul class="list-disc pl-5">
+        <% category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <%= f.label :name, "Category Name *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.text_field :name, required: true, placeholder: "e.g. Pig, Goat & Alpaca Feed", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+
+      <div>
+        <%= f.label :department, "Department *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.select :department, [
+          ["Stockfeed & Animal Nutrition (Phase 1 Live)", "Stockfeed & Animal Nutrition"],
+          ["Rural Hardware & Farm Supplies (Phase 2 Expansion)", "Rural Hardware & Farm Supplies"]
+        ], {}, class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-bush-800 bg-white" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, "Category Description & Animal Nutrition Advice", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+      <%= f.text_area :description, rows: 3, placeholder: "Summary of feeds and products stocked in this section...", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end gap-3 pt-2">
+    <%= link_to "Cancel", admin_categories_path, class: "px-5 py-2.5 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-200 transition" %>
+    <%= f.submit category.new_record? ? "Create Category ✓" : "Update Category ✓", class: "px-6 py-2.5 bg-bush-800 hover:bg-bush-900 text-white text-xs font-black rounded-xl shadow cursor-pointer transition" %>
+  </div>
+<% end %>

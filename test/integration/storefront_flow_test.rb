@@ -77,7 +77,31 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, order.tracking_code
   end
 
+  test "admin authentication flow with default credentials" do
+    get admin_root_path
+    assert_redirected_to admin_login_path
+    follow_redirect!
+    assert_includes response.body, "OPERATIONS PORTAL"
+
+    # Wrong credentials
+    post admin_login_path, params: { email: "neshmapatel1399@gmail.com", password: "wrongpassword" }
+    assert_response :unauthorized
+    assert_includes response.body, "Invalid email or password"
+
+    # Correct credentials
+    sign_in_admin("neshmapatel1399@gmail.com", "neshma1331")
+    get admin_root_path
+    assert_response :success
+    assert_includes response.body, "Warehouse Operations Center"
+    assert_includes response.body, "Neshma Patel"
+
+    # Sign out
+    delete admin_logout_path
+    assert_redirected_to admin_login_path
+  end
+
   test "warehouse admin dashboard and order advancement" do
+    sign_in_admin
     order = Order.first
     get admin_root_path
     assert_response :success
@@ -97,6 +121,7 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "warehouse admin product creation and inventory management" do
+    sign_in_admin
     category = Category.first
     get new_admin_product_path
     assert_response :success
@@ -133,6 +158,7 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "admin barcode scanner and quick restock flow" do
+    sign_in_admin
     variant = ProductVariant.first
     old_stock = variant.stock_quantity
 
@@ -155,6 +181,7 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "admin bulk csv import flow" do
+    sign_in_admin
     variant = ProductVariant.first
     get import_admin_inventory_index_path
     assert_response :success
@@ -180,6 +207,25 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
 
     csv_file.close
     csv_file.unlink
+  end
+
+  test "admin category creation flow" do
+    sign_in_admin
+    get new_admin_category_path
+    assert_response :success
+    assert_includes response.body, "Add New Feed or Supply Category"
+
+    post admin_categories_path, params: {
+      category: {
+        name: "Goat & Alpaca Feed",
+        department: "Stockfeed & Animal Nutrition",
+        description: "Specialized WA pastoral feeds for goats and alpacas."
+      }
+    }
+    assert_redirected_to admin_categories_path
+    follow_redirect!
+    assert_includes response.body, "Goat &amp; Alpaca Feed"
+    assert_not_nil Category.find_by(name: "Goat & Alpaca Feed")
   end
 
   test "sitemap.xml renders valid XML" do

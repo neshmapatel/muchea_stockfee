@@ -39,6 +39,78 @@
     </div>
   </div>
 
+  <!-- Stock Management Hub (All 4 Methods) -->
+  <div class="bg-gradient-to-br from-bush-900 to-bush-950 rounded-3xl p-6 sm:p-8 text-white shadow-md border border-bush-800">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-bush-800">
+      <div>
+        <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400 text-bush-950 inline-block mb-1">
+          Stock & Inventory Operations
+        </span>
+        <h2 class="text-xl font-black text-white">4 Ways to Add &amp; Manage Warehouse Stock</h2>
+        <p class="text-xs text-stone-300 mt-0.5">Select the most efficient tool for your daily restocks and catalogue management.</p>
+      </div>
+      <%= link_to "Open Live Inventory →", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 hover:bg-bush-700 text-white rounded-xl text-xs font-bold transition border border-bush-700 whitespace-nowrap" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Method 1: Barcode Scanner -->
+      <%= link_to scanner_admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+            ⚡
+          </div>
+          <h3 class="text-sm font-black text-white">1. Barcode Scanner</h3>
+          <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+            Scan bags with a handheld gun. Quick buttons for +1, +10, or +40 full pallets.
+          </p>
+        </div>
+        <span class="mt-4 text-[11px] font-bold text-amber-400 group-hover:underline">Open Terminal ➔</span>
+      <% end %>
+
+      <!-- Method 2: Bulk CSV Import -->
+      <%= link_to import_admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-400/20 text-emerald-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+            📂
+          </div>
+          <h3 class="text-sm font-black text-white">2. Bulk CSV Import</h3>
+          <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+            Upload Excel or supplier manifests to update 100+ stock counts or create items in 2 seconds.
+          </p>
+        </div>
+        <span class="mt-4 text-[11px] font-bold text-emerald-400 group-hover:underline">Upload Spreadsheet ➔</span>
+      <% end %>
+
+      <!-- Method 3: Add New Product -->
+      <%= link_to new_admin_product_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-sky-400/20 text-sky-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+            ➕
+          </div>
+          <h3 class="text-sm font-black text-white">3. Add New Product</h3>
+          <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+            Fill in name, brand, retail price (inc. GST), packaging size, and initial stock count.
+          </p>
+        </div>
+        <span class="mt-4 text-[11px] font-bold text-sky-400 group-hover:underline">Add Product Form ➔</span>
+      <% end %>
+
+      <!-- Method 4: Live Inventory & Quick Set -->
+      <%= link_to admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-purple-400/20 text-purple-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+            📋
+          </div>
+          <h3 class="text-sm font-black text-white">4. Live Table &amp; Adjust</h3>
+          <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+            Instant inline "+10", "+40", "-1" and exact stockcount override (=) across all items.
+          </p>
+        </div>
+        <span class="mt-4 text-[11px] font-bold text-purple-400 group-hover:underline">Manage Live Table ➔</span>
+      <% end %>
+    </div>
+  </div>
+
   <!-- Active Orders Queue -->
   <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
     <div class="p-5 bg-stone-50 border-b border-stone-200 flex justify-between items-center">

@@ -1,10 +1,19 @@
 /*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
+ * Muchea Stockfeed & Hardware — Brand Stylesheet
  */
+
+:root {
+  --msh-bush-900: #142920;
+  --msh-bush-800: #1e3a2f;
+  --msh-bush-700: #284e40;
+  --msh-wheat-500: #d49b28;
+  --msh-wheat-600: #b9841f;
+  --msh-red-600: #dc2626;
+  --msh-red-700: #b91c1c;
+  --msh-red-800: #991b1b;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}

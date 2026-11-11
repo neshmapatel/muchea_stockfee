@@ -1,0 +1,132 @@
+<% content_for :title, "Warehouse Operations Dashboard" %>
+
+<div class="space-y-8">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight">Warehouse Operations Center</h1>
+      <p class="text-xs text-stone-500 mt-1">Live overview of orders, dispatch runs, drive-thru collections, and stock inventory.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to "Live Inventory Manager", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 text-white rounded-lg text-xs font-bold hover:bg-bush-900 shadow transition" %>
+      <%= link_to "All Orders & Dispatches", admin_orders_path, class: "px-4 py-2 bg-white text-stone-700 border border-stone-300 rounded-lg text-xs font-bold hover:bg-stone-50 transition" %>
+    </div>
+  </div>
+
+  <!-- Key Metric Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Sales (AUD)</span>
+      <span class="text-2xl font-black text-bush-900 mt-1 block"><%= format_aud(@total_revenue_cents) %></span>
+      <span class="text-[11px] text-stone-500 mt-1 block">Includes 10% Australian GST</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Active Fulfillments</span>
+      <span class="text-2xl font-black text-amber-600 mt-1 block"><%= @active_fulfillments_count %></span>
+      <span class="text-[11px] text-stone-500 mt-1 block">Paid, packing, or on delivery trucks</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Low Stock Warnings</span>
+      <span class="text-2xl font-black text-rose-600 mt-1 block"><%= @low_stock_variants.count %></span>
+      <span class="text-[11px] text-stone-500 mt-1 block">Items below reorder thresholds</span>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Stock Units</span>
+      <span class="text-2xl font-black text-stone-900 mt-1 block"><%= @total_stock_units %></span>
+      <span class="text-[11px] text-stone-500 mt-1 block">Across <%= @total_products_count %> product lines</span>
+    </div>
+  </div>
+
+  <!-- Active Orders Queue -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="p-5 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
+      <div>
+        <h2 class="text-sm font-bold text-bush-900">Recent Customer Orders & Fulfillment Queue</h2>
+        <p class="text-[11px] text-stone-500 mt-0.5">Click "Advance Status" to progress orders from Paid to Packing to Dispatched to Delivered.</p>
+      </div>
+      <%= link_to "View All Orders →", admin_orders_path, class: "text-xs text-bush-800 font-bold hover:underline" %>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
+          <tr>
+            <th class="py-3 px-4">Order #</th>
+            <th class="py-3 px-4">Customer</th>
+            <th class="py-3 px-4">Type / Suburb</th>
+            <th class="py-3 px-4">Total</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Quick Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100">
+          <% @recent_orders.each do |order| %>
+            <tr class="hover:bg-stone-50 transition">
+              <td class="py-3 px-4 font-mono font-bold text-bush-900">
+                <%= link_to order.order_number, admin_order_path(order), class: "hover:underline" %>
+              </td>
+              <td class="py-3 px-4">
+                <strong class="text-stone-900 block"><%= order.customer_name %></strong>
+                <span class="text-stone-400 text-[11px]"><%= order.customer_phone %></span>
+              </td>
+              <td class="py-3 px-4">
+                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold <%= order.pickup? ? 'bg-wheat-100 text-bush-900' : 'bg-bush-100 text-bush-900' %>">
+                  <%= order.pickup? ? 'Drive-Thru Bay' : "Delivery (#{order.suburb})" %>
+                </span>
+              </td>
+              <td class="py-3 px-4 font-bold text-stone-900"><%= order.formatted_total %></td>
+              <td class="py-3 px-4">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border <%= order.status_badge_class %>">
+                  <%= order.status_label %>
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <%= link_to "View", admin_order_path(order), class: "text-stone-600 hover:text-stone-900 font-semibold" %>
+                  <% unless order.status == 'delivered' || order.status == 'cancelled' %>
+                    <%= button_to "Advance Status →", advance_status_admin_order_path(order), method: :patch, class: "px-2.5 py-1 bg-bush-800 text-white font-bold rounded text-[11px] hover:bg-bush-900 transition cursor-pointer" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Low Stock Alert Box -->
+  <% if @low_stock_variants.any? %>
+    <div class="bg-white rounded-2xl border border-rose-200 shadow-sm overflow-hidden">
+      <div class="p-5 bg-rose-50 border-b border-rose-200 flex justify-between items-center">
+        <div>
+          <h2 class="text-sm font-bold text-rose-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span>Low Stock Reorder Alerts</span>
+          </h2>
+          <p class="text-[11px] text-rose-700 mt-0.5">These feeds and hardware items are below minimum safety stock.</p>
+        </div>
+        <%= link_to "Open Inventory Manager →", admin_inventory_index_path, class: "text-xs text-rose-800 font-bold hover:underline" %>
+      </div>
+
+      <div class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <% @low_stock_variants.each do |var| %>
+          <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-xs space-y-2">
+            <div>
+              <span class="block text-[10px] text-stone-400 font-mono">SKU: <%= var.sku %></span>
+              <strong class="text-stone-900 block line-clamp-1"><%= var.product.name %></strong>
+              <span class="text-stone-500 text-[11px]"><%= var.name %></span>
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-stone-200">
+              <span class="text-rose-600 font-black"><%= var.stock_quantity %> left (Min: <%= var.low_stock_threshold %>)</span>
+              <%= button_to "+10 Stock", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-emerald-700 text-white rounded font-bold text-[10px] hover:bg-emerald-800 cursor-pointer" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+

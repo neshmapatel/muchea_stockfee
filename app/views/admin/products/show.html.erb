@@ -1,0 +1,58 @@
+<% content_for :title, "Product: #{@product.name}" %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <nav class="text-xs text-stone-500 mb-1">
+        <%= link_to "← Back to Products", admin_products_path, class: "hover:underline text-bush-800 font-semibold" %>
+      </nav>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight"><%= @product.name %></h1>
+      <p class="text-xs text-stone-500 mt-0.5"><%= @product.category.name %> • Brand: <%= @product.brand %></p>
+    </div>
+
+    <%= link_to "View on Live Store ↗", product_path(@product), target: "_blank", class: "px-4 py-2 bg-bush-800 text-white rounded-lg text-xs font-bold hover:bg-bush-900 transition" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+      <h2 class="text-sm font-bold text-bush-900 border-b border-stone-100 pb-2">Product Description & Formulation</h2>
+      <p class="text-xs text-stone-700 leading-relaxed"><%= @product.full_description %></p>
+      
+      <% if @product.specifications.present? %>
+        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+          <strong class="text-stone-900 block font-bold mb-1">Specifications:</strong>
+          <p class="font-mono text-stone-700"><%= @product.specifications %></p>
+        </div>
+      <% end %>
+
+      <h3 class="text-sm font-bold text-bush-900 border-b border-stone-100 pb-2 pt-4">Configured Packaging Variants</h3>
+      <div class="divide-y divide-stone-100 text-xs">
+        <% @product.variants.each do |v| %>
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <strong class="text-stone-900 block"><%= v.name %></strong>
+              <span class="text-stone-500">SKU: <%= v.sku %> • Weight: <%= v.weight_kg %>kg</span>
+            </div>
+            <div class="text-right">
+              <span class="font-bold text-stone-900 block"><%= v.formatted_price_with_gst %></span>
+              <span class="text-stone-500 text-[11px]"><%= v.stock_quantity %> units in stock</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 text-xs">
+      <img src="<%= @product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="" class="w-full aspect-video object-cover rounded-xl border border-stone-200">
+      <div>
+        <span class="block text-stone-400 uppercase text-[10px] font-bold">Category</span>
+        <strong class="text-stone-900 text-sm"><%= @product.category.name %></strong>
+      </div>
+      <div>
+        <span class="block text-stone-400 uppercase text-[10px] font-bold">Featured On Home</span>
+        <strong class="text-stone-900"><%= @product.featured? ? "Yes (Hero & Spotlight)" : "No" %></strong>
+      </div>
+    </div>
+  </div>
+</div>
+

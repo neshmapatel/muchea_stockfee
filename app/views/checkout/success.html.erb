@@ -1,0 +1,88 @@
+<% content_for :title, "Order Confirmed ##{@order.order_number} | Muchea Stockfeed & Hardware" %>
+
+<div class="bg-bush-900 text-white py-10 border-b-4 border-wheat-500">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <div class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <span class="text-xs font-bold text-wheat-500 uppercase tracking-widest">Order Confirmed & Paid</span>
+    <h1 class="text-3xl sm:text-5xl font-black font-serif-brand mt-1">Thank You, <%= @order.customer_name %>!</h1>
+    <p class="text-xs sm:text-sm text-stone-300 mt-2">
+      Your payment was received. Our Muchea warehouse team is picking your rural feed and hardware order.
+    </p>
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 py-10 space-y-8">
+  <!-- Key Identifiers Card -->
+  <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center border-b border-stone-100 pb-6">
+      <div>
+        <span class="block text-stone-400 text-[10px] uppercase font-bold tracking-wider">Order Number</span>
+        <strong class="text-lg font-black text-bush-900 mt-0.5 block font-mono"><%= @order.order_number %></strong>
+      </div>
+      <div>
+        <span class="block text-stone-400 text-[10px] uppercase font-bold tracking-wider">Tracking Code</span>
+        <strong class="text-lg font-black text-ochre-600 mt-0.5 block font-mono"><%= @order.tracking_code %></strong>
+      </div>
+      <div>
+        <span class="block text-stone-400 text-[10px] uppercase font-bold tracking-wider">Total Paid (AUD)</span>
+        <strong class="text-lg font-black text-stone-900 mt-0.5 block"><%= @order.formatted_total %></strong>
+        <span class="text-[10px] text-stone-400">inc. 10% GST</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <%= link_to tracking_path(@order.tracking_code), class: "w-full sm:w-auto px-6 py-3 bg-bush-800 hover:bg-bush-900 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center gap-2" do %>
+        <%= svg_icon("truck", css_class: "w-4 h-4 text-wheat-500") %>
+        <span>Track Live Order Status →</span>
+      <% end %>
+
+      <%= link_to tax_invoice_path(@order.order_number), target: "_blank", class: "w-full sm:w-auto px-6 py-3 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs rounded-xl border border-stone-300 transition flex items-center justify-center gap-2" do %>
+        <svg class="w-4 h-4 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span>View / Print ATO Tax Invoice</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Order Items & Fulfillment Details -->
+  <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="p-6 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
+      <h2 class="text-base font-bold text-stone-900">Ordered Items</h2>
+      <span class="text-xs text-stone-500"><%= @order.items.count %> line items</span>
+    </div>
+
+    <div class="p-6 divide-y divide-stone-100">
+      <% @order.items.each do |item| %>
+        <div class="py-3 flex justify-between items-center text-xs">
+          <div>
+            <strong class="text-stone-900 block"><%= item.product_variant.product.name %></strong>
+            <span class="text-stone-500"><%= item.quantity %>x <%= item.product_variant.name %> (SKU: <%= item.product_variant.sku %>)</span>
+          </div>
+          <span class="font-bold text-stone-900"><%= item.formatted_total %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="p-6 bg-stone-50 border-t border-stone-200 text-xs space-y-1.5">
+      <div class="flex justify-between text-stone-600">
+        <span>Fulfillment:</span>
+        <strong class="text-stone-900"><%= @order.fulfillment_type == 'pickup' ? 'Drive-Thru Warehouse Loading (Muchea Bay)' : 'Rural Truck Farm Delivery' %></strong>
+      </div>
+      <% if @order.delivery? %>
+        <div class="flex justify-between text-stone-600">
+          <span>Delivery Address:</span>
+          <span class="text-stone-900"><%= @order.delivery_address %>, <%= @order.suburb %> WA <%= @order.postcode %></span>
+        </div>
+      <% end %>
+      <% if @order.delivery_notes.present? %>
+        <div class="flex justify-between text-stone-600">
+          <span>Gate / Unloading Notes:</span>
+          <span class="text-stone-900 italic"><%= @order.delivery_notes %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,147 @@
+<% content_for :title, "#{@category.name} | Muchea Stockfeed & Hardware" %>
+<% content_for :description, @category.description %>
+
+<div class="bg-bush-900 text-white py-10 border-b-4 border-wheat-500">
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- Breadcrumbs -->
+    <nav class="text-xs text-stone-300 mb-3 flex items-center gap-1.5 flex-wrap">
+      <%= link_to "Home", root_path, class: "hover:text-wheat-500" %>
+      <span>/</span>
+      <span><%= @category.department %></span>
+      <span>/</span>
+      <span class="text-wheat-500 font-bold"><%= @category.name %></span>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-2xl bg-bush-800 text-wheat-500 flex items-center justify-center border border-bush-700 flex-shrink-0">
+        <%= svg_icon(@category.icon, css_class: "w-8 h-8") %>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-4xl font-black font-serif-brand"><%= @category.name %></h1>
+        <p class="text-xs sm:text-sm text-stone-300 mt-1 max-w-3xl"><%= @category.description %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Sidebar Filters -->
+    <aside class="lg:col-span-3 space-y-6">
+      <!-- Sort & Filter Box -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100 pb-2">Filter Range</h3>
+
+        <%= form_with url: category_path(@category), method: :get, local: true, class: "space-y-4 text-xs" do |f| %>
+          <!-- Sort -->
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Sort Products</label>
+            <select name="sort" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50 focus:outline-none">
+              <option value="">Featured First</option>
+              <option value="price_asc" <%= "selected" if params[:sort] == "price_asc" %>>Price: Low to High</option>
+              <option value="price_desc" <%= "selected" if params[:sort] == "price_desc" %>>Price: High to Low</option>
+            </select>
+          </div>
+
+          <!-- Brand Filter -->
+          <% if @available_brands.any? %>
+            <div>
+              <label class="block font-bold text-stone-700 mb-1">Filter by Brand</label>
+              <select name="brand" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-stone-50 focus:outline-none">
+                <option value="">All Brands</option>
+                <% @available_brands.each do |brand| %>
+                  <option value="<%= brand %>" <%= "selected" if params[:brand] == brand %>><%= brand %></option>
+                <% end %>
+              </select>
+            </div>
+          <% end %>
+
+          <% if params[:sort].present? || params[:brand].present? %>
+            <%= link_to "Clear Filters", category_path(@category), class: "block text-center text-xs text-rose-600 hover:underline pt-1" %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <!-- Other Categories -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100 pb-2 mb-3">Other Departments</h3>
+        <ul class="space-y-2 text-xs">
+          <% @other_categories.each do |other| %>
+            <li>
+              <%= link_to category_path(other), class: "text-stone-700 hover:text-bush-800 flex items-center justify-between group py-1" do %>
+                <span class="group-hover:translate-x-0.5 transition"><%= other.name %></span>
+                <span class="text-stone-400 text-[10px]"><%= other.products.count %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <!-- Quick Delivery Helper -->
+      <div class="bg-bush-50 p-5 rounded-2xl border border-bush-100 text-xs space-y-2">
+        <div class="flex items-center gap-2 text-bush-800 font-bold">
+          <%= svg_icon("truck", css_class: "w-4 h-4 text-ochre-600") %>
+          <span>Farm Truck Runs</span>
+        </div>
+        <p class="text-stone-600 text-[11px] leading-relaxed">
+          Order in bulk! We deliver bags and pallets across Chittering, Bullsbrook, Gingin & Bindoon.
+        </p>
+        <%= link_to "View Delivery Days →", delivery_schedule_path, class: "text-bush-800 font-bold hover:underline inline-block pt-1 text-[11px]" %>
+      </div>
+    </aside>
+
+    <!-- Products Grid -->
+    <main class="lg:col-span-9">
+      <div class="flex items-center justify-between mb-6 pb-2 border-b border-stone-200">
+        <span class="text-xs text-stone-500 font-medium">Showing <%= @products.count %> products in <%= @category.name %></span>
+      </div>
+
+      <% if @products.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @products.each do |product| %>
+            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+              <div>
+                <div class="relative h-48 bg-stone-200 overflow-hidden">
+                  <img src="<%= product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                  <div class="absolute top-2.5 left-2.5">
+                    <span class="bg-bush-900 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded shadow">
+                      <%= product.brand %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="p-4">
+                  <h3 class="text-sm font-bold text-stone-900 hover:text-bush-800 line-clamp-2">
+                    <%= link_to product.name, product_path(product) %>
+                  </h3>
+                  <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
+                </div>
+              </div>
+
+              <div class="p-4 pt-0 border-t border-stone-100 mt-2">
+                <div class="flex items-baseline justify-between mb-3 pt-2">
+                  <div>
+                    <span class="block text-base font-black text-bush-900"><%= product.price_display %></span>
+                    <span class="block text-[10px] text-stone-400">AUD inc. 10% GST</span>
+                  </div>
+                  <span class="text-[11px] font-bold <%= product.in_stock? ? 'text-emerald-700' : 'text-rose-600' %>">
+                    <%= product.in_stock? ? "In Stock" : "Backorder" %>
+                  </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <%= link_to "Select Size & Buy", product_path(product), class: "flex-1 py-2 text-center text-xs font-bold bg-bush-800 hover:bg-bush-900 text-white rounded-lg transition" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-white p-12 text-center rounded-2xl border border-stone-200">
+          <p class="text-stone-500 text-sm">No products found matching your current filter criteria.</p>
+          <%= link_to "Reset Filters", category_path(@category), class: "mt-4 inline-block px-4 py-2 bg-bush-800 text-white rounded-lg text-xs font-bold" %>
+        </div>
+      <% end %>
+    </main>
+  </div>
+</div>

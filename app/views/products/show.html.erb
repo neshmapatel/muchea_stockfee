@@ -1,0 +1,188 @@
+<% content_for :title, "#{@product.name} | Muchea Stockfeed & Hardware" %>
+<% content_for :description, @product.short_description %>
+
+<!-- Schema.org JSON-LD Structured Data for Google Rich Snippets -->
+<% content_for :head do %>
+  <script type="application/ld+json">
+    <%= @product.schema_json_ld.to_json.html_safe %>
+  </script>
+<% end %>
+
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <!-- Breadcrumbs -->
+  <nav class="text-xs text-stone-500 mb-6 flex items-center gap-1.5 flex-wrap">
+    <%= link_to "Home", root_path, class: "hover:text-bush-800" %>
+    <span>/</span>
+    <%= link_to @product.category.name, category_path(@product.category), class: "hover:text-bush-800" %>
+    <span>/</span>
+    <span class="text-stone-800 font-bold"><%= @product.name %></span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <!-- Left Column: Product Imagery -->
+    <div class="lg:col-span-6">
+      <div class="bg-white p-4 rounded-3xl border border-stone-200 shadow-sm sticky top-24">
+        <div class="relative rounded-2xl overflow-hidden aspect-4/3 bg-stone-100 flex items-center justify-center">
+          <img src="<%= @product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= @product.name %>" class="w-full h-full object-cover">
+          <div class="absolute top-4 left-4">
+            <span class="bg-bush-900 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow">
+              <%= @product.brand %>
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 bg-stone-50 rounded-xl border border-stone-100 flex items-center justify-between text-xs text-stone-600">
+          <div class="flex items-center gap-2">
+            <%= svg_icon("truck", css_class: "w-4 h-4 text-ochre-600") %>
+            <span>Scheduled Farm Delivery Available</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= svg_icon("check", css_class: "w-4 h-4 text-emerald-600") %>
+            <span>Drive-Thru Bag Loading</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Product Purchasing & Variant Selector -->
+    <div class="lg:col-span-6 space-y-6">
+      <div>
+        <span class="text-xs font-bold text-ochre-600 uppercase tracking-widest block"><%= @product.category.name %></span>
+        <h1 class="text-2xl sm:text-3xl font-black text-bush-900 font-serif-brand mt-1 leading-snug">
+          <%= @product.name %>
+        </h1>
+        <p class="text-xs text-stone-500 mt-2">Brand: <strong class="text-stone-800"><%= @product.brand %></strong> • Sourced for Western Australian conditions</p>
+      </div>
+
+      <!-- Price Box -->
+      <div class="bg-stone-50 p-5 rounded-2xl border border-stone-200">
+        <div class="flex items-baseline gap-3">
+          <span class="text-3xl font-black text-bush-900">
+            <%= @selected_variant ? @selected_variant.formatted_price : @product.price_display %>
+          </span>
+          <span class="text-xs font-bold text-stone-500 uppercase">AUD inc. 10% GST</span>
+        </div>
+        <p class="text-[11px] text-stone-400 mt-1">Tax invoice with ABN: 48 619 284 921 provided automatically at checkout.</p>
+      </div>
+
+      <!-- Packaging / Size Variant Selector -->
+      <div>
+        <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+          Select Packaging Size / Bulk Option:
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% @variants.each do |v| %>
+            <%= link_to product_path(@product, variant_id: v.id), class: "p-3.5 rounded-xl border-2 transition text-left flex justify-between items-center #{v.id == @selected_variant.id ? 'border-bush-800 bg-bush-50/50 shadow-sm' : 'border-stone-200 bg-white hover:border-stone-300'}" do %>
+              <div>
+                <span class="block text-xs font-bold text-stone-900"><%= v.name %></span>
+                <span class="block text-[11px] text-stone-500">Weight: <%= v.weight_kg %>kg • SKU: <%= v.sku %></span>
+              </div>
+              <div class="text-right">
+                <span class="block text-xs font-black text-bush-900"><%= v.formatted_price %></span>
+                <% if v.low_stock? %>
+                  <span class="block text-[10px] text-amber-600 font-bold">Low Stock (<%= v.stock_quantity %> left)</span>
+                <% else %>
+                  <span class="block text-[10px] text-emerald-600 font-bold">In Stock</span>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Stock Availability Banner -->
+      <div class="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900">
+        <span class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0 animate-pulse"></span>
+        <span>
+          <strong>In Stock at Muchea:</strong> <%= @selected_variant.stock_quantity %> units available for immediate drive-thru pickup or weekly truck delivery.
+        </span>
+      </div>
+
+      <!-- Add to Cart Form -->
+      <%= form_with url: add_to_cart_path, method: :post, local: true, class: "space-y-4" do |f| %>
+        <%= f.hidden_field :variant_id, value: @selected_variant.id %>
+
+        <div class="flex items-center gap-3">
+          <div class="w-24">
+            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Quantity</label>
+            <%= f.number_field :quantity, value: 1, min: 1, max: [@selected_variant.stock_quantity, 100].max, class: "w-full text-center font-bold px-3 py-3 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+          </div>
+
+          <div class="flex-1 pt-4">
+            <%= f.submit "Add to Cart — #{@selected_variant.formatted_price}", class: "w-full py-3.5 bg-bush-800 hover:bg-bush-900 text-white font-extrabold text-sm rounded-xl shadow-md transition cursor-pointer" %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Postcode Delivery Rate Estimator -->
+      <div class="bg-stone-100 p-4 rounded-2xl border border-stone-200 text-xs space-y-2">
+        <div class="flex items-center gap-2 font-bold text-stone-800">
+          <%= svg_icon("truck", css_class: "w-4 h-4 text-ochre-600") %>
+          <span>Local Farm Delivery Checker</span>
+        </div>
+        <p class="text-[11px] text-stone-600">
+          We service Muchea (6501), Bullsbrook (6084), Chittering (6084), Gingin (6503), Bindoon (6502), and Ellenbrook (6069).
+        </p>
+        <div class="flex items-center gap-2 pt-1">
+          <input type="text" id="postcode-calc" placeholder="Enter WA Postcode" class="px-3 py-1.5 rounded-lg border border-stone-300 text-xs w-36 bg-white focus:outline-none">
+          <button type="button" onclick="checkDeliveryRate()" class="px-3 py-1.5 bg-stone-800 text-white rounded-lg text-xs font-semibold">Check Rate</button>
+        </div>
+        <div id="rate-result" class="text-[11px] font-bold text-bush-800 hidden pt-1"></div>
+        <script>
+          function checkDeliveryRate() {
+            var pc = document.getElementById('postcode-calc').value.trim();
+            var res = document.getElementById('rate-result');
+            res.classList.remove('hidden');
+            if (pc === '6501' || pc === '6084') {
+              res.innerHTML = "✅ Zone 1 (Muchea/Bullsbrook): Flat $15 delivery (Free over $300) • Runs Mon, Wed & Fri";
+            } else if (pc === '6503' || pc === '6502' || pc === '6505') {
+              res.innerHTML = "✅ Zone 3 (Gingin/Bindoon): Flat $40 pastoral run • Runs every Wednesday";
+            } else if (pc === '6069' || pc === '6083') {
+              res.innerHTML = "✅ Zone 2 (Chittering / Upper Swan): Flat $25 delivery • Runs Tue & Thu";
+            } else {
+              res.innerHTML = "📍 Postcode " + pc + " serviced via regional freight or warehouse drive-thru pickup.";
+            }
+          }
+        </script>
+      </div>
+
+      <!-- Description & Specs Tabs -->
+      <div class="border-t border-stone-200 pt-6 space-y-4">
+        <h2 class="text-base font-bold text-stone-900">Product Description & Nutritional Profile</h2>
+        <div class="text-xs text-stone-600 leading-relaxed space-y-3">
+          <p><%= @product.full_description %></p>
+          <% if @product.specifications.present? %>
+            <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200">
+              <strong class="block text-stone-900 font-bold mb-1">Guaranteed Analysis / Technical Specs:</strong>
+              <p class="font-mono text-[11px] text-stone-700"><%= @product.specifications %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <% if @related_products.any? %>
+    <section class="mt-16 pt-10 border-t border-stone-200">
+      <h2 class="text-xl font-bold font-serif-brand text-bush-900 mb-6">Frequently Bought Together</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <% @related_products.each do |rel| %>
+          <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+            <div class="relative h-40 bg-stone-100 overflow-hidden">
+              <img src="<%= rel.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= rel.name %>" class="w-full h-full object-cover group-hover:scale-105 transition">
+            </div>
+            <div class="p-3.5">
+              <span class="text-[10px] text-stone-400 uppercase font-bold"><%= rel.brand %></span>
+              <h4 class="text-xs font-bold text-stone-900 line-clamp-1 hover:text-bush-800">
+                <%= link_to rel.name, product_path(rel) %>
+              </h4>
+              <span class="block text-xs font-black text-bush-900 mt-2"><%= rel.price_display %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>
+

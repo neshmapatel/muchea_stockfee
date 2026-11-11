@@ -1,0 +1,363 @@
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-b from-bush-900 to-bush-800 text-white overflow-hidden py-16 lg:py-20 border-b-4 border-wheat-500">
+  <div class="absolute inset-0 opacity-10 bg-repeat" style="background-image: radial-gradient(#d49b28 1px, transparent 1px); background-size: 24px 24px;"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <!-- Left Column: Copy & Value Proposition -->
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 bg-bush-700/80 border border-bush-600 px-3 py-1.5 rounded-full text-xs font-semibold text-wheat-500">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Muchea Warehouse Open Today • 14 Great Northern Highway</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight font-serif-brand leading-none">
+          Western Australia’s <br>
+          <span class="text-wheat-500">Rural & Equine</span> Powerhouse.
+        </h1>
+
+        <p class="text-stone-300 text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+          Premium horse feeds, prime oaten hay rolls, livestock supplements, and Australian-spec rural fencing & hardware. Servicing the Chittering Valley, Bullsbrook, Gingin, Bindoon, and surrounding WA pastoralists with direct farm truck delivery and warehouse drive-thru bag loading.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+          <%= link_to products_path(department: "Stockfeed & Animal Nutrition"), class: "w-full sm:w-auto px-6 py-3.5 bg-wheat-500 hover:bg-wheat-600 text-bush-900 font-extrabold rounded-xl shadow-lg transition text-center flex items-center justify-center gap-2 group" do %>
+            <span>Shop Stockfeed & Hay</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <% end %>
+
+          <%= link_to products_path(department: "Rural Hardware & Farm Supplies"), class: "w-full sm:w-auto px-6 py-3.5 bg-bush-700/80 hover:bg-bush-700 text-white font-bold rounded-xl border border-bush-600 transition text-center" do %>
+            Browse Fencing & Hardware
+          <% end %>
+
+          <%= link_to delivery_schedule_path, class: "w-full sm:w-auto text-xs text-stone-300 hover:text-white underline text-center" do %>
+            View Delivery Schedule →
+          <% end %>
+        </div>
+
+        <!-- Trust Mini Badges -->
+        <div class="pt-6 border-t border-bush-700/60 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-stone-300">
+          <div class="flex items-center gap-2">
+            <%= svg_icon("truck", css_class: "w-4 h-4 text-wheat-500") %>
+            <span>Local Scheduled Farm Runs</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= svg_icon("shield", css_class: "w-4 h-4 text-wheat-500") %>
+            <span>100% WA Family Owned</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= svg_icon("check", css_class: "w-4 h-4 text-wheat-500") %>
+            <span>Drive-Thru Ute Loading</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Logo Feature Card -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="relative max-w-sm w-full bg-bush-950/80 p-6 rounded-3xl border-2 border-bush-700 shadow-2xl backdrop-blur text-center">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-ochre-600 text-white text-[11px] font-extrabold uppercase px-3 py-0.5 rounded-full shadow">
+            Direct from Muchea
+          </div>
+          
+          <img src="/images/muchea_logo.jpg" alt="Muchea Stockfeed & Hardware Official Logo" class="w-48 h-48 mx-auto object-cover rounded-full border-4 border-wheat-500 shadow-xl mb-4">
+
+          <h2 class="text-xl font-bold font-sans text-white uppercase tracking-tight">
+            <span class="text-red-500 font-black">MUCHEA</span> STOCK FEED &amp; HARDWARE
+          </h2>
+          <p class="text-xs font-serif italic text-wheat-500 mt-1">For Farms, Homes &amp; Life</p>
+          <p class="text-[11px] text-stone-300 mt-0.5">"Quality for a Strong Tomorrow"</p>
+
+          <div class="mt-4 p-3 bg-bush-900 rounded-xl border border-bush-800 text-xs text-left space-y-2">
+            <div class="flex justify-between items-center text-stone-300">
+              <span>Forklift Drive-Thru:</span>
+              <strong class="text-emerald-400">Available Daily</strong>
+            </div>
+            <div class="flex justify-between items-center text-stone-300">
+              <span>Next Scheduled Run:</span>
+              <strong class="text-wheat-500">Chittering / Bullsbrook (Mon)</strong>
+            </div>
+            <div class="flex justify-between items-center text-stone-300">
+              <span>Warehouse Stock:</span>
+              <strong class="text-white">Full Grains, Hay & Wire</strong>
+            </div>
+          </div>
+
+          <a href="tel:0895718840" class="mt-4 block w-full py-2.5 bg-ochre-600 hover:bg-ochre-700 text-white text-xs font-bold rounded-lg transition uppercase tracking-wider">
+            Call Warehouse: (08) 9571 8840
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 Signboard Service Badges as Featured on Offline Storefront -->
+<section class="bg-stone-900 text-white border-b-4 border-red-700 py-8">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-6">
+      <span class="text-xs uppercase font-bold text-red-500 tracking-widest">Our Storefront Core Pillars</span>
+      <h2 class="text-xl sm:text-2xl font-black font-serif italic text-white mt-1">For Farms, Homes &amp; Life</h2>
+    </div>
+    
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6 text-center">
+      <!-- 1. Stockfeed -->
+      <%= link_to products_path(department: "Stockfeed & Animal Nutrition"), class: "group flex flex-col items-center p-3 rounded-2xl hover:bg-stone-800 transition" do %>
+        <div class="w-16 h-16 rounded-full bg-red-800 border-2 border-red-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-red-700 transition duration-200">
+          <%= svg_icon("sack", css_class: "w-8 h-8 text-white") %>
+        </div>
+        <span class="block text-xs font-black uppercase tracking-wider text-white mt-2.5">Stockfeed</span>
+        <span class="text-[10px] text-stone-400">Grains, Feeds &amp; Hay</span>
+      <% end %>
+
+      <!-- 2. Hardware -->
+      <%= link_to products_path(department: "Rural Hardware & Farm Supplies"), class: "group flex flex-col items-center p-3 rounded-2xl hover:bg-stone-800 transition" do %>
+        <div class="w-16 h-16 rounded-full bg-red-800 border-2 border-red-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-red-700 transition duration-200">
+          <%= svg_icon("hammer", css_class: "w-8 h-8 text-white") %>
+        </div>
+        <span class="block text-xs font-black uppercase tracking-wider text-white mt-2.5">Hardware</span>
+        <span class="text-[10px] text-stone-400">Tools, Fasteners &amp; Steel</span>
+      <% end %>
+
+      <!-- 3. Farm Supplies -->
+      <%= link_to category_path("fencing-wire-gates"), class: "group flex flex-col items-center p-3 rounded-2xl hover:bg-stone-800 transition" do %>
+        <div class="w-16 h-16 rounded-full bg-red-800 border-2 border-red-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-red-700 transition duration-200">
+          <%= svg_icon("fence", css_class: "w-8 h-8 text-white") %>
+        </div>
+        <span class="block text-xs font-black uppercase tracking-wider text-white mt-2.5">Farm Supplies</span>
+        <span class="text-[10px] text-stone-400">Fencing, Gates &amp; Wire</span>
+      <% end %>
+
+      <!-- 4. Pet Care -->
+      <%= link_to category_path("working-dog-pet-food"), class: "group flex flex-col items-center p-3 rounded-2xl hover:bg-stone-800 transition" do %>
+        <div class="w-16 h-16 rounded-full bg-red-800 border-2 border-red-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-red-700 transition duration-200">
+          <%= svg_icon("paw", css_class: "w-8 h-8 text-white") %>
+        </div>
+        <span class="block text-xs font-black uppercase tracking-wider text-white mt-2.5">Pet Care</span>
+        <span class="text-[10px] text-stone-400">Dogs, Cats &amp; Birds</span>
+      <% end %>
+
+      <!-- 5. Rural Essentials -->
+      <%= link_to category_path("plumbing-pipe-troughs"), class: "group flex flex-col items-center p-3 rounded-2xl hover:bg-stone-800 transition col-span-2 sm:col-span-1" do %>
+        <div class="w-16 h-16 rounded-full bg-red-800 border-2 border-red-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-red-700 transition duration-200">
+          <%= svg_icon("wheelbarrow", css_class: "w-8 h-8 text-white") %>
+        </div>
+        <span class="block text-xs font-black uppercase tracking-wider text-white mt-2.5">Rural Essentials</span>
+        <span class="text-[10px] text-stone-400">Poly Pipe &amp; Water Troughs</span>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- 4 Key Logistics Services Bar -->
+<section class="bg-white border-b border-stone-200 py-6">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="flex items-start gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-bush-50 text-bush-800 flex items-center justify-center flex-shrink-0 border border-bush-100">
+        <%= svg_icon("truck", css_class: "w-5 h-5") %>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-stone-900">Direct Farm Delivery</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Scheduled weekly truck runs delivering feed, hay & heavy steel wire right to your paddock.</p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-wheat-50 text-wheat-600 flex items-center justify-center flex-shrink-0 border border-wheat-100">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-stone-900">Drive-Thru Bag Loading</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Reverse your ute or trailer straight in. Our warehouse crew load your feed bags and bales for you.</p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-ochre-50 text-ochre-600 flex items-center justify-center flex-shrink-0 border border-ochre-100">
+        <%= svg_icon("shield", css_class: "w-5 h-5") %>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-stone-900">Tonne & Pallet Savings</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Wholesale tier pricing on 40-bag pallets and 1-tonne bulk bags for commercial horse studs & cattle runs.</p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-stone-100 text-stone-700 flex items-center justify-center flex-shrink-0 border border-stone-200">
+        <%= svg_icon("fence", css_class: "w-5 h-5") %>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-stone-900">Rural Hardware & Pipe</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Philmac poly fittings, Waratah cyclone wire, heavy concrete troughs, and high-tensile star pickets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Shop By Department & Categories Grid -->
+<section class="max-w-7xl mx-auto px-4 py-12">
+  <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-3 border-b border-stone-200 gap-4">
+    <div>
+      <span class="text-xs font-bold text-ochre-600 uppercase tracking-widest">Everything for your animals & property</span>
+      <h2 class="text-2xl sm:text-3xl font-black text-bush-900 font-serif-brand">Shop by Category</h2>
+    </div>
+    <div class="text-xs text-stone-500">
+      Need advice on feeding or fencing? Call our team: <strong class="text-stone-900">(08) 9571 8840</strong>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    <% @categories.each do |cat| %>
+      <%= link_to category_path(cat), class: "group bg-white p-5 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md hover:border-bush-700 transition flex flex-col justify-between" do %>
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-stone-50 group-hover:bg-bush-50 text-bush-800 flex items-center justify-center mb-3 transition">
+            <%= svg_icon(cat.icon, css_class: "w-6 h-6 text-bush-800") %>
+          </div>
+          <span class="block text-[10px] uppercase font-bold text-stone-400 tracking-wider"><%= cat.department %></span>
+          <h3 class="text-base font-bold text-stone-900 group-hover:text-bush-800 mt-1 transition leading-snug">
+            <%= cat.name %>
+          </h3>
+          <p class="text-xs text-stone-500 mt-1 line-clamp-2 leading-relaxed">
+            <%= cat.description %>
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-bush-800 group-hover:text-ochre-600 transition">
+          <span><%= cat.products.count %> Products</span>
+          <span>View Range →</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="bg-stone-100 py-12 border-y border-stone-200">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs font-bold text-ochre-600 uppercase tracking-widest">In Stock at Muchea Warehouse</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-bush-900 font-serif-brand">Popular Feeds & Rural Hardware</h2>
+      </div>
+      <%= link_to "View Complete Catalog (#{Product.count} items) →", products_path, class: "text-xs font-bold text-bush-800 hover:text-ochre-600 underline" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <% @featured_products.each do |product| %>
+        <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between group">
+          <div>
+            <!-- Product Image -->
+            <div class="relative h-48 bg-stone-200 overflow-hidden">
+              <img src="<%= product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+              <div class="absolute top-2.5 left-2.5">
+                <span class="bg-bush-900 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow">
+                  <%= product.brand %>
+                </span>
+              </div>
+              <% if product.low_stock? %>
+                <div class="absolute top-2.5 right-2.5">
+                  <span class="bg-amber-500 text-stone-900 text-[10px] font-black uppercase px-2 py-0.5 rounded shadow">
+                    Selling Fast
+                  </span>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Content -->
+            <div class="p-4">
+              <span class="text-[11px] font-semibold text-stone-400 uppercase tracking-wide"><%= product.category.name %></span>
+              <h3 class="text-sm font-bold text-stone-900 mt-1 line-clamp-2 hover:text-bush-800">
+                <%= link_to product.name, product_path(product) %>
+              </h3>
+              <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
+            </div>
+          </div>
+
+          <div class="p-4 pt-0 border-t border-stone-100 mt-2">
+            <div class="flex items-baseline justify-between mb-3 pt-2">
+              <div>
+                <span class="block text-base font-black text-bush-900">
+                  <%= product.price_display %>
+                </span>
+                <span class="block text-[10px] text-stone-400 font-medium">AUD inc. 10% GST</span>
+              </div>
+              <span class="text-[11px] font-bold <%= product.in_stock? ? 'text-emerald-700' : 'text-rose-600' %>">
+                <%= product.in_stock? ? "In Stock" : "Out of Stock" %>
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <%= link_to "Select Size", product_path(product), class: "flex-1 py-2 text-center text-xs font-bold bg-bush-800 hover:bg-bush-900 text-white rounded-lg transition" %>
+              <%= link_to product_path(product), class: "p-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Weekly Delivery Schedule Table -->
+<section class="max-w-7xl mx-auto px-4 py-14">
+  <div class="bg-bush-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl overflow-hidden relative border-t-4 border-ochre-600">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-5 space-y-4">
+        <span class="bg-ochre-600 text-white text-[11px] font-black uppercase px-3 py-1 rounded-full">
+          WA Regional Logistics
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black font-serif-brand leading-tight">
+          Scheduled Weekly Farm Runs
+        </h2>
+        <p class="text-xs sm:text-sm text-stone-300 leading-relaxed">
+          We operate our own dedicated delivery trucks. We bring horse feeds, round bales, lick blocks, fencing rolls, and heavy poly pipe directly into your machinery shed or feed room.
+        </p>
+        <div class="p-3.5 bg-bush-800/80 rounded-xl border border-bush-700 text-xs space-y-1.5">
+          <p><strong class="text-wheat-500">Order Cut-off:</strong> Place orders by 3:00 PM the day prior to your zone’s delivery day.</p>
+          <p><strong class="text-wheat-500">Forklift Unload:</strong> Available for full pallets and round bales upon request.</p>
+        </div>
+        <%= link_to "Check Your Suburb & Postcode Details →", delivery_schedule_path, class: "inline-block text-xs font-bold text-wheat-500 hover:text-white underline" %>
+      </div>
+
+      <div class="lg:col-span-7">
+        <div class="bg-bush-950/90 rounded-2xl p-4 sm:p-6 border border-bush-800 space-y-3">
+          <% @delivery_zones.each do |zone| %>
+            <div class="p-3.5 rounded-xl bg-bush-900/60 border border-bush-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span class="text-[11px] font-bold text-wheat-500 uppercase tracking-wider block"><%= zone.scheduled_days %></span>
+                <h4 class="text-sm font-bold text-white"><%= zone.name %></h4>
+                <p class="text-[11px] text-stone-400 mt-0.5">Postcodes: <%= zone.postcodes %></p>
+              </div>
+              <div class="text-left sm:text-right flex-shrink-0">
+                <span class="block text-sm font-black text-white"><%= zone.formatted_fee %></span>
+                <% if zone.free_threshold_cents.present? %>
+                  <span class="block text-[10px] text-emerald-400">Free over <%= format_aud(zone.free_threshold_cents) %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Drive-Thru Bag Loading Spotlight -->
+<section class="max-w-7xl mx-auto px-4 py-8 mb-12">
+  <div class="bg-wheat-50 border border-wheat-200 rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-5">
+      <div class="w-16 h-16 rounded-2xl bg-wheat-500 text-bush-900 flex items-center justify-center font-black text-2xl flex-shrink-0 shadow-sm">
+        Bay 1
+      </div>
+      <div>
+        <span class="text-xs font-bold text-ochre-600 uppercase tracking-widest">Skip The Shipping Fee</span>
+        <h3 class="text-xl sm:text-2xl font-black text-bush-900 font-serif-brand">Free Warehouse Drive-Thru Bag Loading</h3>
+        <p class="text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl">
+          Order online and select "Warehouse Drive-Thru Pickup". Pull your ute, float, or farm trailer into Bay 1 or 2 at 14 Great Northern Hwy, Muchea. Our team loads your 20kg bags, bales, and star pickets directly into your vehicle.
+        </p>
+      </div>
+    </div>
+    <%= link_to "Learn About Drive-Thru Pickup →", drive_thru_pickup_path, class: "px-6 py-3 bg-bush-800 hover:bg-bush-900 text-white font-bold text-xs rounded-xl whitespace-nowrap transition" %>
+  </div>
+</section>
+

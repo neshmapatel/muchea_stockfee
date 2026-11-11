@@ -1,0 +1,86 @@
+<% content_for :title, "Manage Orders & Dispatch" %>
+
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight">Orders & Dispatch Management</h1>
+      <p class="text-xs text-stone-500 mt-1">Manage picking, packing, driver allocation, and drive-thru customer pickups.</p>
+    </div>
+
+    <!-- Search / Filter -->
+    <div class="flex items-center gap-2">
+      <%= form_with url: admin_orders_path, method: :get, local: true, class: "flex gap-2" do |f| %>
+        <%= f.text_field :q, value: params[:q], placeholder: "Search order # or customer...", class: "px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white focus:outline-none" %>
+        <%= f.submit "Filter", class: "px-3 py-1.5 bg-bush-800 text-white rounded-lg text-xs font-semibold cursor-pointer" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Status Tabs -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-2 text-xs">
+    <%= link_to "All Orders (#{Order.count})", admin_orders_path, class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:status].blank? ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "Paid / Queued (#{Order.where(status: 'paid').count})", admin_orders_path(status: 'paid'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:status] == 'paid' ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "Packing (#{Order.where(status: 'packing').count})", admin_orders_path(status: 'packing'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:status] == 'packing' ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "Dispatched (#{Order.where(status: 'dispatched').count})", admin_orders_path(status: 'dispatched'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:status] == 'dispatched' ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "Delivered (#{Order.where(status: 'delivered').count})", admin_orders_path(status: 'delivered'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:status] == 'delivered' ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
+          <tr>
+            <th class="py-3 px-4">Order #</th>
+            <th class="py-3 px-4">Date</th>
+            <th class="py-3 px-4">Customer</th>
+            <th class="py-3 px-4">Fulfillment</th>
+            <th class="py-3 px-4">Items</th>
+            <th class="py-3 px-4">Total AUD</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100">
+          <% @orders.each do |order| %>
+            <tr class="hover:bg-stone-50 transition">
+              <td class="py-3.5 px-4 font-mono font-bold text-bush-900">
+                <%= link_to order.order_number, admin_order_path(order), class: "hover:underline" %>
+                <span class="block text-[10px] text-stone-400 font-normal">Trk: <%= order.tracking_code %></span>
+              </td>
+              <td class="py-3.5 px-4 text-stone-500">
+                <%= order.created_at.strftime("%d %b %Y") %><br>
+                <span class="text-[10px] text-stone-400"><%= order.created_at.strftime("%I:%M %p") %></span>
+              </td>
+              <td class="py-3.5 px-4">
+                <strong class="text-stone-900 block"><%= order.customer_name %></strong>
+                <span class="text-stone-500 text-[11px]"><%= order.customer_email %></span>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold <%= order.pickup? ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900' %>">
+                  <%= order.pickup? ? 'Drive-Thru Pickup' : "Delivery (#{order.suburb})" %>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-stone-700 font-medium"><%= order.items.sum(:quantity) %> units</td>
+              <td class="py-3.5 px-4 font-black text-stone-900"><%= order.formatted_total %></td>
+              <td class="py-3.5 px-4">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border <%= order.status_badge_class %>">
+                  <%= order.status_label %>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <%= link_to "View", admin_order_path(order), class: "px-2.5 py-1 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded font-semibold text-[11px]" %>
+                  <% unless order.status == 'delivered' || order.status == 'cancelled' %>
+                    <%= button_to "Advance →", advance_status_admin_order_path(order), method: :patch, class: "px-2.5 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold text-[11px] cursor-pointer" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

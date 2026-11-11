@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en-AU" class="h-full bg-stone-50">
+  <head>
+    <meta charset="utf-8">
+    <title><%= content_for(:title) ? "#{yield(:title)} | Muchea Stockfeed & Hardware" : "Muchea Stockfeed & Hardware | Rural Supplies, Equine Nutrition & Farm Hardware WA" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description) || "Premier Western Australian stockfeed and rural hardware supplier located in Muchea WA 6501. Horse feed, cattle grain, oaten hay, fencing wire, star pickets, and rural poly pipe delivered to Chittering, Bullsbrook, Gingin, and Bindoon." %>">
+    <meta name="geo.region" content="AU-WA">
+    <meta name="geo.placename" content="Muchea">
+    <meta name="geo.position" content="-31.5790;115.9734">
+    <meta name="ICBM" content="-31.5790, 115.9734">
+    
+    <!-- OpenGraph & Social Cards -->
+    <meta property="og:site_name" content="Muchea Stockfeed & Hardware">
+    <meta property="og:title" content="<%= content_for(:title) || "Muchea Stockfeed & Hardware — Western Australia" %>">
+    <meta property="og:description" content="Horse feeds, hay, livestock nutrition, cyclone fencing, and farm hardware. Local scheduled truck deliveries & drive-thru warehouse pickup in Muchea, WA.">
+    <meta property="og:image" content="<%= asset_path("muchea_logo.jpg") %>">
+    <meta property="og:type" content="website">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bush: {
+                800: '#1e3a2f',
+                900: '#142920',
+                700: '#284e40',
+                600: '#356352',
+                100: '#e5ece8',
+                50: '#f2f6f4',
+              },
+              wheat: {
+                500: '#d49b28',
+                600: '#b9841f',
+                100: '#fbf3dc',
+                50: '#fdf9ee',
+              },
+              ochre: {
+                600: '#b84a28',
+                700: '#993c1f',
+                100: '#f9e8e2',
+                50: '#fcf3f0',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+      body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      .font-serif-brand {
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+    </style>
+
+    <!-- Schema.org LocalBusiness Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Muchea Stockfeed & Hardware",
+      "image": "<%= request.base_url %>/images/muchea_logo.jpg",
+      "telephone": "+61-8-9571-8840",
+      "email": "sales@mucheastockfeed.com.au",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "14 Great Northern Highway",
+        "addressLocality": "Muchea",
+        "addressRegion": "WA",
+        "postalCode": "6501",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -31.5790,
+        "longitude": 115.9734
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "07:30",
+          "closes": "17:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "08:00",
+          "closes": "16:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Sunday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+      "priceRange": "$$"
+    }
+    </script>
+
+    <%= yield :head %>
+  </head>
+
+  <body class="min-h-full flex flex-col text-stone-800 antialiased selection:bg-wheat-500 selection:text-white">
+    <!-- Top Announcement Bar -->
+    <aside aria-label="Store Announcement" class="bg-bush-900 text-stone-200 text-xs py-2 px-4 border-b border-bush-800">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center gap-1.5 bg-ochre-600 text-white font-bold px-2 py-0.5 rounded text-[11px] tracking-wide uppercase">
+            WA Rural Routes
+          </span>
+          <span>Delivering Mon–Fri across Muchea, Chittering, Bullsbrook, Gingin & Bindoon</span>
+        </div>
+        <div class="flex items-center gap-5 text-stone-300">
+          <a href="tel:0895718840" class="hover:text-wheat-500 flex items-center gap-1">
+            <%= svg_icon("phone", css_class: "w-3.5 h-3.5 text-wheat-500") %>
+            <span>(08) 9571 8840</span>
+          </a>
+          <span class="text-bush-700">|</span>
+          <div class="flex items-center gap-1">
+            <%= svg_icon("clock", css_class: "w-3.5 h-3.5 text-wheat-500") %>
+            <span>Open Today: 7:30am – 5:00pm</span>
+          </div>
+          <span class="text-bush-700">|</span>
+          <%= link_to "Warehouse Drive-Thru Pickup", drive_thru_pickup_path, class: "hover:text-wheat-500 underline" %>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <!-- Brand Logo & Title -->
+        <%= link_to root_path, class: "flex items-center gap-3.5 group flex-shrink-0" do %>
+          <img src="/images/muchea_logo.jpg" alt="Muchea Stock Feed & Hardware Logo" class="w-14 h-14 object-cover rounded-xl border-2 border-red-700 shadow-md group-hover:scale-105 transition duration-200">
+          <div>
+            <div class="flex items-baseline gap-1.5 leading-none">
+              <span class="text-2xl md:text-3xl font-black tracking-tight text-red-600 uppercase font-sans drop-shadow-sm">
+                MUCHEA
+              </span>
+              <span class="text-xs md:text-sm font-black tracking-wider text-stone-900 uppercase">
+                STOCK FEED & HARDWARE
+              </span>
+            </div>
+            <span class="block text-xs font-serif italic text-stone-600 mt-1">For Farms, Homes &amp; Life</span>
+          </div>
+        <% end %>
+
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-xl hidden md:block">
+          <%= form_with url: products_path, method: :get, local: true, class: "relative" do |f| %>
+            <div class="relative">
+              <%= f.text_field :q, value: params[:q], placeholder: "Search horse feed, lucerne chaff, cyclone wire, star pickets, poly fittings...", class: "w-full pl-10 pr-24 py-2.5 rounded-full border border-stone-300 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-bush-800 focus:bg-white transition" %>
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              <button type="submit" class="absolute inset-y-1 right-1 px-4 bg-bush-800 hover:bg-bush-900 text-white rounded-full text-xs font-semibold transition">
+                Search
+              </button>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Utility Actions & Cart Trigger -->
+        <div class="flex items-center gap-3">
+          <%= link_to tracking_lookup_path, class: "hidden lg:flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-bush-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-lg transition" do %>
+            <%= svg_icon("truck", css_class: "w-4 h-4 text-ochre-600") %>
+            <span>Track Order</span>
+          <% end %>
+
+          <%= link_to admin_root_path, class: "hidden sm:inline-block text-xs font-medium text-stone-500 hover:text-stone-800 border border-stone-200 px-2.5 py-1.5 rounded-md" do %>
+            Warehouse Admin
+          <% end %>
+
+          <!-- Cart Button -->
+          <%= link_to cart_path, class: "relative flex items-center gap-2.5 bg-bush-800 hover:bg-bush-900 text-white px-4 py-2.5 rounded-xl shadow-sm transition group" do %>
+            <%= svg_icon("cart", css_class: "w-5 h-5 text-wheat-500 group-hover:scale-110 transition") %>
+            <div class="text-left">
+              <span class="block text-[10px] text-stone-300 uppercase leading-none font-semibold">Your Cart</span>
+              <span class="block text-sm font-bold leading-none mt-0.5"><%= format_aud(current_cart.total_cents) %></span>
+            </div>
+            <% if current_cart.item_count > 0 %>
+              <span class="absolute -top-1.5 -right-1.5 bg-ochre-600 text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+                <%= current_cart.item_count %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Department Mega Navigation Bar -->
+      <nav class="bg-bush-800 text-stone-100 border-t border-bush-700 overflow-x-auto scrollbar-none">
+        <div class="max-w-7xl mx-auto px-4 flex items-center gap-1 text-xs md:text-sm font-medium whitespace-nowrap py-1">
+          <%= link_to "All Products", products_path, class: "px-3 py-2 rounded hover:bg-bush-700 transition #{'bg-bush-900 text-wheat-500 font-bold' if current_page?(products_path)}" %>
+          
+          <% Category.ordered.each do |cat| %>
+            <%= link_to cat.name, category_path(cat), class: "px-3 py-2 rounded hover:bg-bush-700 transition flex items-center gap-1.5" %>
+          <% end %>
+
+          <span class="text-bush-600 px-1">|</span>
+          <%= link_to "Delivery Schedule", delivery_schedule_path, class: "px-3 py-2 rounded text-wheat-500 hover:bg-bush-700 font-semibold" %>
+          <%= link_to "Drive-Thru Pickup", drive_thru_pickup_path, class: "px-3 py-2 rounded text-stone-300 hover:bg-bush-700" %>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Mobile Search Bar -->
+    <div class="md:hidden bg-white p-3 border-b border-stone-200">
+      <%= form_with url: products_path, method: :get, local: true do |f| %>
+        <div class="relative">
+          <%= f.text_field :q, value: params[:q], placeholder: "Search feed, hay, fencing, pipe...", class: "w-full pl-9 pr-20 py-2 rounded-lg border border-stone-300 bg-stone-50 text-sm focus:outline-none" %>
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <button type="submit" class="absolute inset-y-1 right-1 px-3 bg-bush-800 text-white rounded text-xs font-semibold">Search</button>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Flash Alerts -->
+    <% if flash[:notice].present? %>
+      <div class="bg-emerald-50 border-b border-emerald-200 text-emerald-900 text-sm py-2.5 px-4 text-center font-medium flex items-center justify-center gap-2">
+        <%= svg_icon("check", css_class: "w-4 h-4 text-emerald-600") %>
+        <span><%= flash[:notice] %></span>
+      </div>
+    <% end %>
+    <% if flash[:alert].present? %>
+      <div class="bg-rose-50 border-b border-rose-200 text-rose-900 text-sm py-2.5 px-4 text-center font-medium">
+        <span><%= flash[:alert] %></span>
+      </div>
+    <% end %>
+
+    <!-- Main Page Content -->
+    <main class="flex-1">
+      <%= yield %>
+    </main>
+
+    <!-- Australian Rural Trust Footer -->
+    <footer class="bg-bush-900 text-stone-300 border-t-4 border-ochre-600 pt-12 pb-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <!-- Column 1: Brand & Contact -->
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <img src="/images/muchea_logo.jpg" alt="Logo" class="w-12 h-12 rounded-xl border border-red-700">
+            <div>
+              <h2 class="font-bold text-white text-lg tracking-wide uppercase font-sans">
+                <span class="text-red-500 font-black">MUCHEA</span> STOCK FEED
+              </h2>
+              <p class="text-xs text-stone-300 font-semibold tracking-wider uppercase">&amp; HARDWARE</p>
+              <p class="text-[11px] font-serif italic text-wheat-500">For Farms, Homes &amp; Life</p>
+            </div>
+          </div>
+          <p class="text-xs text-stone-400 mb-4 leading-relaxed">
+            Proudly Western Australian family-operated rural merchandise and animal nutrition center. Serving pastoralists, equine properties, hobby farmers, and trade across the Chittering Valley and northern wheatbelt.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-start gap-2">
+              <%= svg_icon("map-pin", css_class: "w-4 h-4 text-wheat-500 flex-shrink-0 mt-0.5") %>
+              <span>14 Great Northern Highway, Muchea WA 6501</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <%= svg_icon("phone", css_class: "w-4 h-4 text-wheat-500 flex-shrink-0") %>
+              <a href="tel:0895718840" class="hover:text-white font-semibold">(08) 9571 8840</a>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-wheat-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <span>sales@mucheastockfeed.com.au</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Core Departments -->
+        <div>
+          <h3 class="text-white text-sm font-bold uppercase tracking-wider mb-4 border-b border-bush-800 pb-2">Departments</h3>
+          <ul class="space-y-2 text-xs">
+            <% Category.ordered.limit(6).each do |cat| %>
+              <li>
+                <%= link_to cat.name, category_path(cat), class: "hover:text-wheat-500 transition" %>
+              </li>
+            <% end %>
+            <li>
+              <%= link_to "View All Products & Supplies →", products_path, class: "text-wheat-500 font-semibold hover:underline" %>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Rural Delivery & Drive-Thru -->
+        <div>
+          <h3 class="text-white text-sm font-bold uppercase tracking-wider mb-4 border-b border-bush-800 pb-2">Customer Services</h3>
+          <ul class="space-y-2 text-xs">
+            <li><%= link_to "Weekly Local Delivery Runs", delivery_schedule_path, class: "hover:text-wheat-500" %></li>
+            <li><%= link_to "Warehouse Drive-Thru Bag Loading", drive_thru_pickup_path, class: "hover:text-wheat-500" %></li>
+            <li><%= link_to "Track Your Delivery / Ute Load", tracking_lookup_path, class: "hover:text-wheat-500" %></li>
+            <li><%= link_to "About Our WA Family Business", about_path, class: "hover:text-wheat-500" %></li>
+            <li><%= link_to "Location & Trading Hours", contact_path, class: "hover:text-wheat-500" %></li>
+            <li><%= link_to "Warehouse Staff Admin Portal", admin_root_path, class: "text-stone-400 hover:text-white" %></li>
+          </ul>
+          <div class="mt-4 p-3 bg-bush-800/60 rounded-lg border border-bush-700 text-[11px] text-stone-300">
+            <span class="font-bold text-wheat-500 block mb-0.5">Drive-Thru Bag Loading:</span>
+            Pull straight into Bay 1 or 2 with your ute, float, or trailer. Our staff load 20kg bags, bales, and pallets directly.
+          </div>
+        </div>
+
+        <!-- Column 4: Australian Business & Payment Security -->
+        <div>
+          <h3 class="text-white text-sm font-bold uppercase tracking-wider mb-4 border-b border-bush-800 pb-2">Australian Rural Trust</h3>
+          <div class="space-y-2 text-xs mb-4">
+            <p><strong class="text-white">ABN:</strong> 48 619 284 921</p>
+            <p><strong class="text-white">Tax Status:</strong> All retail prices include 10% Australian GST.</p>
+            <p><strong class="text-white">Warehouse Hours:</strong><br>
+              Mon – Fri: 7:30am – 5:00pm<br>
+              Saturday: 8:00am – 4:00pm<br>
+              Sunday: 9:00am – 2:00pm
+            </p>
+          </div>
+          <div class="pt-2 border-t border-bush-800">
+            <span class="block text-[11px] uppercase font-bold text-stone-400 mb-2">Secure Australian Payments:</span>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="bg-white/10 px-2 py-1 rounded text-[10px] font-bold text-white border border-white/20">Visa</span>
+              <span class="bg-white/10 px-2 py-1 rounded text-[10px] font-bold text-white border border-white/20">Mastercard</span>
+              <span class="bg-white/10 px-2 py-1 rounded text-[10px] font-bold text-white border border-white/20">AMEX</span>
+              <span class="bg-white/10 px-2 py-1 rounded text-[10px] font-bold text-white border border-white/20">Apple Pay</span>
+              <span class="bg-white/10 px-2 py-1 rounded text-[10px] font-bold text-white border border-white/20">Google Pay</span>
+              <span class="bg-emerald-950 text-emerald-300 px-2 py-1 rounded text-[10px] font-bold border border-emerald-800">Afterpay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright & Bottom Disclaimers -->
+      <div class="max-w-7xl mx-auto px-4 border-t border-bush-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500 gap-4">
+        <p>&copy; <%= Time.current.year %> Muchea Stockfeed & Hardware Pty Ltd. All Rights Reserved. Servicing the Shire of Chittering and Greater Western Australia.</p>
+        <p class="flex items-center gap-2">
+          <span>ABN 48 619 284 921</span>
+          <span>•</span>
+          <span>Prices in AUD (inc. GST)</span>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

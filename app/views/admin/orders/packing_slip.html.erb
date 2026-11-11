@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <title>Packing Slip #<%= @order.order_number %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; }
+    }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-900 text-xs py-8 px-4 font-sans">
+  <div class="max-w-3xl mx-auto mb-4 text-right no-print">
+    <button onclick="window.print()" class="px-4 py-2 bg-stone-800 text-white font-bold rounded-lg hover:bg-stone-900 transition">
+      🖨️ Print Packing Slip
+    </button>
+  </div>
+
+  <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl border border-stone-300 shadow-sm space-y-6">
+    <div class="flex justify-between items-start border-b-2 border-stone-900 pb-4">
+      <div>
+        <h1 class="text-xl font-black uppercase tracking-wider text-stone-900">MUCHEA WAREHOUSE PACKING SLIP</h1>
+        <p class="text-stone-600 font-bold">14 Great Northern Highway, Muchea WA 6501</p>
+      </div>
+      <div class="text-right">
+        <span class="text-lg font-black font-mono text-stone-900">ORDER: <%= @order.order_number %></span>
+        <p class="text-stone-500 font-mono text-[11px]">Trk: <%= @order.tracking_code %></p>
+        <p class="text-stone-500 text-[11px]"><%= @order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+      </div>
+    </div>
+
+    <!-- Fulfillment Type Banner -->
+    <div class="p-3 bg-stone-100 rounded-lg border border-stone-300 flex justify-between items-center text-xs">
+      <div>
+        <strong class="uppercase text-stone-900 text-sm">Fulfillment Mode: <%= @order.fulfillment_type == 'pickup' ? 'WAREHOUSE DRIVE-THRU PICKUP' : 'TRUCK FARM DELIVERY' %></strong>
+        <% if @order.delivery? %>
+          <p class="text-stone-700 mt-0.5">Address: <%= @order.delivery_address %>, <%= @order.suburb %> WA <%= @order.postcode %></p>
+        <% else %>
+          <p class="text-stone-700 mt-0.5">Stage in Bay 1 / Bay 2 for drive-in collection</p>
+        <% end %>
+      </div>
+      <div class="text-right">
+        <span class="block font-bold">Customer: <%= @order.customer_name %></span>
+        <span class="text-stone-600">Ph: <%= @order.customer_phone %></span>
+      </div>
+    </div>
+
+    <% if @order.delivery_notes.present? %>
+      <div class="p-3 bg-amber-50 rounded-lg border border-amber-300 text-xs">
+        <strong class="text-amber-900 block mb-0.5">DRIVER & UNLOADING INSTRUCTIONS:</strong>
+        <p class="text-amber-800 font-medium italic"><%= @order.delivery_notes %></p>
+      </div>
+    <% end %>
+
+    <!-- Picking Checklist Table -->
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="border-b-2 border-stone-400 text-stone-600 uppercase text-[10px] tracking-wider">
+          <th class="py-2 text-center w-12">[ ✔ ]</th>
+          <th class="py-2">Item & Formulation</th>
+          <th class="py-2">Packaging / Variant</th>
+          <th class="py-2 text-center">SKU</th>
+          <th class="py-2 text-right">Pick Qty</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-200">
+        <% @order.items.each do |item| %>
+          <tr>
+            <td class="py-3 text-center">
+              <span class="inline-block w-5 h-5 border-2 border-stone-400 rounded"></span>
+            </td>
+            <td class="py-3">
+              <strong class="text-stone-900 text-sm block"><%= item.product_variant.product.name %></strong>
+              <span class="text-stone-500 text-[11px]">Brand: <%= item.product_variant.product.brand %></span>
+            </td>
+            <td class="py-3 font-semibold text-stone-800"><%= item.product_variant.name %></td>
+            <td class="py-3 text-center font-mono text-stone-500"><%= item.product_variant.sku %></td>
+            <td class="py-3 text-right">
+              <span class="text-base font-black text-stone-900"><%= item.quantity %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="pt-8 border-t-2 border-stone-300 grid grid-cols-2 gap-8 text-xs text-stone-600">
+      <div>
+        <p class="mb-4">Picked By: ___________________________ Date: _________</p>
+        <p>Checked By: __________________________ Bay #: _________</p>
+      </div>
+      <div>
+        <p class="mb-4">Driver / Forklift Operator: _________________________</p>
+        <p>Customer Signature (if collect): ____________________</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

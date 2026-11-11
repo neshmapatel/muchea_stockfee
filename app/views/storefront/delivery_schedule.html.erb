@@ -1,0 +1,80 @@
+<% content_for :title, "WA Farm Delivery Schedule & Zones" %>
+
+<div class="bg-bush-900 text-white py-12 border-b-4 border-wheat-500">
+  <div class="max-w-7xl mx-auto px-4">
+    <span class="text-xs font-bold text-wheat-500 uppercase tracking-widest">Western Australia Logistics</span>
+    <h1 class="text-3xl sm:text-5xl font-black font-serif-brand mt-1">Farm & Stable Delivery Schedule</h1>
+    <p class="text-sm text-stone-300 mt-2 max-w-2xl">
+      We operate our own dedicated truck and ute fleet delivering bulky animal feeds, round hay bales, fencing wire, star pickets, and heavy concrete water troughs directly to rural gates, feed sheds, and machinery yards across WA.
+    </p>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-12 space-y-10">
+  <!-- Key Delivery Guidelines -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+      <div class="w-10 h-10 rounded-xl bg-bush-50 text-bush-800 flex items-center justify-center font-bold text-base mb-3">1</div>
+      <h3 class="font-bold text-stone-900 text-base">Order Cut-Off 3:00 PM</h3>
+      <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+        To allow our warehouse crew to pick and secure your pallet loads, orders must be placed by 3:00 PM on the working day prior to your zone’s scheduled run.
+      </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+      <div class="w-10 h-10 rounded-xl bg-wheat-50 text-wheat-600 flex items-center justify-center font-bold text-base mb-3">2</div>
+      <h3 class="font-bold text-stone-900 text-base">Paddock & Gate Notes</h3>
+      <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+        At checkout, provide your rural gate code, paddock entry directions, and alert us to any unrestrained dogs. Our drivers leave items undercover whenever possible.
+      </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+      <div class="w-10 h-10 rounded-xl bg-ochre-50 text-ochre-600 flex items-center justify-center font-bold text-base mb-3">3</div>
+      <h3 class="font-bold text-stone-900 text-base">Forklift & Hiab Service</h3>
+      <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+        For 1-tonne bulka bags of grain, semi-trailer loads of round bales, or 1000L concrete troughs, our trucks can be fitted with forklift or crane unload upon request.
+      </p>
+    </div>
+  </div>
+
+  <!-- Detailed Zone Tables -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-stone-200 bg-stone-50">
+      <h2 class="text-lg font-bold text-bush-900">Regional Delivery Zones & Timetable</h2>
+      <p class="text-xs text-stone-500 mt-0.5">Rates include Australian 10% GST. Free shipping thresholds apply automatically in cart.</p>
+    </div>
+
+    <div class="divide-y divide-stone-200">
+      <% @delivery_zones.each do |zone| %>
+        <div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-stone-50 transition">
+          <div class="space-y-1">
+            <span class="inline-block px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wide bg-bush-800 text-wheat-500">
+              <%= zone.scheduled_days %>
+            </span>
+            <h3 class="text-base font-bold text-stone-900"><%= zone.name %></h3>
+            <p class="text-xs text-stone-600"><%= zone.description %></p>
+            <p class="text-xs text-stone-400">Postcodes: <strong class="text-stone-700"><%= zone.postcodes %></strong></p>
+          </div>
+
+          <div class="text-left md:text-right flex-shrink-0">
+            <span class="text-xl font-black text-bush-900 block"><%= zone.formatted_fee %></span>
+            <% if zone.free_threshold_cents.present? %>
+              <span class="text-xs text-emerald-700 font-bold block">Free on orders over <%= format_aud(zone.free_threshold_cents) %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Drive-thru alternative banner -->
+  <div class="p-6 rounded-2xl bg-wheat-50 border border-wheat-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div>
+      <h3 class="font-bold text-bush-900 text-base">Rather pick up today?</h3>
+      <p class="text-xs text-stone-600 mt-0.5">Use our Drive-Thru Bag Loading bays at 14 Great Northern Hwy, Muchea. We load your ute, van, or trailer for free.</p>
+    </div>
+    <%= link_to "View Drive-Thru Details →", drive_thru_pickup_path, class: "px-5 py-2.5 bg-bush-800 hover:bg-bush-900 text-white font-bold text-xs rounded-lg transition whitespace-nowrap" %>
+  </div>
+</div>
+

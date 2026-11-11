@@ -1,0 +1,113 @@
+<% content_for :title, "Live Warehouse Inventory Management" %>
+
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight">Warehouse Inventory Management</h1>
+      <p class="text-xs text-stone-500 mt-1">Real-time stock control across 20kg bags, chaff bales, lick blocks, fencing wire, and star pickets.</p>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="flex items-center gap-2">
+      <%= form_with url: admin_inventory_index_path, method: :get, local: true, class: "flex gap-2" do |f| %>
+        <%= f.text_field :q, value: params[:q], placeholder: "Search SKU or product...", class: "px-3 py-1.5 rounded-lg border border-stone-300 text-xs bg-white focus:outline-none" %>
+        <%= f.submit "Search", class: "px-3 py-1.5 bg-bush-800 text-white rounded-lg text-xs font-semibold cursor-pointer" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Category & Quick Filter Pills -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-2 text-xs">
+    <%= link_to "All Inventory (#{ProductVariant.count})", admin_inventory_index_path, class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter].blank? && params[:category_id].blank? ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <%= link_to "⚠️ Low Stock Warnings (#{ProductVariant.low_stock.count})", admin_inventory_index_path(filter: 'low_stock'), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:filter] == 'low_stock' ? 'bg-rose-700 text-white' : 'bg-white text-rose-700 border border-rose-200'}" %>
+
+    <% @categories.each do |cat| %>
+      <%= link_to cat.name, admin_inventory_index_path(category_id: cat.id), class: "px-3 py-1.5 rounded-lg font-bold transition #{params[:category_id].to_s == cat.id.to_s ? 'bg-bush-800 text-white' : 'bg-white text-stone-700 border border-stone-200'}" %>
+    <% end %>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
+          <tr>
+            <th class="py-3 px-4">SKU / Code</th>
+            <th class="py-3 px-4">Product Name & Formulation</th>
+            <th class="py-3 px-4">Variant / Packaging</th>
+            <th class="py-3 px-4">Price (inc. GST)</th>
+            <th class="py-3 px-4 text-center">In Stock Level</th>
+            <th class="py-3 px-4 text-center">Safety Alert</th>
+            <th class="py-3 px-4 text-right">Quick Stock Adjustment</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100">
+          <% @variants.each do |var| %>
+            <tr class="hover:bg-stone-50 transition <%= 'bg-rose-50/40' if var.low_stock? %>">
+              <td class="py-3 px-4 font-mono font-bold text-stone-700">
+                <%= var.sku %>
+              </td>
+              <td class="py-3 px-4">
+                <strong class="text-stone-900 block"><%= var.product.name %></strong>
+                <span class="text-stone-400 text-[10px] uppercase font-bold"><%= var.product.brand %> • <%= var.product.category.name %></span>
+              </td>
+              <td class="py-3 px-4 text-stone-700 font-medium">
+                <%= var.name %>
+                <span class="block text-[10px] text-stone-400"><%= var.weight_kg %> kg</span>
+              </td>
+              <td class="py-3 px-4 font-bold text-stone-900">
+                <%= var.formatted_price %>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <span class="inline-block px-3 py-1 rounded-lg font-black text-sm <%= var.low_stock? ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' %>">
+                  <%= var.stock_quantity %>
+                </span>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <% if var.low_stock? %>
+                  <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white animate-pulse">
+                    LOW (≤ <%= var.low_stock_threshold %>)
+                  </span>
+                <% else %>
+                  <span class="text-emerald-700 text-[11px] font-semibold">Healthy (Min: <%= var.low_stock_threshold %>)</span>
+                <% end %>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <%= button_to "-1", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: -1, reason: "Store Sale / Breakage"), method: :post, class: "px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded font-bold cursor-pointer" %>
+                  <%= button_to "+10", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-bush-800 hover:bg-bush-900 text-white rounded font-bold cursor-pointer" %>
+                  <%= button_to "+50 (Pallet)", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 50, reason: "Direct Mill Pallet Delivery"), method: :post, class: "px-2 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold cursor-pointer" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Inventory Audit Trail -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <div class="p-4 bg-stone-50 border-b border-stone-200">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-stone-600">Recent Inventory Stock Movements & Order Audit Logs</h2>
+    </div>
+
+    <div class="divide-y divide-stone-100 text-xs">
+      <% @recent_logs.each do |log| %>
+        <div class="p-3.5 flex justify-between items-center">
+          <div>
+            <strong class="text-stone-900"><%= log.product_variant.product.name %> (<%= log.product_variant.name %>)</strong>
+            <p class="text-stone-500 text-[11px] mt-0.5">Reason: <%= log.reason %> • <%= log.created_at.strftime("%d %b %Y at %I:%M %p") %></p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-2 py-0.5 rounded font-black text-xs <%= log.change_amount.positive? ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' %>">
+              <%= log.change_amount.positive? ? "+#{log.change_amount}" : log.change_amount %>
+            </span>
+            <span class="block text-[10px] text-stone-400 mt-0.5">New Balance: <%= log.new_quantity %></span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+

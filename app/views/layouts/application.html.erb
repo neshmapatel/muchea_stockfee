@@ -60,6 +60,18 @@
       .font-serif-brand {
         font-family: 'Playfair Display', Georgia, serif;
       }
+      .site-logo {
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        min-height: 52px !important;
+        max-width: 52px !important;
+        max-height: 52px !important;
+        object-fit: cover !important;
+        border-radius: 12px;
+        display: block !important;
+        flex-shrink: 0 !important;
+      }
     </style>
 
     <!-- Schema.org LocalBusiness Structured Data -->
@@ -141,36 +153,41 @@
 
     <!-- Main Navigation Header -->
     <header class="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-xs">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3 md:gap-6">
         <!-- Brand Logo & Title -->
-        <%= link_to root_path, class: "flex items-center gap-3.5 group flex-shrink-0" do %>
-          <img src="/images/muchea_logo.jpg" alt="Muchea Stock Feed & Hardware Logo" class="w-13 h-13 object-cover rounded-xl border border-stone-300 shadow-sm group-hover:scale-105 transition duration-200">
-          <div>
+        <%= link_to root_path, class: "flex items-center gap-3 group flex-shrink-0" do %>
+          <img src="/images/muchea_logo.jpg"
+               alt="Muchea Stock Feed & Hardware Logo"
+               class="site-logo rounded-xl border border-stone-200 shadow-xs group-hover:scale-105 transition duration-200"
+               width="52"
+               height="52"
+               style="width: 52px; height: 52px; min-width: 52px; min-height: 52px; max-width: 52px; max-height: 52px; object-fit: cover;">
+          <div class="flex-shrink-0">
             <div class="flex items-baseline gap-1.5 leading-none">
-              <span class="text-2xl md:text-3xl font-black tracking-tight text-red-600 uppercase font-sans">
+              <span class="text-xl sm:text-2xl font-black tracking-tight text-red-600 uppercase font-sans">
                 MUCHEA
               </span>
-              <span class="text-xs md:text-sm font-black tracking-wider text-stone-900 uppercase">
+              <span class="text-xs sm:text-sm font-black tracking-wider text-stone-900 uppercase">
                 STOCK FEED
               </span>
             </div>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span class="text-[11px] font-bold text-stone-700 uppercase tracking-wide">&amp; HARDWARE</span>
-              <span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded">Hardware Phase 2</span>
+              <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded">Phase 1 Live</span>
             </div>
             <span class="block text-[11px] font-serif italic text-stone-500 mt-0.5">For Farms, Homes &amp; Life</span>
           </div>
         <% end %>
 
         <!-- Search Bar -->
-        <div class="flex-1 max-w-lg hidden md:block">
+        <div class="flex-1 max-w-xl mx-2 hidden md:block">
           <%= form_with url: products_path, method: :get, local: true, class: "relative" do |f| %>
-            <div class="relative">
-              <%= f.text_field :q, value: params[:q], placeholder: "Search horse feed, lucerne chaff, oaten hay, cattle grower, poultry...", class: "w-full pl-10 pr-24 py-2.5 rounded-full border border-stone-300 bg-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800 focus:bg-white transition" %>
+            <div class="relative flex items-center">
+              <%= f.text_field :q, value: params[:q], placeholder: "Search horse feed, lucerne chaff, poultry seed, cattle grower...", class: "w-full pl-10 pr-24 py-2.5 rounded-full border border-stone-300 bg-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800 focus:bg-white transition" %>
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </div>
-              <button type="submit" class="absolute inset-y-1 right-1 px-4 bg-bush-800 hover:bg-bush-900 text-white rounded-full text-xs font-semibold transition cursor-pointer">
+              <button type="submit" class="absolute right-1 px-4 py-1.5 bg-bush-800 hover:bg-bush-900 text-white rounded-full text-xs font-bold transition cursor-pointer">
                 Search
               </button>
             </div>
@@ -178,21 +195,33 @@
         </div>
 
         <!-- Utility Actions & Cart Trigger -->
-        <div class="flex items-center gap-3">
-          <%= link_to tracking_lookup_path, class: "hidden lg:flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-bush-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-xl transition" do %>
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <a href="tel:0895718840" class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 transition text-xs font-bold">
+            <%= svg_icon("phone", css_class: "w-4 h-4 text-ochre-600") %>
+            <div>
+              <span class="block text-[9px] uppercase tracking-wider text-stone-500 font-bold leading-none">Phone Orders</span>
+              <span class="leading-none mt-0.5">(08) 9571 8840</span>
+            </div>
+          </a>
+
+          <%= link_to tracking_lookup_path, class: "hidden lg:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-bush-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-xl transition" do %>
             <%= svg_icon("truck", css_class: "w-4 h-4 text-ochre-600") %>
-            <span>Track Delivery</span>
+            <span>Track Order</span>
+          <% end %>
+
+          <%= link_to admin_root_path, class: "hidden sm:inline-block text-[11px] font-bold text-stone-500 hover:text-stone-800 border border-stone-200 hover:bg-stone-100 px-2.5 py-2 rounded-xl transition", title: "Warehouse Staff Admin" do %>
+            Staff Admin
           <% end %>
 
           <!-- Cart Button -->
-          <%= link_to cart_path, class: "relative flex items-center gap-2.5 bg-bush-800 hover:bg-bush-900 text-white px-4 py-2.5 rounded-xl shadow-sm transition group" do %>
+          <%= link_to cart_path, class: "relative flex items-center gap-2.5 bg-bush-800 hover:bg-bush-900 text-white px-3.5 sm:px-4 py-2 rounded-xl shadow-xs transition group" do %>
             <%= svg_icon("cart", css_class: "w-5 h-5 text-wheat-500 group-hover:scale-110 transition") %>
             <div class="text-left">
-              <span class="block text-[10px] text-stone-300 uppercase leading-none font-semibold">Live Cart</span>
-              <span class="block text-sm font-bold leading-none mt-0.5"><%= format_aud(current_cart.total_cents) %></span>
+              <span class="block text-[9px] text-stone-300 uppercase leading-none font-semibold">Your Cart</span>
+              <span class="block text-xs sm:text-sm font-bold leading-none mt-0.5"><%= format_aud(current_cart.total_cents) %></span>
             </div>
             <% if current_cart.item_count > 0 %>
-              <span class="absolute -top-1.5 -right-1.5 bg-ochre-600 text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+              <span class="absolute -top-1.5 -right-1.5 bg-ochre-600 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
                 <%= current_cart.item_count %>
               </span>
             <% end %>
@@ -200,23 +229,28 @@
         </div>
       </div>
 
-      <!-- Category Navigation Bar -->
-      <nav class="bg-bush-800 text-stone-100 border-t border-bush-700 overflow-x-auto scrollbar-none">
-        <div class="max-w-7xl mx-auto px-4 flex items-center gap-1 text-xs md:text-sm font-medium whitespace-nowrap py-1">
-          <%= link_to "All Live Feeds", products_path(department: "Stockfeed & Animal Nutrition"), class: "px-3 py-2 rounded hover:bg-bush-700 transition font-bold text-wheat-500" %>
-          
-          <% Category.live.each do |cat| %>
-            <%= link_to cat.name, category_path(cat), class: "px-3 py-2 rounded hover:bg-bush-700 transition flex items-center gap-1.5" %>
+      <!-- Category Navigation Bar (All Things Stock style) -->
+      <nav class="bg-bush-900 text-stone-100 border-t border-bush-800 shadow-sm overflow-x-auto scrollbar-none">
+        <div class="max-w-7xl mx-auto px-4 flex items-center gap-1 text-xs sm:text-sm font-semibold whitespace-nowrap py-1">
+          <%= link_to products_path(department: "Stockfeed & Animal Nutrition"), class: "px-3 py-2 rounded-lg hover:bg-bush-800 transition font-bold text-wheat-400 flex items-center gap-1.5" do %>
+            <span>🌾 All Feed Products</span>
           <% end %>
 
-          <span class="text-bush-600 px-1">|</span>
-          <%= link_to products_path(department: "Rural Hardware & Farm Supplies"), class: "px-3 py-2 rounded hover:bg-bush-700 transition flex items-center gap-1.5 text-stone-300" do %>
+          <% Category.live.each do |cat| %>
+            <%= link_to category_path(cat), class: "px-3 py-2 rounded-lg hover:bg-bush-800 transition text-stone-200 hover:text-white flex items-center gap-1.5" do %>
+              <span><%= cat.name %></span>
+            <% end %>
+          <% end %>
+
+          <span class="text-bush-700 px-1">|</span>
+          <%= link_to products_path(department: "Rural Hardware & Farm Supplies"), class: "px-3 py-2 rounded-lg hover:bg-bush-800 transition flex items-center gap-1.5 text-stone-300" do %>
             <span>Hardware &amp; Fencing</span>
             <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[9px] font-bold px-1.5 py-0.2 rounded uppercase">Phase 2</span>
           <% end %>
-          <span class="text-bush-600 px-1">|</span>
-          <%= link_to "Delivery Schedule", delivery_schedule_path, class: "px-3 py-2 rounded text-stone-300 hover:text-white hover:bg-bush-700" %>
-          <%= link_to "Drive-Thru Bay", drive_thru_pickup_path, class: "px-3 py-2 rounded text-stone-300 hover:text-white hover:bg-bush-700" %>
+
+          <span class="text-bush-700 px-1">|</span>
+          <%= link_to "Delivery Schedule", delivery_schedule_path, class: "px-3 py-2 rounded-lg text-stone-300 hover:text-white hover:bg-bush-800 transition" %>
+          <%= link_to "Drive-Thru Bay", drive_thru_pickup_path, class: "px-3 py-2 rounded-lg text-stone-300 hover:text-white hover:bg-bush-800 transition" %>
         </div>
       </nav>
     </header>
@@ -258,7 +292,7 @@
         <!-- Column 1: Brand & Contact -->
         <div>
           <div class="flex items-center gap-3 mb-4">
-            <img src="/images/muchea_logo.jpg" alt="Logo" class="w-12 h-12 rounded-xl border border-red-700">
+            <img src="/images/muchea_logo.jpg" alt="Logo" class="w-12 h-12 rounded-xl border border-red-700 flex-shrink-0" width="48" height="48" style="width: 48px; height: 48px; max-width: 48px; max-height: 48px; object-fit: cover;">
             <div>
               <h2 class="font-bold text-white text-lg tracking-wide uppercase font-sans">
                 <span class="text-red-500 font-black">MUCHEA</span> STOCK FEED

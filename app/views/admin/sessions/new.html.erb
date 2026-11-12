@@ -7,26 +7,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              bush: {
-                800: '#1e3a2f',
-                900: '#142920',
-                950: '#0c1a14',
-                700: '#284e40',
-              },
-              ochre: {
-                600: '#b84a28',
-                700: '#993c1f',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    <%= render "shared/brand_theme" %>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
       body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -43,7 +24,7 @@
              style="width: 56px; height: 56px; max-width: 56px; max-height: 56px; object-fit: cover;">
       </a>
       <h2 class="mt-4 text-2xl font-black text-bush-950 tracking-tight uppercase">
-        <span class="text-red-600">MUCHEA</span> STOCK FEED
+        <span class="text-brand-primary">MUCHEA</span> STOCK FEED
       </h2>
       <p class="text-xs font-bold text-stone-500 uppercase tracking-widest mt-0.5">&amp; HARDWARE • OPERATIONS PORTAL</p>
       <p class="text-xs text-stone-600 mt-1">Sign in to manage warehouse stock, barcode scanner &amp; orders</p>

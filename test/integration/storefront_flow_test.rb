@@ -234,4 +234,22 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_equal "application/xml", response.media_type
     assert_includes response.body, "<urlset"
   end
+
+  test "storefront and admin render dynamic brand color palette from config" do
+    get root_path
+    assert_response :success
+    assert_includes response.body, 'id="muchea-brand-theme"'
+    assert_includes response.body, "--brand-primary:"
+    assert_includes response.body, "window.BRAND_PALETTE"
+    assert_includes response.body, "bg-brand-primary"
+
+    get admin_login_path
+    assert_response :success
+    assert_includes response.body, 'id="muchea-brand-theme"'
+    assert_includes response.body, "--brand-primary:"
+
+    assert_equal "#c91820", ApplicationController.helpers.brand_palette[:primary]
+    assert_equal "#0f1112", ApplicationController.helpers.brand_palette[:dark]
+    assert_equal "#d49b28", ApplicationController.helpers.brand_palette[:accent]
+  end
 end

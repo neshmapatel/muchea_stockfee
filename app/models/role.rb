@@ -215,3 +215,4 @@ class Role < ApplicationRecord
     end
   end
 end
+

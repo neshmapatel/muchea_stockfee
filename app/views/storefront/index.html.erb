@@ -1,5 +1,5 @@
 <!-- Storefront Signboard Hero (Clean, Authentic Retail Layout) -->
-<section class="bg-stone-950 border-b border-stone-800">
+<section class="bg-brand-dark border-b border-stone-800">
   <div class="max-w-7xl mx-auto px-4 pt-5 pb-6">
     <!-- Real Storefront Signboard Banner -->
     <div class="overflow-hidden rounded-lg border border-stone-800 bg-black shadow-md">
@@ -12,7 +12,7 @@
     <!-- Clean Hero Intro & Direct Actions -->
     <div class="mt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-white">
       <div class="max-w-3xl space-y-2.5">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-red-400">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-brand-accent">
           14 Great Northern Highway, Muchea WA • Quality Products for a Stronger Tomorrow
         </p>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
@@ -25,7 +25,7 @@
       </div>
 
       <div class="flex flex-col sm:flex-row lg:flex-col gap-2.5 flex-shrink-0">
-        <%= link_to products_path(department: "Stockfeed & Animal Nutrition"), class: "px-6 py-3 bg-red-700 hover:bg-red-800 text-white font-bold rounded-lg text-sm text-center transition" do %>
+        <%= link_to products_path(department: "Stockfeed & Animal Nutrition"), class: "px-6 py-3 bg-brand-primary hover:bg-brand-primary-hover text-white font-bold rounded-lg text-sm text-center transition" do %>
           Shop All Live Stockfeed →
         <% end %>
         <div class="flex items-center gap-2">
@@ -41,7 +41,7 @@
 <section class="bg-white border-b border-stone-200 py-5">
   <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
     <div class="flex items-center gap-3 p-2">
-      <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center flex-shrink-0 border-2 border-red-200">
+      <div class="w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center flex-shrink-0 border-2 border-brand-primary/20">
         <%= svg_icon("wheat", css_class: "w-5 h-5 text-white") %>
       </div>
       <div>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="flex items-center gap-3 p-2">
-      <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center flex-shrink-0 border-2 border-red-200">
+      <div class="w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center flex-shrink-0 border-2 border-brand-primary/20">
         <%= svg_icon("paw", css_class: "w-5 h-5 text-white") %>
       </div>
       <div>
@@ -61,7 +61,7 @@
     </div>
 
     <div class="flex items-center gap-3 p-2">
-      <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center flex-shrink-0 border-2 border-red-200">
+      <div class="w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center flex-shrink-0 border-2 border-brand-primary/20">
         <%= svg_icon("truck", css_class: "w-5 h-5 text-white") %>
       </div>
       <div>
@@ -76,7 +76,7 @@
       </div>
       <div>
         <span class="block text-xs font-extrabold uppercase tracking-wide text-stone-900">Hardware</span>
-        <span class="block text-[11px] text-amber-700 font-semibold">Coming Phase 2</span>
+        <span class="block text-[11px] text-brand-accent font-semibold">Coming Phase 2</span>
       </div>
     </div>
 
@@ -86,7 +86,7 @@
       </div>
       <div>
         <span class="block text-xs font-extrabold uppercase tracking-wide text-stone-900">Rural Essentials</span>
-        <span class="block text-[11px] text-amber-700 font-semibold">Coming Phase 2</span>
+        <span class="block text-[11px] text-brand-accent font-semibold">Coming Phase 2</span>
       </div>
     </div>
   </div>
@@ -100,25 +100,25 @@
       <p class="text-xs text-stone-500 mt-0.5">All feeds listed below are stocked at Muchea and available for delivery or pickup.</p>
     </div>
     <div class="text-xs text-stone-600">
-      Counter Advice: <a href="tel:0895718840" class="font-bold text-red-700 hover:underline">(08) 9571 8840</a>
+      Counter Advice: <a href="tel:0895718840" class="font-bold text-brand-primary hover:underline">(08) 9571 8840</a>
     </div>
   </div>
 
   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
     <% @live_categories.each do |cat| %>
-      <%= link_to category_path(cat), class: "group bg-white p-4 rounded-lg border border-stone-200 hover:border-red-700 transition flex flex-col justify-between" do %>
+      <%= link_to category_path(cat), class: "group bg-white p-4 rounded-lg border border-stone-200 hover:border-brand-primary transition flex flex-col justify-between" do %>
         <div>
-          <div class="w-11 h-11 rounded-lg bg-stone-100 group-hover:bg-red-700 text-stone-800 group-hover:text-white flex items-center justify-center mb-3 transition">
+          <div class="w-11 h-11 rounded-lg bg-stone-100 group-hover:bg-brand-primary text-stone-800 group-hover:text-white flex items-center justify-center mb-3 transition">
             <%= svg_icon(cat.icon, css_class: "w-6 h-6") %>
           </div>
-          <h3 class="text-sm font-bold text-stone-900 group-hover:text-red-700 transition leading-snug">
+          <h3 class="text-sm font-bold text-stone-900 group-hover:text-brand-primary transition leading-snug">
             <%= cat.name %>
           </h3>
           <p class="text-[11px] text-stone-500 mt-1 line-clamp-2 leading-relaxed">
             <%= cat.description %>
           </p>
         </div>
-        <div class="mt-4 pt-2.5 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-stone-700 group-hover:text-red-700">
+        <div class="mt-4 pt-2.5 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-stone-700 group-hover:text-brand-primary">
           <span><%= cat.products.size %> items</span>
           <span>→</span>
         </div>
@@ -135,7 +135,7 @@
         <h2 class="text-xl sm:text-2xl font-extrabold text-stone-900">Popular Stockfeeds, Hay &amp; Chaff</h2>
         <p class="text-xs text-stone-500 mt-0.5">Individual bags, 40-bag pallets, 4x4 round bales, and 1-tonne bulka bags.</p>
       </div>
-      <%= link_to "View All Live Stockfeed (#{Product.live.count}) →", products_path(department: "Stockfeed & Animal Nutrition"), class: "text-xs font-bold text-red-700 hover:underline" %>
+      <%= link_to "View All Live Stockfeed (#{Product.live.count}) →", products_path(department: "Stockfeed & Animal Nutrition"), class: "text-xs font-bold text-brand-primary hover:underline" %>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -153,7 +153,7 @@
 
             <div class="p-4">
               <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider"><%= product.category.name %></span>
-              <h3 class="text-sm font-bold text-stone-900 mt-1 line-clamp-2 hover:text-red-700">
+              <h3 class="text-sm font-bold text-stone-900 mt-1 line-clamp-2 hover:text-brand-primary">
                 <%= link_to product.name, product_path(product) %>
               </h3>
               <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
@@ -173,7 +173,7 @@
               </span>
             </div>
 
-            <%= link_to "Select Size & Order", product_path(product), class: "block w-full py-2.5 text-center text-xs font-bold bg-stone-900 hover:bg-red-700 text-white rounded-lg transition" %>
+            <%= link_to "Select Size & Order", product_path(product), class: "block w-full py-2.5 text-center text-xs font-bold bg-brand-dark hover:bg-brand-primary text-white rounded-lg transition" %>
           </div>
         </div>
       <% end %>
@@ -183,10 +183,10 @@
 
 <!-- Rural Hardware Yard Expansion (Phase 2 Coming Soon) -->
 <section class="max-w-7xl mx-auto px-4 py-10">
-  <div class="bg-stone-900 text-white rounded-xl p-6 sm:p-8 border border-stone-800">
+  <div class="bg-brand-dark text-white rounded-xl p-6 sm:p-8 border border-stone-800">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-800">
       <div class="max-w-2xl">
-        <span class="inline-block bg-red-700 text-white text-[10px] font-bold uppercase px-2.5 py-0.5 rounded mb-2 tracking-wider">
+        <span class="inline-block bg-brand-primary text-white text-[10px] font-bold uppercase px-2.5 py-0.5 rounded mb-2 tracking-wider">
           Coming in Phase 2
         </span>
         <h2 class="text-xl sm:text-2xl font-extrabold leading-tight">
@@ -211,7 +211,7 @@
             <span class="text-xs font-bold text-stone-200 mt-1 block"><%= hw.price_display %></span>
           </div>
           <div class="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between text-[11px]">
-            <span class="text-amber-400 font-semibold">Arriving Soon</span>
+            <span class="text-brand-accent font-semibold">Arriving Soon</span>
             <%= link_to "View Specs →", product_path(hw), class: "text-stone-300 hover:text-white font-semibold" %>
           </div>
         </div>
@@ -228,7 +228,7 @@
         <h2 class="text-xl font-extrabold text-stone-900">Scheduled WA Farm Truck Deliveries</h2>
         <p class="text-xs text-stone-500 mt-0.5">Order by 3:00 PM on the working day prior to your local truck run. Gate codes and paddock drop notes supported at checkout.</p>
       </div>
-      <%= link_to "Full Delivery Rates →", delivery_schedule_path, class: "text-xs font-bold text-red-700 hover:underline whitespace-nowrap" %>
+      <%= link_to "Full Delivery Rates →", delivery_schedule_path, class: "text-xs font-bold text-brand-primary hover:underline whitespace-nowrap" %>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -256,7 +256,7 @@
   <!-- Drive-Thru Loading Strip -->
   <div class="bg-stone-100 border border-stone-200 rounded-xl p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
     <div class="flex items-start sm:items-center gap-4">
-      <div class="px-3.5 py-2.5 rounded-lg bg-red-700 text-white font-black text-sm flex-shrink-0">
+      <div class="px-3.5 py-2.5 rounded-lg bg-brand-primary text-white font-black text-sm flex-shrink-0">
         Bay 1 &amp; 2
       </div>
       <div>
@@ -266,6 +266,6 @@
         </p>
       </div>
     </div>
-    <%= link_to "Drive-Thru Instructions →", drive_thru_pickup_path, class: "px-5 py-2.5 bg-stone-900 hover:bg-red-700 text-white font-bold text-xs rounded-lg whitespace-nowrap transition" %>
+    <%= link_to "Drive-Thru Instructions →", drive_thru_pickup_path, class: "px-5 py-2.5 bg-brand-dark hover:bg-brand-primary text-white font-bold text-xs rounded-lg whitespace-nowrap transition" %>
   </div>
 </section>

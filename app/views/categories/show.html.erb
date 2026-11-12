@@ -1,7 +1,7 @@
 <% content_for :title, "#{@category.name} | Muchea Stockfeed & Hardware" %>
 <% content_for :description, @category.description %>
 
-<div class="bg-stone-950 text-white py-8 border-b-2 border-red-700">
+<div class="bg-brand-dark text-white py-8 border-b-2 border-brand-primary">
   <div class="max-w-7xl mx-auto px-4">
     <!-- Breadcrumbs -->
     <nav class="text-xs text-stone-400 mb-3 flex items-center gap-1.5 flex-wrap">
@@ -9,11 +9,11 @@
       <span>/</span>
       <span><%= @category.department %></span>
       <span>/</span>
-      <span class="text-red-400 font-bold"><%= @category.name %></span>
+      <span class="text-brand-accent font-bold"><%= @category.name %></span>
     </nav>
 
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-lg bg-red-700 text-white flex items-center justify-center flex-shrink-0">
+      <div class="w-12 h-12 rounded-lg bg-brand-primary text-white flex items-center justify-center flex-shrink-0">
         <%= svg_icon(@category.icon, css_class: "w-6 h-6") %>
       </div>
       <div>
@@ -129,7 +129,7 @@
                 </div>
 
                 <div class="p-4">
-                  <h3 class="text-sm font-bold text-stone-900 hover:text-red-700 line-clamp-2">
+                  <h3 class="text-sm font-bold text-stone-900 hover:text-brand-primary line-clamp-2">
                     <%= link_to product.name, product_path(product) %>
                   </h3>
                   <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
@@ -142,13 +142,13 @@
                     <span class="block text-base font-black text-stone-950"><%= product.price_display %></span>
                     <span class="block text-[10px] text-stone-400">AUD inc. 10% GST</span>
                   </div>
-                  <span class="text-[11px] font-bold <%= product.coming_soon? ? 'text-amber-700' : (product.in_stock? ? 'text-emerald-700' : 'text-rose-600') %>">
+                  <span class="text-[11px] font-bold <%= product.coming_soon? ? 'text-brand-accent' : (product.in_stock? ? 'text-emerald-700' : 'text-rose-600') %>">
                     <%= product.coming_soon? ? "Arriving Soon" : (product.in_stock? ? "In Stock" : "Backorder") %>
                   </span>
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <%= link_to (product.coming_soon? ? "Preview Specs" : "Select Size & Buy"), product_path(product), class: "flex-1 py-2 text-center text-xs font-bold #{product.coming_soon? ? 'bg-stone-700 hover:bg-stone-800' : 'bg-stone-900 hover:bg-red-700'} text-white rounded-lg transition" %>
+                  <%= link_to (product.coming_soon? ? "Preview Specs" : "Select Size & Buy"), product_path(product), class: "flex-1 py-2 text-center text-xs font-bold #{product.coming_soon? ? 'bg-stone-700 hover:bg-stone-800' : 'bg-brand-dark hover:bg-brand-primary'} text-white rounded-lg transition" %>
                 </div>
               </div>
             </div>

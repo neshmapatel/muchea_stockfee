@@ -1,0 +1,45 @@
+# ==============================================================================
+# MUCHEA STOCKFEED & HARDWARE — GLOBAL COLOR PALETTE
+# ==============================================================================
+# EDIT THIS SINGLE FILE TO CHANGE COLORS ACROSS THE ENTIRE WEBSITE!
+#
+# Any change saved in this file instantly updates:
+#   1. The Public Storefront (Navbar, Hero, Buttons, Badges, Footer)
+#   2. The Category & Product Pages (Call-to-actions, Prices, Tags)
+#   3. The Warehouse Admin Portal (Headers, Navigation, Highlights)
+#   4. The Admin Login & Management Screens
+#   5. Invoices & Packing Slips
+#
+# No server restart required in development. Refresh your browser to see changes.
+# ==============================================================================
+
+# --- Primary Brand Red (Matches physical store signboard) ---
+primary: "#c91820"         # Main brand red for buttons, logo highlights & key CTAs
+primary_hover: "#a81118"   # Darker red for button hover states
+primary_active: "#8a0c12"  # Deep red for active/pressed states
+primary_light: "#fee2e2"   # Light red tint for notification tags & badges
+primary_soft: "#fef2f2"    # Subtle background tint for alerts
+
+# --- Dark Neutral / Charcoal (Matches signboard black background) ---
+dark: "#0f1112"            # Dark charcoal black for top announcement bar, hero & footer
+dark_surface: "#191c1e"    # Elevated dark surface for cards and search dropdowns
+dark_border: "#2a2e33"     # Dark borders for panels and footers
+
+# --- Secondary Accent (Golden Wheat / WA Harvest Gold) ---
+accent: "#d49b28"          # Warm wheat gold for secondary highlights & phase badges
+accent_hover: "#b9841f"    # Deep harvest gold for hover states
+accent_light: "#fdf6e7"    # Very soft wheat cream for tag backgrounds
+
+# --- Australian Bush Green (Secondary Rural Accent) ---
+bush: "#1e3a2f"            # Forest bush green for agricultural accents
+bush_dark: "#142920"       # Deep bush green for admin header & navigation
+bush_hover: "#284e40"      # Medium bush green for admin hover states
+bush_light: "#e5ece8"      # Light bush tint for info panels
+bush_soft: "#f2f6f4"       # Soft bush background
+
+# --- Neutral Surfaces & Borders ---
+surface: "#f8fafc"         # Clean neutral page background
+card: "#ffffff"            # Card and modal white backgrounds
+border: "#e2e8f0"          # Light border lines for cards and separators
+text_main: "#0f172a"       # Primary body text color
+text_muted: "#64748b"      # Secondary muted text color

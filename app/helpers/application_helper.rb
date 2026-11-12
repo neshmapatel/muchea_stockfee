@@ -1,4 +1,42 @@
 module ApplicationHelper
+  DEFAULT_BRAND_PALETTE = {
+    primary:        "#c91820",
+    primary_hover:  "#a81118",
+    primary_active: "#8a0c12",
+    primary_light:  "#fee2e2",
+    primary_soft:   "#fef2f2",
+    dark:           "#0f1112",
+    dark_surface:   "#191c1e",
+    dark_border:    "#2a2e33",
+    accent:         "#d49b28",
+    accent_hover:   "#b9841f",
+    accent_light:   "#fdf6e7",
+    bush:           "#1e3a2f",
+    bush_dark:      "#142920",
+    bush_hover:     "#284e40",
+    bush_light:     "#e5ece8",
+    bush_soft:      "#f2f6f4",
+    surface:        "#f8fafc",
+    card:           "#ffffff",
+    border:         "#e2e8f0",
+    text_main:      "#0f172a",
+    text_muted:     "#64748b"
+  }.freeze
+
+  def brand_palette
+    palette_file = Rails.root.join("config", "brand_palette.yml")
+    loaded = if File.exist?(palette_file)
+               begin
+                 YAML.safe_load(File.read(palette_file))&.symbolize_keys || {}
+               rescue StandardError
+                 {}
+               end
+             else
+               {}
+             end
+    DEFAULT_BRAND_PALETTE.merge(loaded)
+  end
+
   def format_aud(cents)
     return "AU$ 0.00" if cents.nil? || cents.zero?
     "AU$ #{format('%.2f', cents / 100.0)}"

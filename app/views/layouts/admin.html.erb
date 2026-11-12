@@ -7,28 +7,9 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN & Dynamic Global Brand Theme -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              bush: {
-                800: '#1e3a2f',
-                900: '#142920',
-                700: '#284e40',
-                600: '#356352',
-              },
-              ochre: {
-                600: '#b84a28',
-                700: '#993c1f',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    <%= render "shared/brand_theme" %>
     <%= yield :head %>
   </head>
 

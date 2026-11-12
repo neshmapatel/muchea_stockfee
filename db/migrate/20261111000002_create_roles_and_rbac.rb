@@ -75,3 +75,4 @@ class CreateRolesAndRbac < ActiveRecord::Migration[8.1]
     drop_table :roles
   end
 end
+

@@ -1,11 +1,11 @@
 <% content_for :title, params[:q].present? ? "Search: #{params[:q]} | Product Catalog" : "All Feeds, Supplies & Rural Hardware" %>
 
-<div class="bg-stone-950 text-white py-8 border-b-2 border-red-700">
+<div class="bg-brand-dark text-white py-8 border-b-2 border-brand-primary">
   <div class="max-w-7xl mx-auto px-4">
-    <span class="text-[11px] font-bold text-red-400 uppercase tracking-widest">Muchea Stockfeed &amp; Hardware Catalog</span>
+    <span class="text-[11px] font-bold text-brand-accent uppercase tracking-widest">Muchea Stockfeed &amp; Hardware Catalog</span>
     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1">
       <% if params[:q].present? %>
-        Search Results for "<span class="text-red-400"><%= params[:q] %></span>"
+        Search Results for "<span class="text-brand-primary"><%= params[:q] %></span>"
       <% elsif params[:department].present? %>
         <%= params[:department] %>
       <% else %>
@@ -49,7 +49,7 @@
 
             <div class="p-4">
               <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider"><%= product.category.name %></span>
-              <h3 class="text-sm font-bold text-stone-900 hover:text-red-700 line-clamp-2 mt-1">
+              <h3 class="text-sm font-bold text-stone-900 hover:text-brand-primary line-clamp-2 mt-1">
                 <%= link_to product.name, product_path(product) %>
               </h3>
               <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
@@ -68,7 +68,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <%= link_to "Select Size & Buy", product_path(product), class: "flex-1 py-2 text-center text-xs font-bold bg-stone-900 hover:bg-red-700 text-white rounded-lg transition" %>
+              <%= link_to "Select Size & Buy", product_path(product), class: "flex-1 py-2 text-center text-xs font-bold bg-brand-dark hover:bg-brand-primary text-white rounded-lg transition" %>
             </div>
           </div>
         </div>

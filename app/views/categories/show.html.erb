@@ -1,23 +1,23 @@
 <% content_for :title, "#{@category.name} | Muchea Stockfeed & Hardware" %>
 <% content_for :description, @category.description %>
 
-<div class="bg-bush-900 text-white py-10 border-b-4 border-wheat-500">
+<div class="bg-stone-950 text-white py-8 border-b-2 border-red-700">
   <div class="max-w-7xl mx-auto px-4">
     <!-- Breadcrumbs -->
-    <nav class="text-xs text-stone-300 mb-3 flex items-center gap-1.5 flex-wrap">
-      <%= link_to "Home", root_path, class: "hover:text-wheat-500" %>
+    <nav class="text-xs text-stone-400 mb-3 flex items-center gap-1.5 flex-wrap">
+      <%= link_to "Home", root_path, class: "hover:text-white" %>
       <span>/</span>
       <span><%= @category.department %></span>
       <span>/</span>
-      <span class="text-wheat-500 font-bold"><%= @category.name %></span>
+      <span class="text-red-400 font-bold"><%= @category.name %></span>
     </nav>
 
     <div class="flex items-center gap-4">
-      <div class="w-14 h-14 rounded-2xl bg-bush-800 text-wheat-500 flex items-center justify-center border border-bush-700 flex-shrink-0">
-        <%= svg_icon(@category.icon, css_class: "w-8 h-8") %>
+      <div class="w-12 h-12 rounded-lg bg-red-700 text-white flex items-center justify-center flex-shrink-0">
+        <%= svg_icon(@category.icon, css_class: "w-6 h-6") %>
       </div>
       <div>
-        <h1 class="text-2xl sm:text-4xl font-black font-serif-brand"><%= @category.name %></h1>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight"><%= @category.name %></h1>
         <p class="text-xs sm:text-sm text-stone-300 mt-1 max-w-3xl"><%= @category.description %></p>
       </div>
     </div>
@@ -110,18 +110,18 @@
       <% if @products.any? %>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <% @products.each do |product| %>
-            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group">
+            <div class="bg-white rounded-lg border border-stone-200 overflow-hidden hover:border-stone-400 transition flex flex-col justify-between group">
               <div>
-                <div class="relative h-48 bg-stone-100 overflow-hidden">
+                <div class="relative h-48 bg-stone-100 overflow-hidden border-b border-stone-200">
                   <img src="<%= product.hero_image_url.presence || '/images/muchea_logo.jpg' %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                   <div class="absolute top-2.5 left-2.5">
-                    <span class="bg-bush-900 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded shadow">
+                    <span class="bg-stone-950/90 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded">
                       <%= product.brand %>
                     </span>
                   </div>
                   <% if product.coming_soon? %>
                     <div class="absolute top-2.5 right-2.5">
-                      <span class="bg-amber-500 text-stone-900 text-[9px] font-black uppercase px-2 py-0.5 rounded shadow">
+                      <span class="bg-amber-500 text-stone-950 text-[9px] font-black uppercase px-2 py-0.5 rounded">
                         Phase 2
                       </span>
                     </div>
@@ -129,7 +129,7 @@
                 </div>
 
                 <div class="p-4">
-                  <h3 class="text-sm font-bold text-stone-900 hover:text-bush-800 line-clamp-2">
+                  <h3 class="text-sm font-bold text-stone-900 hover:text-red-700 line-clamp-2">
                     <%= link_to product.name, product_path(product) %>
                   </h3>
                   <p class="text-xs text-stone-500 mt-1 line-clamp-2"><%= product.short_description %></p>
@@ -139,16 +139,16 @@
               <div class="p-4 pt-0 border-t border-stone-100 mt-2">
                 <div class="flex items-baseline justify-between mb-3 pt-2">
                   <div>
-                    <span class="block text-base font-black text-bush-900"><%= product.price_display %></span>
+                    <span class="block text-base font-black text-stone-950"><%= product.price_display %></span>
                     <span class="block text-[10px] text-stone-400">AUD inc. 10% GST</span>
                   </div>
-                  <span class="text-[11px] font-bold <%= product.coming_soon? ? 'text-amber-600' : (product.in_stock? ? 'text-emerald-700' : 'text-rose-600') %>">
+                  <span class="text-[11px] font-bold <%= product.coming_soon? ? 'text-amber-700' : (product.in_stock? ? 'text-emerald-700' : 'text-rose-600') %>">
                     <%= product.coming_soon? ? "Arriving Soon" : (product.in_stock? ? "In Stock" : "Backorder") %>
                   </span>
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <%= link_to (product.coming_soon? ? "Preview Specs" : "Select Size & Buy"), product_path(product), class: "flex-1 py-2 text-center text-xs font-bold #{product.coming_soon? ? 'bg-stone-800 hover:bg-stone-900' : 'bg-bush-800 hover:bg-bush-900'} text-white rounded-xl transition" %>
+                  <%= link_to (product.coming_soon? ? "Preview Specs" : "Select Size & Buy"), product_path(product), class: "flex-1 py-2 text-center text-xs font-bold #{product.coming_soon? ? 'bg-stone-700 hover:bg-stone-800' : 'bg-stone-900 hover:bg-red-700'} text-white rounded-lg transition" %>
                 </div>
               </div>
             </div>

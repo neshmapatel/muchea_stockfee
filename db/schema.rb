@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_172523) do
   create_table "admin_users", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -38,6 +38,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_categories_on_slug", unique: true
+  end
+
+  create_table "contact_inquiries", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.string "location"
+    t.text "message", null: false
+    t.string "status", default: "new", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_contact_inquiries_on_created_at"
+    t.index ["status"], name: "index_contact_inquiries_on_status"
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.string "business_name"
+    t.string "abn"
+    t.string "property_address"
+    t.string "suburb"
+    t.string "postcode"
+    t.string "state", default: "WA"
+    t.string "primary_interest"
+    t.text "notes"
+    t.string "password_digest", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "approved_at"
+    t.integer "approved_by_id"
+    t.text "rejection_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_customers_on_approved_by_id"
+    t.index ["email"], name: "index_customers_on_email", unique: true
+    t.index ["status"], name: "index_customers_on_status"
   end
 
   create_table "delivery_zones", force: :cascade do |t|
@@ -155,6 +194,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_000002) do
   end
 
   add_foreign_key "admin_users", "roles"
+  add_foreign_key "customers", "admin_users", column: "approved_by_id"
   add_foreign_key "inventory_logs", "admin_users", on_delete: :nullify
   add_foreign_key "inventory_logs", "product_variants"
   add_foreign_key "order_items", "orders"

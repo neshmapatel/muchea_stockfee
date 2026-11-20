@@ -1,0 +1,129 @@
+<% content_for :title, "Customer & Member Approvals" %>
+
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
+    <div>
+      <h1 class="text-2xl font-black text-stone-900 tracking-tight">Customer Accounts &amp; Price Approvals</h1>
+      <p class="text-xs text-stone-500 mt-0.5">
+        Review customer registrations. Only Super Admins can authorize accounts to unlock product pricing.
+      </p>
+    </div>
+
+    <% if @pending_count > 0 %>
+      <div class="px-4 py-2 bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-xs font-bold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+        <span><%= @pending_count %> customer activation request(s) awaiting approval</span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-1.5 text-xs font-semibold overflow-x-auto pb-1">
+      <%= link_to "All Accounts (#{@pending_count + @approved_count + @rejected_count})", admin_customers_path, class: "px-3 py-1.5 rounded-lg transition #{params[:status].blank? || params[:status] == 'all' ? 'bg-stone-900 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+      <%= link_to admin_customers_path(status: "pending"), class: "px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 #{params[:status] == 'pending' ? 'bg-amber-600 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" do %>
+        <span>Pending Approval</span>
+        <% if @pending_count > 0 %>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black <%= params[:status] == 'pending' ? 'bg-white text-amber-900' : 'bg-amber-500 text-white' %>">
+            <%= @pending_count %>
+          </span>
+        <% end %>
+      <% end %>
+      <%= link_to "Approved Members (#{@approved_count})", admin_customers_path(status: "approved"), class: "px-3 py-1.5 rounded-lg transition #{params[:status] == 'approved' ? 'bg-emerald-700 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+      <%= link_to "Declined (#{@rejected_count})", admin_customers_path(status: "rejected"), class: "px-3 py-1.5 rounded-lg transition #{params[:status] == 'rejected' ? 'bg-rose-700 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+    </div>
+
+    <!-- Search Form -->
+    <div class="w-full md:w-72">
+      <%= form_with url: admin_customers_path, method: :get, local: true do |f| %>
+        <%= f.hidden_field :status, value: params[:status] if params[:status].present? %>
+        <div class="relative">
+          <%= f.text_field :q, value: params[:q], placeholder: "Search name, farm, email, ABN...", class: "w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-stone-900" %>
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Customers Table -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <% if @customers.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-stone-50 border-b border-stone-200 text-stone-600 font-bold uppercase tracking-wider text-[10px]">
+              <th class="py-3.5 px-4">Customer / Farm Name</th>
+              <th class="py-3.5 px-4">Contact Info</th>
+              <th class="py-3.5 px-4">Location</th>
+              <th class="py-3.5 px-4">Primary Category</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-right">Approval Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-100">
+            <% @customers.each do |c| %>
+              <tr class="hover:bg-stone-50/80 transition">
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-stone-900 text-sm">
+                    <%= link_to c.name, admin_customer_path(c), class: "hover:underline" %>
+                  </div>
+                  <% if c.business_name.present? %>
+                    <div class="text-[11px] text-stone-600 font-medium"><%= c.business_name %></div>
+                  <% end %>
+                  <% if c.abn.present? %>
+                    <div class="text-[10px] text-stone-400 font-mono">ABN: <%= c.abn %></div>
+                  <% end %>
+                </td>
+                <td class="py-3.5 px-4 space-y-0.5">
+                  <div class="font-medium text-stone-800"><%= c.email %></div>
+                  <div class="text-stone-500"><%= c.phone %></div>
+                </td>
+                <td class="py-3.5 px-4 text-stone-700">
+                  <%= [c.suburb, c.state, c.postcode].reject(&:blank?).join(", ") %>
+                </td>
+                <td class="py-3.5 px-4 text-stone-600">
+                  <%= c.primary_interest.presence || "General Farm" %>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-block px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider border <%= c.status_badge_color %>">
+                    <%= c.status %>
+                  </span>
+                  <% if c.approved? && c.approved_by %>
+                    <span class="block text-[9px] text-stone-400 mt-0.5">By <%= c.approved_by.name %></span>
+                  <% end %>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <%= link_to "View Profile", admin_customer_path(c), class: "px-2.5 py-1.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold transition text-[11px]" %>
+
+                    <% if current_admin.super_admin? %>
+                      <% if c.pending? || c.rejected? %>
+                        <%= button_to "Approve & Unlock Prices", approve_admin_customer_path(c), method: :patch, class: "px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-bold transition text-[11px] cursor-pointer shadow-xs", data: { turbo_confirm: "Authorize #{c.name} to view wholesale and retail prices?" } %>
+                      <% end %>
+                      <% if c.pending? %>
+                        <%= button_to "Decline", reject_admin_customer_path(c), method: :patch, class: "px-2.5 py-1.5 rounded bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold transition text-[11px] cursor-pointer", data: { turbo_confirm: "Decline membership for #{c.name}?" } %>
+                      <% end %>
+                    <% else %>
+                      <% if c.pending? %>
+                        <span class="text-[10px] text-stone-400 italic">Super Admin approval only</span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-12 text-center text-stone-500">
+        <p class="font-bold text-sm">No member accounts found.</p>
+        <p class="text-xs text-stone-400 mt-1">Try clearing filters or search terms.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

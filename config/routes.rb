@@ -11,9 +11,21 @@ Rails.application.routes.draw do
   get "drive-thru-pickup", to: "storefront#drive_thru_pickup", as: :drive_thru_pickup
   get "about", to: "storefront#about", as: :about
   get "contact", to: "storefront#contact", as: :contact
+  post "contact", to: "storefront#submit_contact"
 
   # SEO Dynamic XML Sitemap
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
+
+  # Customer / Member Authentication & Account Activation
+  get "customer/register", to: "customers/registrations#new", as: :customer_register
+  post "customer/register", to: "customers/registrations#create"
+  get "register", to: "customers/registrations#new"
+  get "customer/login", to: "customers/sessions#new", as: :customer_login
+  post "customer/login", to: "customers/sessions#create"
+  get "login", to: "customers/sessions#new"
+  delete "customer/logout", to: "customers/sessions#destroy", as: :customer_logout
+  get "customer/account", to: "customers/dashboard#show", as: :customer_account
+  get "customer/dashboard", to: "customers/dashboard#show", as: :customer_dashboard
 
   # Shopping Cart
   get "cart", to: "cart#show", as: :cart
@@ -56,6 +68,18 @@ Rails.application.routes.draw do
     end
     resources :products
     resources :categories, except: [:show]
+    resources :customers, only: [:index, :show] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+    resources :inquiries, only: [:index, :show] do
+      member do
+        patch :resolve
+        patch :reopen
+      end
+    end
     resources :users, except: [:show, :destroy] do
       member do
         patch :toggle_active

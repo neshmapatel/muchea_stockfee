@@ -1,4 +1,6 @@
 class CartController < ApplicationController
+  before_action :require_approved_customer!, only: [ :add_item ]
+
   def show
     @delivery_zones = DeliveryZone.all
   end

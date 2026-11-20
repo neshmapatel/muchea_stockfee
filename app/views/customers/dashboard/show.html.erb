@@ -1,0 +1,129 @@
+<% content_for :title, "My Member Account | Muchea Stockfeed & Hardware" %>
+
+<div class="bg-brand-dark text-white py-8 border-b-2 border-brand-primary">
+  <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <span class="text-[11px] font-bold uppercase tracking-widest text-brand-accent">Rural Member Portal</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-0.5">
+        G'day, <%= @customer.first_name %>
+      </h1>
+      <p class="text-xs text-stone-300"><%= @customer.email %> • Registered <%= @customer.created_at.strftime("%d %b %Y") %></p>
+    </div>
+
+    <div>
+      <%= button_to "Sign Out", customer_logout_path, method: :delete, class: "px-4 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold transition border border-stone-700 cursor-pointer" %>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 py-10 space-y-8">
+  <!-- Prominent Account Status Banner -->
+  <% if @customer.pending? %>
+    <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 sm:p-8 space-y-4">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-400 text-stone-900 flex items-center justify-center flex-shrink-0 font-black text-xl shadow-xs">
+          ⏳
+        </div>
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-200 text-amber-900 mb-1">
+            Status: Pending Approval
+          </span>
+          <h2 class="text-xl font-extrabold text-stone-900">Your Member Account is Awaiting Super Admin Authorization</h2>
+          <p class="text-xs sm:text-sm text-stone-700 mt-1 leading-relaxed">
+            Your profile has been submitted and an activation request email has been sent to our shed Super Admin.
+            To protect pastoral pricing integrity, product prices and online checkout will unlock immediately once your account is approved.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="text-stone-600">
+          Need immediate feed delivery today? Call our Muchea shed on <a href="tel:0895718840" class="font-bold text-stone-900 underline">(08) 9571 8840</a>.
+        </div>
+        <%= link_to "Browse Feed Catalog (Specs Only) →", products_path, class: "px-4 py-2 bg-stone-900 hover:bg-brand-primary text-white font-bold rounded-lg transition text-center whitespace-nowrap" %>
+      </div>
+    </div>
+  <% elsif @customer.approved? %>
+    <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-6 sm:p-8 space-y-4">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 font-black text-xl shadow-xs">
+          ✅
+        </div>
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-200 text-emerald-900 mb-1">
+            Status: Approved Member
+          </span>
+          <h2 class="text-xl font-extrabold text-stone-900">Full Price Visibility &amp; Ordering Active</h2>
+          <p class="text-xs sm:text-sm text-stone-700 mt-1 leading-relaxed">
+            Your account is verified! You have complete access to live feed prices, 40-bag pallet discounts, and scheduled farm truck delivery checkout across Western Australia.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-emerald-200/80 flex items-center gap-3">
+        <%= link_to "Shop All Live Feeds & View Prices →", products_path, class: "px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs rounded-xl shadow transition" %>
+        <%= link_to "Delivery Schedule", delivery_schedule_path, class: "px-4 py-2.5 bg-white border border-stone-300 text-stone-700 font-bold text-xs rounded-xl hover:bg-stone-50 transition" %>
+      </div>
+    </div>
+  <% elsif @customer.rejected? %>
+    <div class="bg-rose-50 border-2 border-rose-300 rounded-2xl p-6 sm:p-8 space-y-3">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 font-black text-xl shadow-xs">
+          ✕
+        </div>
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-rose-200 text-rose-900 mb-1">
+            Status: Application Declined
+          </span>
+          <h2 class="text-xl font-extrabold text-stone-900">Account Activation Request Declined</h2>
+          <p class="text-xs sm:text-sm text-stone-700 mt-1 leading-relaxed">
+            <%= @customer.rejection_reason.presence || "Your account request does not meet our current commercial wholesale criteria. Please contact our shed to discuss." %>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Customer Profile Summary -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6 text-xs">
+    <div class="flex items-center justify-between border-b border-stone-100 pb-4">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-stone-800">Your Registered Details</h3>
+      <span class="text-stone-400">ABN / Property Profile</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <span class="block text-[10px] font-bold uppercase text-stone-400">Full Name</span>
+        <span class="text-sm font-bold text-stone-900 mt-0.5 block"><%= @customer.name %></span>
+      </div>
+      <div>
+        <span class="block text-[10px] font-bold uppercase text-stone-400">Contact Number</span>
+        <span class="text-sm font-bold text-stone-900 mt-0.5 block"><%= @customer.phone %></span>
+      </div>
+      <% if @customer.business_name.present? %>
+        <div>
+          <span class="block text-[10px] font-bold uppercase text-stone-400">Farm / Business Name</span>
+          <span class="text-sm font-bold text-stone-900 mt-0.5 block"><%= @customer.business_name %></span>
+        </div>
+      <% end %>
+      <% if @customer.abn.present? %>
+        <div>
+          <span class="block text-[10px] font-bold uppercase text-stone-400">ABN</span>
+          <span class="text-sm font-mono font-bold text-stone-900 mt-0.5 block"><%= @customer.abn %></span>
+        </div>
+      <% end %>
+      <div>
+        <span class="block text-[10px] font-bold uppercase text-stone-400">Property Address</span>
+        <span class="text-sm font-semibold text-stone-900 mt-0.5 block">
+          <%= [@customer.property_address, @customer.suburb, @customer.state, @customer.postcode].reject(&:blank?).join(", ") %>
+        </span>
+      </div>
+      <% if @customer.primary_interest.present? %>
+        <div>
+          <span class="block text-[10px] font-bold uppercase text-stone-400">Primary Feed Category</span>
+          <span class="text-sm font-semibold text-stone-900 mt-0.5 block"><%= @customer.primary_interest %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -101,7 +101,12 @@
         <div class="flex items-center gap-3">
           <span class="text-stone-100 font-semibold">14 Great Northern Hwy, Muchea WA 6501</span>
           <span class="hidden lg:inline text-stone-600">|</span>
-          <span class="hidden lg:inline text-stone-400">Stockfeed, Chaff &amp; Hay Delivery Active (Hardware Coming Phase 2)</span>
+          <span class="hidden lg:inline text-stone-400">Stockfeed, Chaff &amp; Hay Delivery Active</span>
+          <% unless can_view_prices? %>
+            <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-brand-primary/20 text-brand-accent border border-brand-primary/40">
+              🔒 Prices Locked • Member Login Required
+            </span>
+          <% end %>
         </div>
         <div class="flex items-center gap-4 text-stone-300 text-xs">
           <a href="tel:0895718840" class="hover:text-white flex items-center gap-1.5 transition">
@@ -163,13 +168,26 @@
 
         <!-- Utility Actions & Cart Trigger -->
         <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <%= link_to tracking_lookup_path, class: "hidden lg:flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-lg transition" do %>
+          <!-- Member Auth Buttons -->
+          <% if customer_signed_in? %>
+            <div class="flex items-center gap-1.5">
+              <%= link_to customer_dashboard_path, class: "flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border #{customer_approved? ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-900 border-amber-300'}" do %>
+                <span><%= customer_approved? ? "👤 #{current_customer.first_name}" : "⏳ #{current_customer.first_name} (Pending)" %></span>
+              <% end %>
+              <%= button_to "Sign Out", customer_logout_path, method: :delete, class: "text-[11px] text-stone-500 hover:text-stone-900 font-semibold cursor-pointer hidden md:inline" %>
+            </div>
+          <% else %>
+            <%= link_to "Member Login", customer_login_path, class: "hidden sm:inline-block text-xs font-semibold text-stone-700 hover:text-stone-950 px-2.5 py-1.5 rounded-lg transition" %>
+            <%= link_to "Activate Account", customer_register_path, class: "text-xs font-bold bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white border border-brand-primary/30 px-3 py-1.5 rounded-lg transition whitespace-nowrap" %>
+          <% end %>
+
+          <%= link_to tracking_lookup_path, class: "hidden xl:flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-stone-950 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-lg transition" do %>
             <%= svg_icon("truck", css_class: "w-4 h-4 text-brand-primary") %>
             <span>Track Order</span>
           <% end %>
 
           <%= link_to admin_root_path, class: "hidden sm:inline-block text-xs font-semibold text-stone-600 hover:text-stone-950 border border-stone-300 hover:bg-stone-100 px-3 py-2 rounded-lg transition", title: "Warehouse Staff Admin" do %>
-            Staff Portal
+            Staff
           <% end %>
 
           <!-- Cart Button -->
@@ -299,8 +317,7 @@
             <li><%= link_to "Track Order / Delivery", tracking_lookup_path, class: "hover:text-white" %></li>
             <li><%= link_to "About Our Store", about_path, class: "hover:text-white" %></li>
             <li><%= link_to "Location & Trading Hours", contact_path, class: "hover:text-white" %></li>
-            <li><%= link_to "Staff Admin Portal", admin_root_path, class: "text-stone-400 hover:text-white" %></li>
-          </ul>
+           </ul>
           <div class="mt-4 p-3 bg-stone-900 rounded-lg border border-stone-800 text-[11px] text-stone-300">
             <span class="font-bold text-white block mb-0.5">Drive-Thru Bag Loading:</span>
             Pull into Bay 1 or 2 with your ute, float, or trailer — we load your bags and bales for you.
@@ -334,7 +351,7 @@
 
       <!-- Copyright & Bottom Disclaimers -->
       <div class="max-w-7xl mx-auto px-4 border-t border-stone-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500 gap-4">
-        <p>&copy; <%= Time.current.year %> Muchea Stockfeed &amp; Hardware. All Rights Reserved.</p>
+        <p>&copy; <%= Time.current.year %> Muchea Trading Pty Ltd t/a Muchea Stockfeed &amp; Hardware. All Rights Reserved.</p>
         <p class="flex items-center gap-2">
           <span>ABN 48 619 284 921</span>
           <span>•</span>

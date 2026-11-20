@@ -9,6 +9,17 @@ module Admin
       items << { label: "CSV Import", desktop_label: "Bulk Import", path: import_admin_inventory_index_path, active: controller_name == "inventory" && action_name == "import" } if can?(:bulk_csv_import)
       items << { label: "Products", path: admin_products_path, active: controller_name == "products" } if can_any?(:manage_products, :view_inventory, :manage_inventory)
       items << { label: "Categories", path: admin_categories_path, active: controller_name == "categories" } if can?(:manage_categories)
+
+      pending_members = Customer.pending.count
+      member_label = pending_members > 0 ? "Members (#{pending_members})" : "Members"
+      member_desktop = pending_members > 0 ? "👥 Members (#{pending_members} pending)" : "👥 Member Accounts"
+      items << { label: member_label, desktop_label: member_desktop, path: admin_customers_path, active: controller_name == "customers", highlight: pending_members > 0 }
+
+      new_inquiries = ContactInquiry.where(status: "new").count
+      inq_label = new_inquiries > 0 ? "Enquiries (#{new_inquiries})" : "Enquiries"
+      inq_desktop = new_inquiries > 0 ? "📬 Enquiries (#{new_inquiries} new)" : "📬 Enquiries"
+      items << { label: inq_label, desktop_label: inq_desktop, path: admin_inquiries_path, active: controller_name == "inquiries", highlight: new_inquiries > 0 }
+
       items << { label: "Team", desktop_label: "Team & Admins", path: admin_users_path, active: controller_name == "users" } if can_any?(:manage_admin_users, :manage_super_admins)
       items << { label: "Roles", path: admin_roles_path, active: controller_name == "roles" } if can?(:manage_roles)
       items

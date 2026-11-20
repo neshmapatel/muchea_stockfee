@@ -1,4 +1,6 @@
 class CheckoutController < ApplicationController
+  before_action :require_approved_customer!
+
   def new
     if current_cart.empty?
       redirect_to cart_path, alert: "Your cart is empty. Please add products before checking out."
@@ -6,8 +8,12 @@ class CheckoutController < ApplicationController
     end
 
     @order = Order.new(
+      customer_name: current_customer&.name,
+      customer_email: current_customer&.email,
+      customer_phone: current_customer&.phone,
+      delivery_address: current_customer&.property_address,
       fulfillment_type: current_cart.fulfillment_type,
-      postcode: current_cart.postcode
+      postcode: current_cart.postcode.presence || current_customer&.postcode
     )
   end
 

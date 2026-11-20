@@ -1,0 +1,99 @@
+<% content_for :title, "Member Profile: #{@customer.name}" %>
+
+<div class="space-y-6 max-w-4xl">
+  <!-- Back Link -->
+  <div>
+    <%= link_to "← Back to Customer Approvals", admin_customers_path, class: "text-xs font-bold text-stone-600 hover:text-stone-900 transition" %>
+  </div>
+
+  <!-- Header Card -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl font-black text-stone-900"><%= @customer.name %></h1>
+        <span class="inline-block px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider border <%= @customer.status_badge_color %>">
+          <%= @customer.status %>
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Registered on <%= @customer.created_at.strftime("%d %B %Y at %H:%M") %>
+      </p>
+    </div>
+
+    <!-- Super Admin Action Buttons -->
+    <% if current_admin.super_admin? %>
+      <div class="flex items-center gap-2">
+        <% if @customer.pending? || @customer.rejected? %>
+          <%= button_to "Approve & Unlock Prices", approve_admin_customer_path(@customer), method: :patch, class: "px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer" %>
+        <% end %>
+        <% if @customer.pending? || @customer.approved? %>
+          <%= form_with url: reject_admin_customer_path(@customer), method: :patch, local: true, class: "inline-flex items-center gap-2" do |f| %>
+            <%= f.text_field :rejection_reason, placeholder: "Decline reason...", class: "px-3 py-2 text-xs rounded-xl border border-stone-300 w-44" %>
+            <%= f.submit "Decline", class: "px-3 py-2 bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs rounded-xl transition cursor-pointer" %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-xs text-stone-500 italic">
+        🔒 Super Admin access required to approve or decline activation requests.
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+    <!-- Contact Info -->
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-4">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-stone-800 border-b border-stone-100 pb-2">
+        Contact &amp; Identification
+      </h3>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Email Address</span>
+        <a href="mailto:<%= @customer.email %>" class="text-sm font-bold text-stone-900 hover:underline"><%= @customer.email %></a>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Phone Number</span>
+        <a href="tel:<%= @customer.phone %>" class="text-sm font-bold text-stone-900 hover:underline"><%= @customer.phone %></a>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Farm / Business Name</span>
+        <span class="text-sm font-semibold text-stone-800"><%= @customer.business_name.presence || "None specified" %></span>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Australian Business Number (ABN)</span>
+        <span class="text-sm font-mono font-bold text-stone-900"><%= @customer.abn.presence || "Not supplied" %></span>
+      </div>
+    </div>
+
+    <!-- Location & Farm Category -->
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-4">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-stone-800 border-b border-stone-100 pb-2">
+        Property Location &amp; Category
+      </h3>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Property Address</span>
+        <span class="text-sm font-semibold text-stone-800"><%= @customer.property_address.presence || "Not specified" %></span>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Suburb, State &amp; Postcode</span>
+        <span class="text-sm font-bold text-stone-900">
+          <%= [@customer.suburb, @customer.state, @customer.postcode].reject(&:blank?).join(", ").presence || "Muchea Region" %>
+        </span>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Primary Feed Interest</span>
+        <span class="text-sm font-semibold text-stone-800"><%= @customer.primary_interest.presence || "General Stockfeed" %></span>
+      </div>
+      <div>
+        <span class="block text-stone-400 font-bold uppercase text-[10px]">Approval Log</span>
+        <% if @customer.approved_at %>
+          <span class="text-emerald-700 font-semibold">Approved by <%= @customer.approved_by&.name || "Super Admin" %> on <%= @customer.approved_at.strftime("%d %b %Y at %H:%M") %></span>
+        <% elsif @customer.rejected? %>
+          <span class="text-rose-700 font-semibold">Declined by <%= @customer.approved_by&.name || "Super Admin" %></span>
+        <% else %>
+          <span class="text-amber-700 font-semibold">Awaiting initial review by Super Admin</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

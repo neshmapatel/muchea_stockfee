@@ -1,0 +1,14 @@
+NEW RURAL CUSTOMER ENQUIRY - MUCHEA STOCKFEED & HARDWARE
+============================================================
+
+Customer: <%= @inquiry.name %>
+Phone: <%= @inquiry.phone %>
+Email: <%= @inquiry.email %>
+Location: <%= @inquiry.location %>
+Time: <%= @inquiry.created_at.strftime("%d %B %Y, %I:%M %p AWST") %>
+
+Message:
+<%= @inquiry.message %>
+
+View in Admin:
+http://localhost:3000/admin/inquiries/<%= @inquiry.id %>

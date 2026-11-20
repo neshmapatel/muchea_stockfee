@@ -65,6 +65,7 @@ class Cart
   end
 
   def delivery_fee_cents
+    return 0 if empty?
     return 0 if fulfillment_type == "pickup"
 
     zone = delivery_zone
@@ -82,10 +83,12 @@ class Cart
 
   # Australian GST is 10%, included in prices (1/11th of total inc GST)
   def gst_cents
+    return 0 if empty?
     ((subtotal_cents + delivery_fee_cents) / 11.0).round
   end
 
   def total_cents
+    return 0 if empty?
     subtotal_cents + delivery_fee_cents
   end
 

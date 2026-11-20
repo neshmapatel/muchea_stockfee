@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Tax Invoice - <%= @order.order_number %> | Muchea Stockfeed & Hardware</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <%= render "shared/brand_theme" %>
   <style>
     @media print {
       .no-print { display: none !important; }
@@ -22,7 +23,7 @@
     <!-- Header -->
     <div class="flex justify-between items-start border-b border-stone-200 pb-6">
       <div class="flex items-center gap-4">
-        <img src="/images/muchea_logo.jpg" alt="Logo" class="w-16 h-16 rounded-full border border-stone-300">
+        <img src="/images/muchea_logo.jpg" alt="Logo" class="w-16 h-16 rounded-full border border-stone-300" width="64" height="64" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover;">
         <div>
           <h1 class="text-xl font-black uppercase tracking-wider text-stone-900">Muchea Stockfeed & Hardware</h1>
           <p class="text-stone-500 font-semibold">Muchea Stockfeed & Hardware Pty Ltd</p>

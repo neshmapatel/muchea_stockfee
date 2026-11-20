@@ -1,0 +1,14 @@
+<% content_for :title, "Add New Category" %>
+
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-black text-bush-900 tracking-tight">Add New Feed or Supply Category</h1>
+      <p class="text-xs text-stone-500 mt-1">Create a new product section in the online catalogue.</p>
+    </div>
+    <%= link_to "← Back to Categories", admin_categories_path, class: "px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold rounded-xl transition" %>
+  </div>
+
+  <%= render "form", category: @category %>
+</div>
+

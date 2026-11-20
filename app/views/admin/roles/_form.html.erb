@@ -1,0 +1,107 @@
+<%= form_with model: [:admin, role], url: role.new_record? ? admin_roles_path : admin_role_path(role), local: true, class: "space-y-6" do |f| %>
+  <% if role.errors.any? %>
+    <div class="p-4 bg-rose-50 border border-rose-300 rounded-2xl text-rose-800 text-xs">
+      <strong class="font-bold block mb-1">Please fix the following <%= pluralize(role.errors.count, "error") %>:</strong>
+      <ul class="list-disc pl-5 space-y-0.5">
+        <% role.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Role Basics -->
+  <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4">
+      <h2 class="text-sm font-black text-bush-900 uppercase tracking-wider">1. Role Identity</h2>
+      <p class="text-xs text-stone-500 mt-0.5">Give the role a clear name and description for team members.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-2">
+        <%= f.label :name, "Role Name *", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.text_field :name, required: true, placeholder: "e.g. Regional Dispatcher, Yard Supervisor", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+
+      <div>
+        <%= f.label :display_order, "Display Order", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+        <%= f.number_field :display_order, value: role.display_order || 10, class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, "Role Responsibility Summary", class: "block text-xs font-bold text-stone-700 uppercase mb-1" %>
+      <%= f.text_area :description, rows: 2, placeholder: "Brief summary of what this staff role is responsible for...", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+    </div>
+
+    <% if current_admin.super_admin? && role.slug != "super_admin" %>
+      <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+        <%= f.check_box :is_super_admin, class: "mt-0.5 w-4 h-4 rounded text-amber-600 focus:ring-amber-600" %>
+        <div>
+          <label for="role_is_super_admin" class="text-xs font-black text-amber-950 block cursor-pointer">
+            Grant Super Admin Wildcard Authority (Unrestricted Access)
+          </label>
+          <span class="text-[11px] text-amber-800">
+            Users with this role automatically receive full permission across all current and future modules, including creating other Super Admins.
+          </span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Granular Permissions Matrix -->
+  <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div>
+        <h2 class="text-sm font-black text-bush-900 uppercase tracking-wider">2. Module &amp; Action Permissions</h2>
+        <p class="text-xs text-stone-500 mt-0.5">Select individual capabilities unlocked for users assigned to this role.</p>
+      </div>
+      <% unless role.is_super_admin? %>
+        <div class="flex items-center gap-2 text-xs">
+          <button type="button" onclick="toggleAllPerms(true)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 font-bold text-stone-700 cursor-pointer">Select All</button>
+          <button type="button" onclick="toggleAllPerms(false)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 font-bold text-stone-500 cursor-pointer">Clear All</button>
+        </div>
+      <% end %>
+    </div>
+
+    <% if role.is_super_admin? %>
+      <div class="p-6 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold">
+        ★ This is a Super Admin role. All permissions below — and any future features added to the platform — are permanently enabled.
+      </div>
+    <% else %>
+      <%= hidden_field_tag "role[permissions][]", "" %>
+      <div class="space-y-6">
+        <% Role::PERMISSION_CATALOG.each do |group_title, perms| %>
+          <div class="space-y-3">
+            <h3 class="text-[11px] font-black uppercase tracking-wider text-bush-800 border-b border-stone-100 pb-1.5"><%= group_title %></h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <% perms.each do |key, meta| %>
+                <label class="flex items-start gap-3 p-3.5 rounded-2xl border border-stone-200 hover:border-bush-600 transition cursor-pointer has-[:checked]:bg-emerald-50/60 has-[:checked]:border-emerald-600">
+                  <%= check_box_tag "role[permissions][]", key, role.permissions.include?(key), id: "perm_#{key}", class: "perm-checkbox mt-0.5 w-4 h-4 rounded text-bush-800 focus:ring-bush-800" %>
+                  <div>
+                    <span class="block text-xs font-bold text-stone-900"><%= meta[:label] %></span>
+                    <span class="block text-[11px] text-stone-500 mt-0.5 leading-snug"><%= meta[:description] %></span>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex items-center justify-end gap-3 pt-2">
+    <%= link_to "Cancel", admin_roles_path, class: "px-5 py-2.5 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-200 transition" %>
+    <%= f.submit role.new_record? ? "Create Role ✓" : "Save Role Permissions ✓", class: "px-6 py-2.5 bg-bush-800 hover:bg-bush-900 text-white text-xs font-black rounded-xl shadow cursor-pointer transition" %>
+  </div>
+<% end %>
+
+<script>
+  function toggleAllPerms(checked) {
+    document.querySelectorAll('.perm-checkbox').forEach(function(cb) {
+      cb.checked = checked;
+    });
+  }
+</script>
+

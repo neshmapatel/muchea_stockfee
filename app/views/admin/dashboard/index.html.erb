@@ -4,101 +4,230 @@
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-black text-bush-900 tracking-tight">Warehouse Operations Center</h1>
-      <p class="text-xs text-stone-500 mt-1">Live overview of orders, dispatch runs, drive-thru collections, and stock inventory.</p>
+      <p class="text-xs text-stone-500 mt-1">
+        Signed in as <strong class="text-stone-700"><%= current_admin.name %></strong> (<%= current_admin.role_name %>). Live overview of warehouse operations.
+      </p>
     </div>
-    <div class="flex items-center gap-2">
-      <%= link_to "Live Inventory Manager", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 text-white rounded-lg text-xs font-bold hover:bg-bush-900 shadow transition" %>
-      <%= link_to "All Orders & Dispatches", admin_orders_path, class: "px-4 py-2 bg-white text-stone-700 border border-stone-300 rounded-lg text-xs font-bold hover:bg-stone-50 transition" %>
+    <div class="flex flex-wrap items-center gap-2">
+      <% if can_any?(:view_inventory, :manage_inventory) %>
+        <%= link_to "Live Inventory Manager", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 text-white rounded-lg text-xs font-bold hover:bg-bush-900 shadow transition" %>
+      <% end %>
+      <% if can_any?(:view_orders, :manage_orders) %>
+        <%= link_to "All Orders & Dispatches", admin_orders_path, class: "px-4 py-2 bg-white text-stone-700 border border-stone-300 rounded-lg text-xs font-bold hover:bg-stone-50 transition" %>
+      <% end %>
+      <% if can_any?(:manage_admin_users, :manage_super_admins) %>
+        <%= link_to "Team & Access", admin_users_path, class: "px-4 py-2 bg-amber-50 text-amber-950 border border-amber-300 rounded-lg text-xs font-bold hover:bg-amber-100 transition" %>
+      <% end %>
     </div>
   </div>
 
-  <!-- Key Metric Cards -->
+  <!-- Key Metric Cards (Filtered by Role Authority) -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Sales (AUD)</span>
-      <span class="text-2xl font-black text-bush-900 mt-1 block"><%= format_aud(@total_revenue_cents) %></span>
-      <span class="text-[11px] text-stone-500 mt-1 block">Includes 10% Australian GST</span>
-    </div>
+    <% if can?(:view_financials) %>
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Sales (AUD)</span>
+        <span class="text-2xl font-black text-bush-900 mt-1 block"><%= format_aud(@total_revenue_cents.to_i) %></span>
+        <span class="text-[11px] text-stone-500 mt-1 block">Includes 10% Australian GST</span>
+      </div>
+    <% end %>
 
-    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Active Fulfillments</span>
-      <span class="text-2xl font-black text-amber-600 mt-1 block"><%= @active_fulfillments_count %></span>
-      <span class="text-[11px] text-stone-500 mt-1 block">Paid, packing, or on delivery trucks</span>
-    </div>
+    <% if can_any?(:view_orders, :manage_orders) %>
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Active Fulfillments</span>
+        <span class="text-2xl font-black text-amber-600 mt-1 block"><%= @active_fulfillments_count.to_i %></span>
+        <span class="text-[11px] text-stone-500 mt-1 block">Paid, packing, or on delivery trucks</span>
+      </div>
+    <% end %>
 
-    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Low Stock Warnings</span>
-      <span class="text-2xl font-black text-rose-600 mt-1 block"><%= @low_stock_variants.count %></span>
-      <span class="text-[11px] text-stone-500 mt-1 block">Items below reorder thresholds</span>
-    </div>
+    <% if can_any?(:view_inventory, :manage_inventory, :manage_products) %>
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Low Stock Warnings</span>
+        <span class="text-2xl font-black text-rose-600 mt-1 block"><%= @low_stock_variants.size %></span>
+        <span class="text-[11px] text-stone-500 mt-1 block">Items below reorder thresholds</span>
+      </div>
 
-    <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-      <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Stock Units</span>
-      <span class="text-2xl font-black text-stone-900 mt-1 block"><%= @total_stock_units %></span>
-      <span class="text-[11px] text-stone-500 mt-1 block">Across <%= @total_products_count %> product lines</span>
-    </div>
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block">Total Stock Units</span>
+        <span class="text-2xl font-black text-stone-900 mt-1 block"><%= @total_stock_units.to_i %></span>
+        <span class="text-[11px] text-stone-500 mt-1 block">Across <%= @total_products_count.to_i %> product lines</span>
+      </div>
+    <% end %>
   </div>
+
+  <!-- Stock Management Hub (Rendered based on Role Permissions) -->
+  <% if can_any?(:use_barcode_scanner, :bulk_csv_import, :manage_products, :manage_inventory) %>
+    <div class="bg-gradient-to-br from-bush-900 to-bush-950 rounded-3xl p-6 sm:p-8 text-white shadow-md border border-bush-800">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-bush-800">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400 text-bush-950 inline-block mb-1">
+            Stock &amp; Inventory Operations
+          </span>
+          <h2 class="text-xl font-black text-white">Add &amp; Manage Warehouse Stock</h2>
+          <p class="text-xs text-stone-300 mt-0.5">Available restock &amp; catalog tools permitted for your role.</p>
+        </div>
+        <% if can_any?(:view_inventory, :manage_inventory) %>
+          <%= link_to "Open Live Inventory →", admin_inventory_index_path, class: "px-4 py-2 bg-bush-800 hover:bg-bush-700 text-white rounded-xl text-xs font-bold transition border border-bush-700 whitespace-nowrap" %>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <% if can?(:use_barcode_scanner) %>
+          <%= link_to scanner_admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+                ⚡
+              </div>
+              <h3 class="text-sm font-black text-white">1. Barcode Scanner</h3>
+              <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+                Scan bags with a handheld gun. Quick buttons for +1, +10, or +40 full pallets.
+              </p>
+            </div>
+            <span class="mt-4 text-[11px] font-bold text-amber-400 group-hover:underline">Open Terminal ➔</span>
+          <% end %>
+        <% end %>
+
+        <% if can?(:bulk_csv_import) %>
+          <%= link_to import_admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-400/20 text-emerald-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+                📂
+              </div>
+              <h3 class="text-sm font-black text-white">2. Bulk CSV Import</h3>
+              <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+                Upload Excel or supplier manifests to update 100+ stock counts or create items in 2 seconds.
+              </p>
+            </div>
+            <span class="mt-4 text-[11px] font-bold text-emerald-400 group-hover:underline">Upload Spreadsheet ➔</span>
+          <% end %>
+        <% end %>
+
+        <% if can?(:manage_products) %>
+          <%= link_to new_admin_product_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-sky-400/20 text-sky-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+                ➕
+              </div>
+              <h3 class="text-sm font-black text-white">3. Add New Product</h3>
+              <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+                Fill in name, brand, retail price (inc. GST), packaging size, and initial stock count.
+              </p>
+            </div>
+            <span class="mt-4 text-[11px] font-bold text-sky-400 group-hover:underline">Add Product Form ➔</span>
+          <% end %>
+        <% end %>
+
+        <% if can?(:manage_inventory) %>
+          <%= link_to admin_inventory_index_path, class: "bg-bush-800/80 hover:bg-bush-700/90 p-5 rounded-2xl border border-bush-700/80 transition flex flex-col justify-between group" do %>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-purple-400/20 text-purple-400 flex items-center justify-center text-lg mb-3 group-hover:scale-110 transition">
+                📋
+              </div>
+              <h3 class="text-sm font-black text-white">4. Live Table &amp; Adjust</h3>
+              <p class="text-xs text-stone-300 mt-1 leading-relaxed">
+                Instant inline "+10", "+40", "-1" and exact stockcount override (=) across all items.
+              </p>
+            </div>
+            <span class="mt-4 text-[11px] font-bold text-purple-400 group-hover:underline">Manage Live Table ➔</span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Role & Staff Governance Quick Banner -->
+  <% if can_any?(:manage_admin_users, :manage_super_admins, :manage_roles) %>
+    <div class="bg-white rounded-2xl border border-amber-200 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl flex-shrink-0">
+          🛡️
+        </div>
+        <div>
+          <h2 class="text-sm font-black text-bush-950">Team Governance &amp; Role-Based Access</h2>
+          <p class="text-xs text-stone-500 mt-0.5">
+            <strong><%= @active_staff_count.to_i %></strong> active staff account(s) across <strong><%= @roles_count.to_i %></strong> configured roles.
+            <% if current_admin.super_admin? %>
+              You have Super Admin authority to appoint other Super Admins or customize role permissions.
+            <% end %>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <% if can_any?(:manage_admin_users, :manage_super_admins) %>
+          <%= link_to "➕ Add Staff / Super Admin", new_admin_user_path, class: "px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition shadow-xs" %>
+          <%= link_to "View Team (#{@active_staff_count.to_i})", admin_users_path, class: "px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-bold transition" %>
+        <% end %>
+        <% if can?(:manage_roles) %>
+          <%= link_to "Configure Roles", admin_roles_path, class: "px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
   <!-- Active Orders Queue -->
-  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-    <div class="p-5 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
-      <div>
-        <h2 class="text-sm font-bold text-bush-900">Recent Customer Orders & Fulfillment Queue</h2>
-        <p class="text-[11px] text-stone-500 mt-0.5">Click "Advance Status" to progress orders from Paid to Packing to Dispatched to Delivered.</p>
+  <% if can_any?(:view_orders, :manage_orders) %>
+    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+      <div class="p-5 bg-stone-50 border-b border-stone-200 flex justify-between items-center">
+        <div>
+          <h2 class="text-sm font-bold text-bush-900">Recent Customer Orders &amp; Fulfillment Queue</h2>
+          <p class="text-[11px] text-stone-500 mt-0.5">
+            <%= can?(:manage_orders) ? 'Click "Advance Status" to progress orders from Paid to Packing to Dispatched to Delivered.' : 'View customer order totals, GST amounts, and fulfillment statuses.' %>
+          </p>
+        </div>
+        <%= link_to "View All Orders →", admin_orders_path, class: "text-xs text-bush-800 font-bold hover:underline" %>
       </div>
-      <%= link_to "View All Orders →", admin_orders_path, class: "text-xs text-bush-800 font-bold hover:underline" %>
-    </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
-          <tr>
-            <th class="py-3 px-4">Order #</th>
-            <th class="py-3 px-4">Customer</th>
-            <th class="py-3 px-4">Type / Suburb</th>
-            <th class="py-3 px-4">Total</th>
-            <th class="py-3 px-4">Status</th>
-            <th class="py-3 px-4 text-right">Quick Action</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-stone-100">
-          <% @recent_orders.each do |order| %>
-            <tr class="hover:bg-stone-50 transition">
-              <td class="py-3 px-4 font-mono font-bold text-bush-900">
-                <%= link_to order.order_number, admin_order_path(order), class: "hover:underline" %>
-              </td>
-              <td class="py-3 px-4">
-                <strong class="text-stone-900 block"><%= order.customer_name %></strong>
-                <span class="text-stone-400 text-[11px]"><%= order.customer_phone %></span>
-              </td>
-              <td class="py-3 px-4">
-                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold <%= order.pickup? ? 'bg-wheat-100 text-bush-900' : 'bg-bush-100 text-bush-900' %>">
-                  <%= order.pickup? ? 'Drive-Thru Bay' : "Delivery (#{order.suburb})" %>
-                </span>
-              </td>
-              <td class="py-3 px-4 font-bold text-stone-900"><%= order.formatted_total %></td>
-              <td class="py-3 px-4">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border <%= order.status_badge_class %>">
-                  <%= order.status_label %>
-                </span>
-              </td>
-              <td class="py-3 px-4 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  <%= link_to "View", admin_order_path(order), class: "text-stone-600 hover:text-stone-900 font-semibold" %>
-                  <% unless order.status == 'delivered' || order.status == 'cancelled' %>
-                    <%= button_to "Advance Status →", advance_status_admin_order_path(order), method: :patch, class: "px-2.5 py-1 bg-bush-800 text-white font-bold rounded text-[11px] hover:bg-bush-900 transition cursor-pointer" %>
-                  <% end %>
-                </div>
-              </td>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
+            <tr>
+              <th class="py-3 px-4">Order #</th>
+              <th class="py-3 px-4">Customer</th>
+              <th class="py-3 px-4">Type / Suburb</th>
+              <th class="py-3 px-4">Total</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4 text-right">Quick Action</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-stone-100">
+            <% @recent_orders.each do |order| %>
+              <tr class="hover:bg-stone-50 transition">
+                <td class="py-3 px-4 font-mono font-bold text-bush-900">
+                  <%= link_to order.order_number, admin_order_path(order), class: "hover:underline" %>
+                </td>
+                <td class="py-3 px-4">
+                  <strong class="text-stone-900 block"><%= order.customer_name %></strong>
+                  <span class="text-stone-400 text-[11px]"><%= order.customer_phone %></span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold <%= order.pickup? ? 'bg-wheat-100 text-bush-900' : 'bg-bush-100 text-bush-900' %>">
+                    <%= order.pickup? ? 'Drive-Thru Bay' : "Delivery (#{order.suburb})" %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 font-bold text-stone-900"><%= order.formatted_total %></td>
+                <td class="py-3 px-4">
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border <%= order.status_badge_class %>">
+                    <%= order.status_label %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <%= link_to "View", admin_order_path(order), class: "text-stone-600 hover:text-stone-900 font-semibold" %>
+                    <% if can?(:manage_orders) && !%w[delivered cancelled].include?(order.status) %>
+                      <%= button_to "Advance Status →", advance_status_admin_order_path(order), method: :patch, class: "px-2.5 py-1 bg-bush-800 text-white font-bold rounded text-[11px] hover:bg-bush-900 transition cursor-pointer" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <!-- Low Stock Alert Box -->
-  <% if @low_stock_variants.any? %>
+  <% if can_any?(:view_inventory, :manage_inventory, :manage_products) && @low_stock_variants.any? %>
     <div class="bg-white rounded-2xl border border-rose-200 shadow-sm overflow-hidden">
       <div class="p-5 bg-rose-50 border-b border-rose-200 flex justify-between items-center">
         <div>
@@ -121,7 +250,9 @@
             </div>
             <div class="flex justify-between items-center pt-2 border-t border-stone-200">
               <span class="text-rose-600 font-black"><%= var.stock_quantity %> left (Min: <%= var.low_stock_threshold %>)</span>
-              <%= button_to "+10 Stock", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-emerald-700 text-white rounded font-bold text-[10px] hover:bg-emerald-800 cursor-pointer" %>
+              <% if can?(:manage_inventory) %>
+                <%= button_to "+10 Stock", quick_adjust_admin_inventory_index_path(variant_id: var.id, delta: 10, reason: "Restock Shipment"), method: :post, class: "px-2 py-1 bg-emerald-700 text-white rounded font-bold text-[10px] hover:bg-emerald-800 cursor-pointer" %>
+              <% end %>
             </div>
           </div>
         <% end %>
@@ -129,4 +260,3 @@
     </div>
   <% end %>
 </div>
-

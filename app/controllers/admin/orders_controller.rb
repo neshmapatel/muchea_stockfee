@@ -1,5 +1,9 @@
 module Admin
   class OrdersController < BaseController
+    before_action -> { authorize_any!(:view_orders, :manage_orders) }, only: [ :index, :show, :packing_slip ]
+    before_action -> { authorize!(:manage_orders) }, only: [ :advance_status, :update ]
+    before_action :set_order, only: [ :show, :advance_status, :update, :packing_slip ]
+
     def index
       @orders = Order.recent
 
@@ -14,20 +18,25 @@ module Admin
           term, term, term, term
         )
       end
+
+      order_ids = @orders.pluck(:id)
+      @item_quantities_by_order = if order_ids.any?
+        OrderItem.where(order_id: order_ids).group(:order_id).sum(:quantity)
+      else
+        {}
+      end
     end
 
     def show
-      @order = Order.find(params[:id])
     end
 
     def advance_status
-      @order = Order.find(params[:id])
       next_status = case @order.status
-                    when "paid" then "packing"
-                    when "packing" then "dispatched"
-                    when "dispatched" then "delivered"
-                    else @order.status
-                    end
+      when "paid" then "packing"
+      when "packing" then "dispatched"
+      when "dispatched" then "delivered"
+      else @order.status
+      end
 
       updates = { status: next_status }
       updates[:dispatched_at] = Time.current if next_status == "dispatched"
@@ -38,7 +47,6 @@ module Admin
     end
 
     def update
-      @order = Order.find(params[:id])
       if @order.update(order_params)
         redirect_to admin_order_path(@order), notice: "Order updated successfully."
       else
@@ -47,15 +55,17 @@ module Admin
     end
 
     def packing_slip
-      @order = Order.find(params[:id])
       render layout: false
     end
 
     private
+
+    def set_order
+      @order = Order.includes(items: { product_variant: :product }).find(params[:id])
+    end
 
     def order_params
       params.require(:order).permit(:status, :carrier_name, :delivery_notes)
     end
   end
 end
-

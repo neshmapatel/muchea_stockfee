@@ -1,0 +1,42 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1c1917; background-color: #fafaf9; border-radius: 12px; border: 1px solid #e7e5e4;">
+  <div style="border-bottom: 2px solid #c91820; padding-bottom: 16px; margin-bottom: 20px;">
+    <h1 style="color: #c91820; font-size: 20px; margin: 0;">New Rural Customer Enquiry</h1>
+    <p style="color: #78716c; font-size: 13px; margin: 4px 0 0;">Received via the Muchea Stockfeed & Hardware Contact Portal</p>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+    <tr>
+      <td style="padding: 8px 0; color: #78716c; width: 140px; font-weight: 600;">Customer Name:</td>
+      <td style="padding: 8px 0; font-weight: bold; color: #1c1917;"><%= @inquiry.name %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #78716c; font-weight: 600;">Phone Number:</td>
+      <td style="padding: 8px 0;"><a href="tel:<%= @inquiry.phone %>" style="color: #c91820; font-weight: bold; text-decoration: none;"><%= @inquiry.phone %></a></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #78716c; font-weight: 600;">Email Address:</td>
+      <td style="padding: 8px 0;"><a href="mailto:<%= @inquiry.email %>" style="color: #1c1917;"><%= @inquiry.email %></a></td>
+    </tr>
+    <% if @inquiry.location.present? %>
+    <tr>
+      <td style="padding: 8px 0; color: #78716c; font-weight: 600;">Property / Location:</td>
+      <td style="padding: 8px 0;"><%= @inquiry.location %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <td style="padding: 8px 0; color: #78716c; font-weight: 600;">Submitted At:</td>
+      <td style="padding: 8px 0;"><%= @inquiry.created_at.strftime("%d %B %Y, %I:%M %p AWST") %></td>
+    </tr>
+  </table>
+
+  <div style="background-color: #ffffff; border: 1px solid #e7e5e4; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+    <h3 style="margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #78716c;">Enquiry Message:</h3>
+    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #292524; white-space: pre-wrap;"><%= @inquiry.message %></p>
+  </div>
+
+  <div style="text-align: center; margin-top: 24px;">
+    <a href="http://localhost:3000/admin/inquiries/<%= @inquiry.id %>" style="display: inline-block; background-color: #0f1112; color: #ffffff; padding: 12px 24px; font-size: 13px; font-weight: bold; text-decoration: none; border-radius: 8px;">
+      View Enquiry in Admin Operations Hub →
+    </a>
+  </div>
+</div>

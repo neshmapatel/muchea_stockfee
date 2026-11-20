@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_17_172523) do
+  create_table "admin_users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.datetime "last_sign_in_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "role_id", null: false
+    t.boolean "active", default: true, null: false
+    t.string "phone"
+    t.integer "created_by_id"
+    t.index ["active"], name: "index_admin_users_on_active"
+    t.index ["created_by_id"], name: "index_admin_users_on_created_by_id"
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["role_id"], name: "index_admin_users_on_role_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
     t.string "slug", null: false
@@ -21,6 +38,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_categories_on_slug", unique: true
+  end
+
+  create_table "contact_inquiries", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.string "location"
+    t.text "message", null: false
+    t.string "status", default: "new", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_contact_inquiries_on_created_at"
+    t.index ["status"], name: "index_contact_inquiries_on_status"
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.string "business_name"
+    t.string "abn"
+    t.string "property_address"
+    t.string "suburb"
+    t.string "postcode"
+    t.string "state", default: "WA"
+    t.string "primary_interest"
+    t.text "notes"
+    t.string "password_digest", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "approved_at"
+    t.integer "approved_by_id"
+    t.text "rejection_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_customers_on_approved_by_id"
+    t.index ["email"], name: "index_customers_on_email", unique: true
+    t.index ["status"], name: "index_customers_on_status"
   end
 
   create_table "delivery_zones", force: :cascade do |t|
@@ -41,6 +97,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_000001) do
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "admin_user_id"
+    t.index ["admin_user_id"], name: "index_inventory_logs_on_admin_user_id"
     t.index ["product_variant_id"], name: "index_inventory_logs_on_product_variant_id"
   end
 
@@ -121,6 +179,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_000001) do
     t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.text "permissions", default: "[]", null: false
+    t.boolean "is_super_admin", default: false, null: false
+    t.boolean "system_role", default: false, null: false
+    t.integer "display_order", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["is_super_admin"], name: "index_roles_on_is_super_admin"
+    t.index ["slug"], name: "index_roles_on_slug", unique: true
+  end
+
+  add_foreign_key "admin_users", "roles"
+  add_foreign_key "customers", "admin_users", column: "approved_by_id"
+  add_foreign_key "inventory_logs", "admin_users", on_delete: :nullify
   add_foreign_key "inventory_logs", "product_variants"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "product_variants"

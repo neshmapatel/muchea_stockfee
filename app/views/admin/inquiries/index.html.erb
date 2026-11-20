@@ -1,0 +1,119 @@
+<% content_for :title, "Customer Enquiries & Quote Requests" %>
+
+<div class="space-y-6">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200">
+    <div>
+      <h1 class="text-2xl font-black text-stone-900 tracking-tight">Customer Enquiries &amp; Quote Requests</h1>
+      <p class="text-xs text-stone-500 mt-0.5">
+        Messages submitted from the website contact page for hay rolls, bulk feed, and fencing orders.
+      </p>
+    </div>
+
+    <% if @new_count > 0 %>
+      <div class="px-4 py-2 bg-rose-100 border border-rose-300 text-rose-900 rounded-xl text-xs font-bold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+        <span><%= @new_count %> unread enquiry(s) awaiting response</span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-1.5 text-xs font-semibold overflow-x-auto pb-1">
+      <%= link_to "All (#{@new_count + @in_progress_count + @resolved_count})", admin_inquiries_path, class: "px-3 py-1.5 rounded-lg transition #{params[:status].blank? || params[:status] == 'all' ? 'bg-stone-900 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+      <%= link_to admin_inquiries_path(status: "new"), class: "px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 #{params[:status] == 'new' ? 'bg-rose-700 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" do %>
+        <span>New</span>
+        <% if @new_count > 0 %>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black <%= params[:status] == 'new' ? 'bg-white text-rose-900' : 'bg-rose-600 text-white' %>">
+            <%= @new_count %>
+          </span>
+        <% end %>
+      <% end %>
+      <%= link_to "In Progress (#{@in_progress_count})", admin_inquiries_path(status: "in_progress"), class: "px-3 py-1.5 rounded-lg transition #{params[:status] == 'in_progress' ? 'bg-amber-600 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+      <%= link_to "Resolved (#{@resolved_count})", admin_inquiries_path(status: "resolved"), class: "px-3 py-1.5 rounded-lg transition #{params[:status] == 'resolved' ? 'bg-emerald-700 text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}" %>
+    </div>
+
+    <!-- Search Form -->
+    <div class="w-full md:w-72">
+      <%= form_with url: admin_inquiries_path, method: :get, local: true do |f| %>
+        <%= f.hidden_field :status, value: params[:status] if params[:status].present? %>
+        <div class="relative">
+          <%= f.text_field :q, value: params[:q], placeholder: "Search customer, phone, text...", class: "w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-stone-900" %>
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Inquiries Table -->
+  <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+    <% if @inquiries.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-stone-100 text-stone-500 uppercase text-[10px] tracking-wider border-b border-stone-200">
+            <tr>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4">Customer</th>
+              <th class="py-3 px-4">Contact</th>
+              <th class="py-3 px-4">Location</th>
+              <th class="py-3 px-4">Message Snippet</th>
+              <th class="py-3 px-4">Date</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-100">
+            <% @inquiries.each do |inq| %>
+              <tr class="hover:bg-stone-50 transition <%= 'bg-rose-50/30' if inq.new? %>">
+                <td class="py-3.5 px-4 whitespace-nowrap">
+                  <% if inq.new? %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-100 text-rose-800 border border-rose-300">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> New
+                    </span>
+                  <% elsif inq.status == 'in_progress' %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800 border border-amber-300">
+                      In Progress
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      ✓ Resolved
+                    </span>
+                  <% end %>
+                </td>
+                <td class="py-3.5 px-4 whitespace-nowrap">
+                  <strong class="text-stone-900 block font-bold text-sm"><%= inq.name %></strong>
+                </td>
+                <td class="py-3.5 px-4 whitespace-nowrap">
+                  <a href="tel:<%= inq.phone %>" class="text-brand-primary font-bold hover:underline block"><%= inq.phone %></a>
+                  <span class="text-stone-400 text-[11px]"><%= inq.email %></span>
+                </td>
+                <td class="py-3.5 px-4 whitespace-nowrap">
+                  <span class="text-stone-700 font-medium"><%= inq.location.presence || "WA Region" %></span>
+                </td>
+                <td class="py-3.5 px-4 max-w-xs">
+                  <p class="text-stone-600 line-clamp-2"><%= inq.message %></p>
+                </td>
+                <td class="py-3.5 px-4 whitespace-nowrap text-stone-400 text-[11px]">
+                  <%= inq.created_at.strftime("%d %b %Y, %I:%M %p") %>
+                </td>
+                <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                  <div class="flex items-center justify-end gap-2">
+                    <%= link_to "View Details →", admin_inquiry_path(inq), class: "px-2.5 py-1 bg-stone-900 hover:bg-brand-primary text-white font-bold rounded-lg text-[11px] transition" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-12 text-center text-stone-500">
+        <p class="text-sm font-semibold">No enquiries found matching this filter.</p>
+        <p class="text-xs text-stone-400 mt-1">Customer enquiries submitted through the /contact page will appear here.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,119 @@
+<%# ============================================================================== %>
+<%# MUCHEA STOCKFEED & HARDWARE — DYNAMIC GLOBAL BRAND COLOR PALETTE               %>
+<%# ============================================================================== %>
+<%# Source of truth: config/brand_palette.yml                                      %>
+<%# To change ANY color on the website, simply edit `config/brand_palette.yml`!     %>
+<%# ============================================================================== %>
+<% bp = brand_palette %>
+
+<!-- 1. CSS Custom Properties (:root variables for native CSS, inline styles & SVGs) -->
+<style id="muchea-brand-theme">
+  :root {
+    --brand-primary:        <%= bp[:primary] %>;
+    --brand-primary-hover:  <%= bp[:primary_hover] %>;
+    --brand-primary-active: <%= bp[:primary_active] %>;
+    --brand-primary-light:  <%= bp[:primary_light] %>;
+    --brand-primary-soft:   <%= bp[:primary_soft] %>;
+
+    --brand-dark:           <%= bp[:dark] %>;
+    --brand-dark-surface:   <%= bp[:dark_surface] %>;
+    --brand-dark-border:    <%= bp[:dark_border] %>;
+
+    --brand-accent:         <%= bp[:accent] %>;
+    --brand-accent-hover:   <%= bp[:accent_hover] %>;
+    --brand-accent-light:   <%= bp[:accent_light] %>;
+
+    --brand-bush:           <%= bp[:bush] %>;
+    --brand-bush-dark:      <%= bp[:bush_dark] %>;
+    --brand-bush-hover:     <%= bp[:bush_hover] %>;
+    --brand-bush-light:     <%= bp[:bush_light] %>;
+    --brand-bush-soft:      <%= bp[:bush_soft] %>;
+
+    --brand-surface:        <%= bp[:surface] %>;
+    --brand-card:           <%= bp[:card] %>;
+    --brand-border:         <%= bp[:border] %>;
+    --brand-text:           <%= bp[:text_main] %>;
+    --brand-muted:          <%= bp[:text_muted] %>;
+  }
+</style>
+
+<!-- 2. Tailwind Configuration extending semantic brand tokens and aliases -->
+<script>
+  window.BRAND_PALETTE = {
+    primary:        "<%= bp[:primary] %>",
+    primaryHover:   "<%= bp[:primary_hover] %>",
+    primaryActive:  "<%= bp[:primary_active] %>",
+    primaryLight:   "<%= bp[:primary_light] %>",
+    primarySoft:    "<%= bp[:primary_soft] %>",
+    dark:           "<%= bp[:dark] %>",
+    darkSurface:    "<%= bp[:dark_surface] %>",
+    darkBorder:     "<%= bp[:dark_border] %>",
+    accent:         "<%= bp[:accent] %>",
+    accentHover:    "<%= bp[:accent_hover] %>",
+    accentLight:    "<%= bp[:accent_light] %>",
+    bush:           "<%= bp[:bush] %>",
+    bushDark:       "<%= bp[:bush_dark] %>",
+    bushHover:      "<%= bp[:bush_hover] %>",
+    bushLight:      "<%= bp[:bush_light] %>",
+    bushSoft:       "<%= bp[:bush_soft] %>",
+    surface:        "<%= bp[:surface] %>",
+    card:           "<%= bp[:card] %>",
+    border:         "<%= bp[:border] %>",
+    textMain:       "<%= bp[:text_main] %>",
+    textMuted:      "<%= bp[:text_muted] %>"
+  };
+
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            primary: "<%= bp[:primary] %>",
+            "primary-hover": "<%= bp[:primary_hover] %>",
+            "primary-active": "<%= bp[:primary_active] %>",
+            "primary-light": "<%= bp[:primary_light] %>",
+            "primary-soft": "<%= bp[:primary_soft] %>",
+            dark: "<%= bp[:dark] %>",
+            "dark-surface": "<%= bp[:dark_surface] %>",
+            "dark-border": "<%= bp[:dark_border] %>",
+            accent: "<%= bp[:accent] %>",
+            "accent-hover": "<%= bp[:accent_hover] %>",
+            "accent-light": "<%= bp[:accent_light] %>",
+            bush: "<%= bp[:bush] %>",
+            "bush-dark": "<%= bp[:bush_dark] %>",
+            "bush-hover": "<%= bp[:bush_hover] %>",
+            "bush-light": "<%= bp[:bush_light] %>",
+            "bush-soft": "<%= bp[:bush_soft] %>",
+            surface: "<%= bp[:surface] %>",
+            card: "<%= bp[:card] %>",
+            border: "<%= bp[:border] %>",
+            text: "<%= bp[:text_main] %>",
+            muted: "<%= bp[:text_muted] %>"
+          },
+          // Backward-compatible aliases so existing views effortlessly sync:
+          bush: {
+            950: "<%= bp[:bush_dark] %>",
+            900: "<%= bp[:bush_dark] %>",
+            800: "<%= bp[:bush] %>",
+            700: "<%= bp[:bush_hover] %>",
+            600: "<%= bp[:bush_hover] %>",
+            100: "<%= bp[:bush_light] %>",
+            50:  "<%= bp[:bush_soft] %>"
+          },
+          wheat: {
+            600: "<%= bp[:accent_hover] %>",
+            500: "<%= bp[:accent] %>",
+            100: "<%= bp[:accent_light] %>",
+            50:  "<%= bp[:accent_light] %>"
+          },
+          ochre: {
+            700: "<%= bp[:primary_hover] %>",
+            600: "<%= bp[:primary] %>",
+            100: "<%= bp[:primary_light] %>",
+            50:  "<%= bp[:primary_soft] %>"
+          }
+        }
+      }
+    }
+  };
+</script>

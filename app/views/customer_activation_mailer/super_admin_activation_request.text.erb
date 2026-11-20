@@ -1,0 +1,22 @@
+[ACTION REQUIRED] NEW ACCOUNT ACTIVATION REQUEST
+Muchea Stockfeed & Hardware — Operations Admin
+
+G'day Super Admin,
+
+A new customer has registered on the website and is awaiting your authorization to view pricing:
+
+- Name: <%= @customer.name %>
+- Email: <%= @customer.email %>
+- Phone: <%= @customer.phone %>
+<% if @customer.business_name.present? %>- Farm/Business: <%= @customer.business_name %><% end %>
+<% if @customer.abn.present? %>- ABN: <%= @customer.abn %><% end %>
+- Location: <%= [@customer.property_address, @customer.suburb, @customer.state, @customer.postcode].reject(&:blank?).join(", ") %>
+<% if @customer.primary_interest.present? %>- Primary Interest: <%= @customer.primary_interest %><% end %>
+- Status: PENDING APPROVAL
+
+To review and approve this member request, visit:
+<%= admin_customer_url(@customer) %>
+
+--
+Muchea Stockfeed & Hardware Pty Ltd
+14 Great Northern Highway, Muchea WA 6501

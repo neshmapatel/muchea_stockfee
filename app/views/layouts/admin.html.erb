@@ -7,28 +7,9 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN & Dynamic Global Brand Theme -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              bush: {
-                800: '#1e3a2f',
-                900: '#142920',
-                700: '#284e40',
-                600: '#356352',
-              },
-              ochre: {
-                600: '#b84a28',
-                700: '#993c1f',
-              }
-            }
-          }
-        }
-      }
-    </script>
+    <%= render "shared/brand_theme" %>
     <%= yield :head %>
   </head>
 
@@ -38,28 +19,64 @@
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-4">
           <%= link_to admin_root_path, class: "flex items-center gap-2.5" do %>
-            <img src="/images/muchea_logo.jpg" alt="Logo" class="w-9 h-9 rounded-full border border-stone-400">
+            <img src="/images/muchea_logo.jpg" alt="Logo" class="w-9 h-9 rounded-full border border-stone-400" width="36" height="36" style="width: 36px; height: 36px; max-width: 36px; max-height: 36px; object-fit: cover;">
             <div>
               <span class="block text-sm font-bold uppercase tracking-wider text-white">Muchea Warehouse</span>
               <span class="block text-[10px] text-amber-400 font-semibold tracking-wide">OPERATIONS & INVENTORY ADMIN</span>
             </div>
           <% end %>
 
-          <nav class="hidden md:flex items-center gap-1 ml-6 text-xs font-semibold">
-            <%= link_to "Dashboard", admin_root_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if current_page?(admin_root_path)}" %>
-            <%= link_to "Orders & Dispatch", admin_orders_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'orders'}" %>
-            <%= link_to "Live Inventory", admin_inventory_index_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'inventory'}" %>
-            <%= link_to "Products", admin_products_path, class: "px-3 py-1.5 rounded hover:bg-bush-800 transition #{'bg-bush-800 text-amber-400' if controller_name == 'products'}" %>
+          <% nav_items = admin_nav_items %>
+          <nav class="hidden lg:flex items-center gap-1 ml-6 text-xs font-semibold">
+            <% nav_items.each do |item| %>
+              <%
+                desktop_classes = if item[:highlight] && item[:active]
+                  "bg-amber-500 text-bush-950 font-bold"
+                elsif item[:active]
+                  "bg-bush-800 text-amber-400 font-bold"
+                else
+                  "hover:bg-bush-800"
+                end
+              %>
+              <%= link_to (item[:desktop_label] || item[:label]), item[:path], class: "px-2.5 py-1.5 rounded transition whitespace-nowrap #{desktop_classes}" %>
+            <% end %>
           </nav>
         </div>
 
         <div class="flex items-center gap-3">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-900 text-emerald-300 border border-emerald-700">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Warehouse Online
-          </span>
-          <%= link_to "View Storefront →", root_path, target: "_blank", class: "text-xs text-stone-300 hover:text-white border border-stone-600 px-3 py-1 rounded hover:bg-bush-800 transition" %>
+          <% if admin_signed_in? %>
+            <div class="hidden sm:flex flex-col text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <span class="text-xs font-bold text-white"><%= current_admin.name %></span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase <%= current_admin.super_admin? ? 'bg-amber-400 text-bush-950' : 'bg-bush-700 text-emerald-200' %>">
+                  <%= current_admin.role_name %>
+                </span>
+              </div>
+              <span class="text-[10px] text-amber-400/90 font-mono"><%= current_admin.email %></span>
+            </div>
+            <%= button_to "Sign Out", admin_logout_path, method: :delete, class: "text-xs text-rose-300 hover:text-white border border-rose-800 bg-rose-950/70 hover:bg-rose-900 px-2.5 py-1 rounded transition cursor-pointer" %>
+          <% end %>
+
+          <%= link_to "Storefront ↗", root_path, target: "_blank", class: "text-xs text-stone-300 hover:text-white border border-stone-600 px-3 py-1 rounded hover:bg-bush-800 transition" %>
         </div>
+      </div>
+
+      <!-- Mobile/Tablet Secondary Nav Scroll -->
+      <div class="lg:hidden bg-bush-950 px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs border-t border-bush-800">
+        <% nav_items.each do |item| %>
+          <%
+            mobile_classes = if item[:highlight] && item[:active]
+              "bg-amber-500 text-bush-950 font-bold"
+            elsif item[:highlight]
+              "bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold"
+            elsif item[:active]
+              "bg-bush-800 text-amber-400 font-bold"
+            else
+              "text-stone-300"
+            end
+          %>
+          <%= link_to item[:label], item[:path], class: "px-2.5 py-1 rounded whitespace-nowrap #{mobile_classes}" %>
+        <% end %>
       </div>
     </header>
 

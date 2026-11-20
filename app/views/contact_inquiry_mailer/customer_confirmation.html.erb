@@ -1,0 +1,23 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1c1917; background-color: #fafaf9; border-radius: 12px; border: 1px solid #e7e5e4;">
+  <div style="border-bottom: 2px solid #c91820; padding-bottom: 16px; margin-bottom: 20px;">
+    <h1 style="color: #c91820; font-size: 20px; margin: 0;">Thanks for contacting Muchea Stockfeed & Hardware</h1>
+    <p style="color: #78716c; font-size: 13px; margin: 4px 0 0;">14 Great Northern Highway, Muchea WA 6501 • (08) 9571 8840</p>
+  </div>
+
+  <p style="font-size: 14px; line-height: 1.6; color: #292524;">
+    G'day <%= @inquiry.name %>,
+  </p>
+
+  <p style="font-size: 14px; line-height: 1.6; color: #292524;">
+    We've received your enquiry regarding animal feeds, hay, or farm hardware supplies. Our shed team will review your message and get back to you shortly.
+  </p>
+
+  <div style="background-color: #ffffff; border: 1px solid #e7e5e4; border-radius: 8px; padding: 16px; margin: 20px 0;">
+    <h3 style="margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #78716c;">Summary of Your Message:</h3>
+    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #44403c; white-space: pre-wrap;"><%= @inquiry.message %></p>
+  </div>
+
+  <p style="font-size: 13px; line-height: 1.6; color: #78716c;">
+    Need urgent feed loading today? Feel free to call our warehouse counter directly on <strong style="color: #1c1917;">(08) 9571 8840</strong>.
+  </p>
+</div>

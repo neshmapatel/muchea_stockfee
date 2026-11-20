@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   has_many :variants, class_name: "ProductVariant", dependent: :destroy
   has_many :order_items, through: :variants
 
+  accepts_nested_attributes_for :variants, allow_destroy: true, reject_if: :all_blank
+
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
 
@@ -10,6 +12,8 @@ class Product < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :featured, -> { active.where(featured: true) }
+  scope :live, -> { joins(:category).where(categories: { department: "Stockfeed & Animal Nutrition" }) }
+  scope :coming_soon, -> { joins(:category).where(categories: { department: "Rural Hardware & Farm Supplies" }) }
   scope :by_brand, ->(brand) { where(brand: brand) if brand.present? }
   scope :search, ->(term) {
     if term.present?
@@ -23,15 +27,27 @@ class Product < ApplicationRecord
   end
 
   def default_variant
-    variants.find_by(is_default: true) || variants.order(price_cents: :asc).first
+    if variants.loaded?
+      variants.find(&:is_default?) || variants.min_by(&:price_cents)
+    else
+      variants.find_by(is_default: true) || variants.order(price_cents: :asc).first
+    end
   end
 
   def min_price_cents
-    variants.minimum(:price_cents) || 0
+    if variants.loaded?
+      variants.map(&:price_cents).min || 0
+    else
+      variants.minimum(:price_cents) || 0
+    end
   end
 
   def max_price_cents
-    variants.maximum(:price_cents) || 0
+    if variants.loaded?
+      variants.map(&:price_cents).max || 0
+    else
+      variants.maximum(:price_cents) || 0
+    end
   end
 
   def min_price_dollars
@@ -39,7 +55,8 @@ class Product < ApplicationRecord
   end
 
   def price_display
-    if variants.count > 1 && min_price_cents != max_price_cents
+    variant_count = variants.loaded? ? variants.size : variants.count
+    if variant_count > 1 && min_price_cents != max_price_cents
       "From AU$ #{format('%.2f', min_price_cents / 100.0)} inc. GST"
     elsif default_variant
       "AU$ #{format('%.2f', default_variant.price_cents / 100.0)} inc. GST"
@@ -52,8 +69,16 @@ class Product < ApplicationRecord
     variants.any?(&:in_stock?)
   end
 
+  def live?
+    category&.live?
+  end
+
+  def coming_soon?
+    category&.coming_soon?
+  end
+
   def total_stock
-    variants.sum(:stock_quantity)
+    variants.loaded? ? variants.sum(&:stock_quantity) : variants.sum(:stock_quantity)
   end
 
   def low_stock?
@@ -65,7 +90,7 @@ class Product < ApplicationRecord
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": name,
-      "image": [hero_image_url.presence || "/images/muchea_logo.jpg"],
+      "image": [ hero_image_url.presence || "/images/muchea_logo.jpg" ],
       "description": short_description,
       "brand": {
         "@type": "Brand",
@@ -86,7 +111,14 @@ class Product < ApplicationRecord
   private
 
   def generate_slug
-    self.slug = name.parameterize if slug.blank? && name.present?
+    return if slug.present? || name.blank?
+    base = name.parameterize
+    candidate = base
+    counter = 1
+    while Product.where.not(id: id).exists?(slug: candidate)
+      candidate = "#{base}-#{counter}"
+      counter += 1
+    end
+    self.slug = candidate
   end
 end
-

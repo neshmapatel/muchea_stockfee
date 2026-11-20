@@ -1,0 +1,13 @@
+G'day <%= @customer.first_name %>,
+
+Thank you for your interest in Muchea Stockfeed & Hardware.
+We were unable to activate your online account at this time.
+<% if @customer.rejection_reason.present? %>
+Reason: <%= @customer.rejection_reason %>
+<% end %>
+
+If you have questions or wish to provide additional pastoral/business details, please contact us on (08) 9571 8840.
+
+--
+Muchea Stockfeed & Hardware Pty Ltd
+14 Great Northern Highway, Muchea WA 6501

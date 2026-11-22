@@ -8,7 +8,7 @@
 </div>
 
 <div class="max-w-7xl mx-auto px-4 py-10">
-  <%= form_with url: process_checkout_path, method: :post, local: true, class: "space-y-8" do |f| %>
+  <%= form_with url: process_checkout_path, method: :post, local: true, id: "checkout-payment-form", class: "space-y-8" do |f| %>
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <!-- Left Column: Customer & Delivery Details -->
       <div class="lg:col-span-7 space-y-6">
@@ -22,17 +22,17 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div class="sm:col-span-2">
               <label class="block font-bold text-stone-700 mb-1">Full Name / Trading Name *</label>
-              <%= f.text_field :customer_name, required: true, placeholder: "e.g. John Henderson (Henderson Equine)", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+              <%= f.text_field :customer_name, id: "customer_name", required: true, value: @order.customer_name, placeholder: "e.g. John Henderson (Henderson Equine)", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
             </div>
 
             <div>
               <label class="block font-bold text-stone-700 mb-1">Email Address (for Tax Invoice & Tracking) *</label>
-              <%= f.email_field :customer_email, required: true, placeholder: "john@hendersonequine.com.au", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+              <%= f.email_field :customer_email, id: "customer_email", required: true, value: @order.customer_email, placeholder: "john@hendersonequine.com.au", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
             </div>
 
             <div>
               <label class="block font-bold text-stone-700 mb-1">Mobile Phone (for Driver SMS updates) *</label>
-              <%= f.telephone_field :customer_phone, required: true, placeholder: "0412 345 678", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+              <%= f.telephone_field :customer_phone, id: "customer_phone", required: true, value: @order.customer_phone, placeholder: "0412 345 678", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
           <div class="space-y-4 text-xs">
             <!-- Radio selector -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label class="p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 <%= current_cart.fulfillment_type == 'delivery' ? 'border-bush-800 bg-bush-50' : 'border-stone-200 bg-white' %>">
+              <label id="lbl-delivery" class="p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 <%= current_cart.fulfillment_type == 'delivery' ? 'border-bush-800 bg-bush-50' : 'border-stone-200 bg-white' %>">
                 <input type="radio" name="fulfillment_type" value="delivery" <%= 'checked' if current_cart.fulfillment_type == 'delivery' %> onchange="toggleFulfillment(this.value)">
                 <div>
                   <span class="block font-bold text-stone-900">🚜 Rural Truck Delivery</span>
@@ -55,11 +55,11 @@
                 </div>
               </label>
 
-              <label class="p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 <%= current_cart.fulfillment_type == 'pickup' ? 'border-bush-800 bg-bush-50' : 'border-stone-200 bg-white' %>">
+              <label id="lbl-pickup" class="p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 <%= current_cart.fulfillment_type == 'pickup' ? 'border-bush-800 bg-bush-50' : 'border-stone-200 bg-white' %>">
                 <input type="radio" name="fulfillment_type" value="pickup" <%= 'checked' if current_cart.fulfillment_type == 'pickup' %> onchange="toggleFulfillment(this.value)">
                 <div>
                   <span class="block font-bold text-stone-900">🚗 Drive-Thru Bag Loading (FREE)</span>
-                  <span class="text-[11px] text-stone-500">14 Great Northern Hwy, Muchea</span>
+                  <span class="text-[11px] text-stone-500">17b Edwards Pl, Muchea</span>
                 </div>
               </label>
             </div>
@@ -68,23 +68,31 @@
             <div id="delivery-fields" class="<%= 'hidden' if current_cart.fulfillment_type == 'pickup' %> space-y-3 pt-2">
               <div>
                 <label class="block font-bold text-stone-700 mb-1">Property Address / Lot Number *</label>
-                <%= f.text_field :delivery_address, placeholder: "e.g. Lot 412 Chittering Road", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
+                <%= f.text_field :delivery_address, id: "delivery_address", value: @order.delivery_address, placeholder: "e.g. Lot 412 Chittering Road", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800" %>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block font-bold text-stone-700 mb-1">Suburb / Locality *</label>
-                  <%= f.text_field :suburb, placeholder: "e.g. Lower Chittering, Bullsbrook, Gingin", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none" %>
+                  <%= f.text_field :suburb, id: "suburb", placeholder: "e.g. Lower Chittering, Bullsbrook, Gingin", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none" %>
                 </div>
                 <div>
-                  <label class="block font-bold text-stone-700 mb-1">WA Postcode *</label>
-                  <%= f.text_field :postcode, value: current_cart.postcode, placeholder: "6084", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none" %>
+                  <label class="block font-bold text-stone-700 mb-1">WA Postcode (4 Digits) *</label>
+                  <div class="relative">
+                    <%= f.text_field :postcode, id: "postcode", value: current_cart.postcode, placeholder: "e.g. 6501, 6084", maxlength: 4, oninput: "validatePostcodeRealtime(this.value)", class: "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800 transition" %>
+                    <div id="postcode-spinner" class="hidden absolute right-3 top-2.5 text-stone-400">
+                      <svg class="animate-spin h-5 w-5 text-bush-800" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              <!-- Real-time Postcode Verification Feedback Box -->
+              <div id="postcode-feedback" class="pt-1"></div>
+
               <div>
                 <label class="block font-bold text-stone-700 mb-1">Rural Gate Access & Unloading Instructions</label>
-                <%= f.text_area :delivery_notes, rows: 2, placeholder: "e.g. Gate code #9941. Please leave pallet in the open hay shed on left of driveway. Beware: Friendly kelpie on property.", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none" %>
+                <%= f.text_area :delivery_notes, id: "delivery_notes", rows: 2, placeholder: "e.g. Gate code #9941. Please leave pallet in the open hay shed on left of driveway. Beware: Friendly kelpie on property.", class: "w-full px-3.5 py-2 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none" %>
               </div>
             </div>
 
@@ -94,62 +102,6 @@
                 Drive straight into Bay 1 or Bay 2. Show your order confirmation SMS or name at the desk and our team will load your bags or forklift your pallet into your vehicle.
               </p>
             </div>
-          </div>
-        </div>
-
-        <!-- 3. Payment Method -->
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
-          <div class="flex items-center gap-2 border-b border-stone-100 pb-3">
-            <span class="w-6 h-6 rounded-full bg-bush-800 text-white flex items-center justify-center text-xs font-bold">3</span>
-            <h2 class="text-base font-bold text-stone-900">Australian Payment Selection</h2>
-          </div>
-
-          <div class="space-y-3 text-xs">
-            <div class="p-4 border-2 border-bush-800 rounded-xl bg-bush-50/50 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="flex items-center gap-2 font-bold text-stone-900 cursor-pointer">
-                  <input type="radio" name="payment_method" value="Credit Card / Stripe" checked>
-                  <span>Credit / Debit Card (Stripe Elements)</span>
-                </label>
-                <div class="flex items-center gap-1 text-[10px] font-bold text-stone-500">
-                  <span class="bg-white px-1.5 py-0.5 rounded border border-stone-200">VISA</span>
-                  <span class="bg-white px-1.5 py-0.5 rounded border border-stone-200">MC</span>
-                  <span class="bg-white px-1.5 py-0.5 rounded border border-stone-200">AMEX</span>
-                </div>
-              </div>
-
-              <!-- Card Input Simulation -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div class="sm:col-span-2">
-                  <label class="block text-[11px] font-bold text-stone-600 mb-1">Card Number</label>
-                  <input type="text" placeholder="•••• •••• •••• 4242" value="4242 •••• •••• 4242" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-white font-mono focus:outline-none">
-                </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-stone-600 mb-1">Expiry Date</label>
-                  <input type="text" placeholder="MM / YY" value="12 / 28" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-white font-mono focus:outline-none">
-                </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-stone-600 mb-1">CVC Security Code</label>
-                  <input type="text" placeholder="CVC" value="312" class="w-full px-3 py-2 rounded-lg border border-stone-300 bg-white font-mono focus:outline-none">
-                </div>
-              </div>
-            </div>
-
-            <label class="p-3.5 border border-stone-200 rounded-xl flex items-center justify-between cursor-pointer hover:bg-stone-50">
-              <div class="flex items-center gap-2 font-bold text-stone-800">
-                <input type="radio" name="payment_method" value="Apple Pay / Google Pay">
-                <span>Apple Pay / Google Pay</span>
-              </div>
-              <span class="text-[11px] text-stone-400">1-Touch Checkout</span>
-            </label>
-
-            <label class="p-3.5 border border-stone-200 rounded-xl flex items-center justify-between cursor-pointer hover:bg-stone-50">
-              <div class="flex items-center gap-2 font-bold text-stone-800">
-                <input type="radio" name="payment_method" value="Afterpay (4 Payments)">
-                <span>Afterpay (4 fortnightly interest-free payments)</span>
-              </div>
-              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Afterpay</span>
-            </label>
           </div>
         </div>
       </div>
@@ -174,33 +126,59 @@
           <div class="space-y-2 text-xs pt-3 border-t border-stone-200">
             <div class="flex justify-between text-stone-600">
               <span>Subtotal (inc. GST)</span>
-              <span class="font-bold text-stone-900"><%= format_aud(current_cart.subtotal_cents) %></span>
+              <span id="summary-subtotal" class="font-bold text-stone-900"><%= format_aud(current_cart.subtotal_cents) %></span>
             </div>
 
             <div class="flex justify-between text-stone-600">
               <span>Delivery Fee</span>
-              <span class="font-bold text-stone-900"><%= current_cart.fulfillment_type == 'pickup' ? 'FREE' : format_aud(current_cart.delivery_fee_cents) %></span>
+              <span id="summary-delivery-fee" class="font-bold text-stone-900"><%= current_cart.fulfillment_type == 'pickup' ? 'FREE' : format_aud(current_cart.delivery_fee_cents) %></span>
             </div>
+
+            <% if StripeConfig.surcharge_enabled? %>
+              <div class="flex justify-between text-stone-600">
+                <span class="flex items-center gap-1">
+                  <span>Card Processing Surcharge</span>
+                  <span class="text-[10px] text-stone-400">(<%= StripeConfig.surcharge_percent %>% + <%= format_aud(StripeConfig.surcharge_fixed_cents) %>)</span>
+                </span>
+                <span id="summary-processing-fee" class="font-bold text-stone-900"><%= format_aud(current_cart.processing_fee_cents) %></span>
+              </div>
+            <% end %>
 
             <div class="flex justify-between text-stone-500 text-[11px]">
               <span>Australian GST (10% included)</span>
-              <span><%= format_aud(current_cart.gst_cents) %></span>
+              <span id="summary-gst"><%= format_aud(current_cart.gst_cents) %></span>
             </div>
 
             <div class="flex justify-between items-baseline pt-3 border-t border-stone-200">
               <span class="text-sm font-bold text-stone-900">Total Payable</span>
               <div class="text-right">
-                <span class="text-2xl font-black text-bush-900"><%= format_aud(current_cart.total_cents) %></span>
+                <span id="summary-total" class="text-2xl font-black text-bush-900"><%= format_aud(current_cart.total_cents) %></span>
                 <span class="block text-[10px] text-stone-400">AUD inc. 10% GST</span>
               </div>
             </div>
           </div>
 
-          <%= f.submit "Place Order & Pay #{format_aud(current_cart.total_cents)}", class: "w-full py-4 bg-bush-800 hover:bg-bush-900 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer" %>
+          <!-- Submit Button -->
+          <button type="submit" id="submit-order-button" class="w-full py-4 bg-bush-800 hover:bg-bush-900 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer flex items-center justify-center gap-2">
+            <span id="button-spinner" class="hidden">
+              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            </span>
+            <span id="button-label">Proceed to Stripe Checkout (<span id="btn-amount"><%= format_aud(current_cart.total_cents) %></span>) →</span>
+          </button>
+
+          <!-- Accepted Payment Methods -->
+          <div class="flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold text-stone-600 pt-1">
+            <span class="bg-stone-100 px-2 py-0.5 rounded border border-stone-200">VISA</span>
+            <span class="bg-stone-100 px-2 py-0.5 rounded border border-stone-200">Mastercard</span>
+            <span class="bg-stone-100 px-2 py-0.5 rounded border border-stone-200">eftpos</span>
+            <span class="bg-stone-100 px-2 py-0.5 rounded border border-stone-200">Apple Pay</span>
+            <span class="bg-stone-100 px-2 py-0.5 rounded border border-stone-200">Google Pay</span>
+          </div>
 
           <div class="text-[11px] text-stone-500 space-y-1 text-center pt-2">
+            <p>🔒 256-bit SSL encrypted Stripe session</p>
             <p>✅ Australian Tax Invoice issued immediately</p>
-            <p>✅ Tracking code sent via email & SMS</p>
+            <p>✅ Consignment tracking sent via email & SMS</p>
           </div>
         </div>
       </div>
@@ -209,16 +187,244 @@
 </div>
 
 <script>
+  var subtotalCents = <%= current_cart.subtotal_cents %>;
+  var deliveryFeeCents = <%= current_cart.delivery_fee_cents %>;
+  var surchargeEnabled = <%= StripeConfig.surcharge_enabled? ? 'true' : 'false' %>;
+  var surchargePercent = <%= StripeConfig.surcharge_percent %>;
+  var surchargeFixedCents = <%= StripeConfig.surcharge_fixed_cents %>;
+  var debounceTimer = null;
+  var isPostcodeValidForDelivery = true;
+
+  function formatAud(cents) {
+    return 'AU$ ' + (cents / 100).toFixed(2);
+  }
+
+  function calculateSurcharge(baseCents) {
+    if (!surchargeEnabled || baseCents <= 0) return 0;
+    return Math.round((baseCents * (surchargePercent / 100.0)) + surchargeFixedCents);
+  }
+
+  function updateOrderTotals(feeCents) {
+    deliveryFeeCents = feeCents;
+    var baseCents = subtotalCents + feeCents;
+    var surchargeCents = calculateSurcharge(baseCents);
+    var totalCents = baseCents + surchargeCents;
+    var gstCents = Math.round(totalCents / 11.0);
+
+    var feeEl = document.getElementById('summary-delivery-fee');
+    var surchargeEl = document.getElementById('summary-processing-fee');
+    var totalEl = document.getElementById('summary-total');
+    var btnAmount = document.getElementById('btn-amount');
+    var gstEl = document.getElementById('summary-gst');
+
+    if (feeEl) feeEl.textContent = (feeCents === 0) ? 'FREE' : formatAud(feeCents);
+    if (surchargeEl) surchargeEl.textContent = formatAud(surchargeCents);
+    if (totalEl) totalEl.textContent = formatAud(totalCents);
+    if (btnAmount) btnAmount.textContent = formatAud(totalCents);
+    if (gstEl) gstEl.textContent = formatAud(gstCents);
+  }
+
+  function setCheckoutButtonState(enabled, reason) {
+    var btn = document.getElementById('submit-order-button');
+    if (!btn) return;
+
+    var fulfillment = getSelectedFulfillment();
+    if (fulfillment === 'pickup') {
+      btn.disabled = false;
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.removeAttribute('title');
+      return;
+    }
+
+    if (enabled) {
+      btn.disabled = false;
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.removeAttribute('title');
+    } else {
+      btn.disabled = true;
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+      if (reason) btn.setAttribute('title', reason);
+    }
+  }
+
+  function getSelectedFulfillment() {
+    var radio = document.querySelector('input[name="fulfillment_type"]:checked');
+    return radio ? radio.value : 'delivery';
+  }
+
+  function validatePostcodeRealtime(val) {
+    clearTimeout(debounceTimer);
+    var cleanVal = (val || '').trim();
+    var feedbackEl = document.getElementById('postcode-feedback');
+    var inputEl = document.getElementById('postcode');
+    var spinnerEl = document.getElementById('postcode-spinner');
+
+    if (!cleanVal) {
+      if (feedbackEl) feedbackEl.innerHTML = '';
+      if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-bush-800 transition";
+      setCheckoutButtonState(false, "Please enter a valid WA postcode for truck delivery.");
+      return;
+    }
+
+    // Check if non-digits entered
+    if (!/^\d+$/.test(cleanVal)) {
+      if (feedbackEl) {
+        feedbackEl.innerHTML = '<div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-[11px] font-semibold flex items-center gap-2">' +
+          '<span>⚠️</span><span>Postcode must contain numbers only (e.g. 6501, 6084).</span></div>';
+      }
+      if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border-2 border-rose-400 bg-rose-50/20 text-rose-900 focus:outline-none";
+      setCheckoutButtonState(false, "Invalid postcode format.");
+      return;
+    }
+
+    // Fewer than 4 digits
+    if (cleanVal.length < 4) {
+      if (feedbackEl) {
+        feedbackEl.innerHTML = '<p class="text-[11px] text-stone-500 italic pl-1">Entering 4-digit WA postcode (' + cleanVal.length + '/4)...</p>';
+      }
+      if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none";
+      setCheckoutButtonState(false, "Please complete your 4-digit postcode.");
+      return;
+    }
+
+    // Non-WA postcode (Australian postcodes outside 6000-6999)
+    if (!cleanVal.startsWith('6')) {
+      if (feedbackEl) {
+        feedbackEl.innerHTML = '<div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-950 space-y-1">' +
+          '<div class="flex items-center gap-2 font-bold text-xs text-rose-900">' +
+          '<span>🚫</span><span>Interstate Postcode (Outside Western Australia)</span></div>' +
+          '<p class="text-[11px] text-rose-800 leading-relaxed">' +
+          'Postcode <strong>' + cleanVal + '</strong> is outside WA. Muchea Rural Fleet only delivers within Western Australia (6000–6999). Please select <strong>Drive-Thru Bag Loading (FREE)</strong> or enter a WA property address.' +
+          '</p></div>';
+      }
+      if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border-2 border-rose-400 bg-rose-50/20 text-rose-900 focus:outline-none";
+      setCheckoutButtonState(false, "Interstate delivery unavailable. Our truck fleet only services WA.");
+      return;
+    }
+
+    // Debounced server lookup
+    if (spinnerEl) spinnerEl.classList.remove('hidden');
+
+    debounceTimer = setTimeout(function() {
+      fetch('<%= checkout_validate_postcode_path %>?postcode=' + encodeURIComponent(cleanVal), {
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (spinnerEl) spinnerEl.classList.add('hidden');
+
+        if (data.valid) {
+          updateOrderTotals(data.fee_cents);
+          setCheckoutButtonState(true);
+
+          if (data.status === 'matched_zone') {
+            if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/20 text-stone-900 focus:outline-none";
+            if (feedbackEl) {
+              feedbackEl.innerHTML = '<div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-950 space-y-1">' +
+                '<div class="flex items-center justify-between">' +
+                '<span class="font-bold text-xs text-emerald-900 flex items-center gap-1.5"><span>✅</span> ' + data.zone_name + '</span>' +
+                '<span class="font-bold text-xs px-2 py-0.5 rounded ' + (data.is_free ? 'bg-emerald-200 text-emerald-900' : 'bg-white border border-emerald-300 text-emerald-800') + '">' + data.formatted_fee + '</span>' +
+                '</div>' +
+                '<p class="text-[11px] text-emerald-800 leading-snug">' +
+                'Scheduled farm delivery on <strong>' + data.scheduled_days + '</strong>.' +
+                (data.is_free ? ' <span class="font-bold text-emerald-900">Free delivery threshold achieved!</span>' : '') +
+                '</p>' +
+                '</div>';
+            }
+          } else {
+            // Regional WA
+            if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border-2 border-amber-400 bg-amber-50/20 text-stone-900 focus:outline-none";
+            if (feedbackEl) {
+              feedbackEl.innerHTML = '<div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-950 space-y-1">' +
+                '<div class="flex items-center justify-between">' +
+                '<span class="font-bold text-xs text-amber-950 flex items-center gap-1.5"><span>🚚</span> Regional WA Delivery</span>' +
+                '<span class="font-bold text-xs px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900">' + data.formatted_fee + '</span>' +
+                '</div>' +
+                '<p class="text-[11px] text-amber-800 leading-snug">' +
+                'Postcode <strong>' + cleanVal + '</strong> is outside our scheduled local routes. Our dispatch team will contact you to confirm truck drop-off timing.' +
+                '</p>' +
+                '</div>';
+            }
+          }
+        } else {
+          setCheckoutButtonState(false, data.message);
+          if (inputEl) inputEl.className = "w-full px-3.5 py-2.5 rounded-xl border-2 border-rose-400 bg-rose-50/20 text-rose-900 focus:outline-none";
+          if (feedbackEl) {
+            feedbackEl.innerHTML = '<div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-[11px] font-semibold flex items-center gap-2">' +
+              '<span>⚠️</span><span>' + data.message + '</span></div>';
+          }
+        }
+      })
+      .catch(function(err) {
+        if (spinnerEl) spinnerEl.classList.add('hidden');
+        console.warn('Postcode validation error:', err);
+      });
+    }, 250);
+  }
+
   function toggleFulfillment(val) {
     var del = document.getElementById('delivery-fields');
     var pic = document.getElementById('pickup-fields');
+    var lblDel = document.getElementById('lbl-delivery');
+    var lblPic = document.getElementById('lbl-pickup');
+
     if (val === 'pickup') {
       del.classList.add('hidden');
       pic.classList.remove('hidden');
+      if (lblDel) lblDel.className = "p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 border-stone-200 bg-white";
+      if (lblPic) lblPic.className = "p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 border-bush-800 bg-bush-50";
+      updateOrderTotals(0);
+      setCheckoutButtonState(true);
     } else {
       del.classList.remove('hidden');
       pic.classList.add('hidden');
+      if (lblDel) lblDel.className = "p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 border-bush-800 bg-bush-50";
+      if (lblPic) lblPic.className = "p-3.5 rounded-xl border-2 cursor-pointer flex items-center gap-3 border-stone-200 bg-white";
+      var pcInput = document.getElementById('postcode');
+      if (pcInput && pcInput.value) {
+        validatePostcodeRealtime(pcInput.value);
+      } else {
+        updateOrderTotals(2500);
+        setCheckoutButtonState(false, "Please enter your WA postcode.");
+      }
     }
   }
-</script>
 
+  // Handle Form Submission
+  var form = document.getElementById('checkout-payment-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      var fulfillment = getSelectedFulfillment();
+      if (fulfillment === 'delivery') {
+        var pcInput = document.getElementById('postcode');
+        var pc = pcInput ? pcInput.value.trim() : '';
+        if (!pc || !/^\d{4}$/.test(pc) || !pc.startsWith('6')) {
+          e.preventDefault();
+          alert("Please enter a valid 4-digit WA postcode (6000–6999) to proceed with rural truck delivery, or select Drive-Thru Bag Loading.");
+          if (pcInput) pcInput.focus();
+          return false;
+        }
+      }
+
+      var btn = document.getElementById('submit-order-button');
+      var spinner = document.getElementById('button-spinner');
+      var label = document.getElementById('button-label');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+      if (spinner) spinner.classList.remove('hidden');
+      if (label) label.textContent = 'Connecting to Stripe Secure Checkout...';
+    });
+  }
+
+  // Run on page load if prefilled
+  document.addEventListener('DOMContentLoaded', function() {
+    var fulfillment = getSelectedFulfillment();
+    if (fulfillment === 'delivery') {
+      var pcInput = document.getElementById('postcode');
+      if (pcInput && pcInput.value) {
+        validatePostcodeRealtime(pcInput.value);
+      }
+    }
+  });
+</script>

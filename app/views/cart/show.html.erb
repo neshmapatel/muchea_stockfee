@@ -104,8 +104,18 @@
                   </div>
                   <% if current_cart.delivery_zone.present? %>
                     <p class="text-[11px] text-emerald-700 font-semibold mt-1">
-                      Matched: <%= current_cart.delivery_zone.name %> (<%= current_cart.delivery_zone.scheduled_days %>)
+                      ✅ Matched: <%= current_cart.delivery_zone.name %> (<%= current_cart.delivery_zone.scheduled_days %>)
                     </p>
+                  <% elsif current_cart.postcode.present? %>
+                    <% if current_cart.postcode.match?(/\A6\d{3}\z/) %>
+                      <p class="text-[11px] text-amber-800 font-semibold mt-1">
+                        🚚 Regional WA Delivery (AU$ 35.00) • Scheduled upon dispatch
+                      </p>
+                    <% else %>
+                      <p class="text-[11px] text-rose-700 font-semibold mt-1">
+                        ⚠️ Non-WA or invalid postcode. Delivery is for WA only (postcodes 6000–6999).
+                      </p>
+                    <% end %>
                   <% end %>
                 </div>
               <% else %>
@@ -129,6 +139,16 @@
                 <%= current_cart.fulfillment_type == 'pickup' ? 'FREE' : format_aud(current_cart.delivery_fee_cents) %>
               </span>
             </div>
+
+            <% if current_cart.processing_fee_cents > 0 %>
+              <div class="flex justify-between text-stone-600">
+                <span class="flex items-center gap-1">
+                  <span>Card Surcharge</span>
+                  <span class="text-[10px] text-stone-400">(<%= StripeConfig.surcharge_percent %>%)</span>
+                </span>
+                <span class="font-bold text-stone-900"><%= format_aud(current_cart.processing_fee_cents) %></span>
+              </div>
+            <% end %>
 
             <div class="flex justify-between text-stone-500 text-[11px] pt-1">
               <span>Includes 10% Australian GST</span>

@@ -68,6 +68,12 @@
               <span>Delivery Fee:</span>
               <span class="font-bold text-stone-900"><%= @order.delivery_fee_cents.zero? ? 'FREE' : format_aud(@order.delivery_fee_cents) %></span>
             </div>
+            <% if @order.processing_fee_cents.to_i > 0 %>
+              <div class="flex justify-between text-stone-600">
+                <span>Card Surcharge:</span>
+                <span class="font-bold text-stone-900"><%= format_aud(@order.processing_fee_cents) %></span>
+              </div>
+            <% end %>
             <div class="flex justify-between text-stone-500 text-[11px]">
               <span>Included GST (10%):</span>
               <span><%= format_aud(@order.gst_cents) %></span>
@@ -128,11 +134,33 @@
           <% end %>
         </div>
 
-        <div class="pt-3 border-t border-stone-100">
-          <span class="block text-stone-400 uppercase text-[10px] font-bold">Payment Details</span>
-          <p class="text-stone-700 mt-0.5">Method: <strong><%= @order.payment_method %></strong></p>
+        <div class="pt-3 border-t border-stone-100 space-y-2">
+          <span class="block text-stone-400 uppercase text-[10px] font-bold">Stripe Payment Records</span>
+          <p class="text-stone-700">Method: <strong><%= @order.payment_method %></strong></p>
           <p class="text-stone-700">Status: <strong class="text-emerald-700 uppercase font-black"><%= @order.payment_status %></strong></p>
-          <p class="text-[10px] font-mono text-stone-400">Ref: <%= @order.stripe_payment_intent_id %></p>
+          <% if @order.stripe_session_id.present? %>
+            <p class="text-[10px] font-mono text-stone-500 break-all">Session: <%= @order.stripe_session_id %></p>
+          <% end %>
+          <% if @order.stripe_payment_intent_id.present? %>
+            <p class="text-[10px] font-mono text-stone-500 break-all">Intent: <%= @order.stripe_payment_intent_id %></p>
+          <% end %>
+
+          <% if @order.payments.any? %>
+            <div class="mt-2 pt-2 border-t border-dashed border-stone-200 space-y-1.5">
+              <span class="text-[10px] font-bold text-stone-500 block uppercase">Payment Ledger (<%= @order.payments.count %>)</span>
+              <% @order.payments.each do |p| %>
+                <div class="bg-stone-50 p-2 rounded border border-stone-200 text-[11px] space-y-0.5">
+                  <div class="flex justify-between items-center">
+                    <span class="font-bold text-stone-800"><%= p.formatted_amount %></span>
+                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold <%= p.succeeded? ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' %> uppercase"><%= p.status %></span>
+                  </div>
+                  <% if p.stripe_receipt_url.present? %>
+                    <%= link_to "Stripe Receipt ↗", p.stripe_receipt_url, target: "_blank", class: "text-bush-800 hover:underline block text-[10px] font-bold" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
 
         <div class="pt-3 border-t border-stone-100">

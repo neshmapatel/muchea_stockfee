@@ -12,7 +12,22 @@ class ApplicationController < ActionController::Base
                 :customer_approved?,
                 :can_view_prices?,
                 :current_admin,
-                :admin_signed_in?
+                :admin_signed_in?,
+                :stripe_publishable_key,
+                :stripe_configured?,
+                :stripe_test_mode?
+
+  def stripe_publishable_key
+    StripeConfig.publishable_key
+  end
+
+  def stripe_configured?
+    StripeConfig.configured?
+  end
+
+  def stripe_test_mode?
+    StripeConfig.test_mode?
+  end
 
   def current_cart
     @current_cart ||= Cart.new(session)
@@ -42,18 +57,26 @@ class ApplicationController < ActionController::Base
     current_admin.present?
   end
 
-  # Price gating rule: Storefront prices and online ordering are strictly reserved for approved member accounts
+  # Price gating toggle:
+  # When false (default), prices and online checkout are publicly viewable (required for initial Stripe merchant verification).
+  # When true, prices and checkout are strictly gated for approved member accounts.
+  # Can be toggled at any time via ENV['REQUIRE_PRICE_GATE'] or by changing this method.
+  def self.price_gating_enabled?
+    ENV.fetch("REQUIRE_PRICE_GATE", "false") == "true"
+  end
+
   def can_view_prices?
+    return true unless self.class.price_gating_enabled?
     customer_approved?
   end
 
   def require_approved_customer!
-    unless can_view_prices?
-      if customer_pending?
-        redirect_to customer_dashboard_path, alert: "Your account is currently pending approval. Prices and online checkout will unlock once approved by our shed management."
-      else
-        redirect_to customer_login_path(return_to: request.fullpath), alert: "Please log in to your approved member account to view prices and order."
-      end
+    return if can_view_prices?
+
+    if customer_pending?
+      redirect_to customer_dashboard_path, alert: "Your account is currently pending approval. Prices and online checkout will unlock once approved by our shed management."
+    else
+      redirect_to customer_login_path(return_to: request.fullpath), alert: "Please log in to your approved member account to view prices and order."
     end
   end
 end

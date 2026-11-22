@@ -32,7 +32,7 @@ The digital brand mark has been directly aligned with the physical storefront si
    - **Warehouse Drive-Thru Bag Loading:** Drive-in ute and trailer loading with forklift assistance at 14 Great Northern Highway, Muchea WA 6501.
 4. **ATO Compliant Billing & 10% GST:**
    - All prices clearly displayed as `AU$ (inc. GST)`.
-   - Automated ATO-compliant Tax Invoice generation with registered **ABN: 48 619 284 921**.
+   - Automated ATO-compliant Tax Invoice generation with registered **ABN: 56 700 841 550** (Muchea Trading Pty Ltd, ACN 700 841 550).
 5. **Australian Payment Processing:**
    - Stripe integration supporting AUD Cards (Visa, Mastercard, AMEX), Apple Pay, Google Pay, and Afterpay.
 6. **Live Consignment & Order Tracking:**
@@ -59,7 +59,27 @@ bundle exec rails db:migrate
 bundle exec rails db:seed
 ```
 
-### 3. Start the Server
+### 3. Stripe Payment Configuration (Test Keys)
+To enable live Stripe card tokenization and payments:
+1. Create or edit `.env` in the project root (see `.env.example`):
+   ```bash
+   STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   STRIPE_WEBHOOK_SECRET=your_stripe_webhook_signing_secret # optional
+   ```
+2. Or use Rails encrypted credentials:
+   ```bash
+   bin/rails credentials:edit
+   ```
+   Add:
+   ```yaml
+   stripe:
+     publishable_key: your_stripe_publishable_key
+     secret_key: your_stripe_secret_key
+     webhook_secret: your_stripe_webhook_signing_secret
+   ```
+
+### 4. Start the Server
 ```bash
 bundle exec rails server -p 3000
 ```

@@ -1,6 +1,8 @@
 class Order < ApplicationRecord
   has_many :items, class_name: "OrderItem", dependent: :destroy
   has_many :product_variants, through: :items
+  has_many :payments, dependent: :destroy
+  has_one :latest_payment, -> { order(created_at: :desc) }, class_name: "Payment"
 
   validates :customer_name, presence: true
   validates :customer_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -34,6 +36,14 @@ class Order < ApplicationRecord
 
   def delivery_fee_dollars
     delivery_fee_cents / 100.0
+  end
+
+  def processing_fee_dollars
+    processing_fee_cents / 100.0
+  end
+
+  def formatted_processing_fee
+    "AU$ #{format('%.2f', processing_fee_dollars)}"
   end
 
   def pickup?
@@ -79,8 +89,8 @@ class Order < ApplicationRecord
   def recalculate_totals!
     self.subtotal_cents = items.sum(&:total_price_cents)
     # Australian GST is 10% (1/11th of GST-inclusive price)
-    self.gst_cents = ((subtotal_cents + delivery_fee_cents) / 11.0).round
-    self.total_cents = subtotal_cents + delivery_fee_cents
+    self.total_cents = subtotal_cents + delivery_fee_cents + (processing_fee_cents || 0)
+    self.gst_cents = (total_cents / 11.0).round
     save!
   end
 

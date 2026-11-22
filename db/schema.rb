@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_17_172523) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_22_163922) do
   create_table "admin_users", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -139,9 +139,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_172523) do
     t.datetime "delivered_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_session_id"
+    t.integer "processing_fee_cents", default: 0, null: false
     t.index ["order_number"], name: "index_orders_on_order_number", unique: true
     t.index ["status"], name: "index_orders_on_status"
     t.index ["tracking_code"], name: "index_orders_on_tracking_code"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_session_id"
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", default: "aud", null: false
+    t.string "status", default: "pending", null: false
+    t.string "payment_method", default: "stripe"
+    t.string "stripe_receipt_url"
+    t.string "customer_email"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["stripe_payment_intent_id"], name: "index_payments_on_stripe_payment_intent_id"
+    t.index ["stripe_session_id"], name: "index_payments_on_stripe_session_id"
   end
 
   create_table "product_variants", force: :cascade do |t|
@@ -199,6 +219,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_17_172523) do
   add_foreign_key "inventory_logs", "product_variants"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "product_variants"
+  add_foreign_key "payments", "orders"
   add_foreign_key "product_variants", "products"
   add_foreign_key "products", "categories"
 end

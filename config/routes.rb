@@ -13,6 +13,12 @@ Rails.application.routes.draw do
   get "contact", to: "storefront#contact", as: :contact
   post "contact", to: "storefront#submit_contact"
 
+  # Legal & Australian Consumer Law / Stripe Compliance Pages
+  get "refund-policy", to: "storefront#refund_policy", as: :refund_policy
+  get "returns", to: "storefront#refund_policy"
+  get "terms", to: "storefront#terms", as: :terms
+  get "privacy", to: "storefront#privacy", as: :privacy
+
   # SEO Dynamic XML Sitemap
   get "sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }
 
@@ -34,11 +40,18 @@ Rails.application.routes.draw do
   delete "cart/remove/:variant_id", to: "cart#remove_item", as: :remove_from_cart
   delete "cart/clear", to: "cart#clear", as: :clear_cart
 
-  # Australian Checkout & ATO Tax Invoicing
+  # Australian Checkout & Stripe Integration
   get "checkout", to: "checkout#new", as: :checkout
   post "checkout", to: "checkout#create", as: :process_checkout
+  match "checkout/validate_postcode", to: "checkout#validate_postcode", via: [:get, :post], as: :checkout_validate_postcode
+  post "checkout/payment_intent", to: "checkout#create_payment_intent", as: :checkout_payment_intent
+  post "checkout/stripe_session", to: "checkout#create_stripe_session", as: :checkout_stripe_session
+  get "checkout/stripe_return", to: "checkout#stripe_return", as: :checkout_stripe_return
   get "checkout/success/:order_number", to: "checkout#success", as: :checkout_success
   get "checkout/invoice/:order_number", to: "checkout#invoice", as: :tax_invoice
+
+  # Stripe Webhooks (Live order payment status updates)
+  post "webhooks/stripe", to: "webhooks#stripe", as: :stripe_webhook
 
   # Public WA Order & Shipment Tracking
   get "tracking", to: "tracking#index", as: :tracking_lookup

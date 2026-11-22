@@ -81,15 +81,29 @@ class Cart
     end
   end
 
+  def processing_fee_cents
+    return 0 if empty?
+    return 0 unless StripeConfig.surcharge_enabled?
+
+    base = subtotal_cents + delivery_fee_cents
+    percent = StripeConfig.surcharge_percent
+    fixed = StripeConfig.surcharge_fixed_cents
+    ((base * (percent / 100.0)) + fixed).round
+  end
+
+  def processing_fee_dollars
+    processing_fee_cents / 100.0
+  end
+
   # Australian GST is 10%, included in prices (1/11th of total inc GST)
   def gst_cents
     return 0 if empty?
-    ((subtotal_cents + delivery_fee_cents) / 11.0).round
+    (total_cents / 11.0).round
   end
 
   def total_cents
     return 0 if empty?
-    subtotal_cents + delivery_fee_cents
+    subtotal_cents + delivery_fee_cents + processing_fee_cents
   end
 
   def add_item(variant_id, qty = 1)

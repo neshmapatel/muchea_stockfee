@@ -11,30 +11,49 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: /Trusted Animal Feeds/i
     assert_select "nav a", text: /Equine Feed & Nutrition/i
-    assert_includes response.body, "48 619 284 921"
+    assert_includes response.body, "56 700 841 550"
+    assert_includes response.body, "17b Edwards Pl, Muchea WA 6501"
     assert_includes response.body, "Drive-Thru Bag Loading"
   end
 
-  test "category and product pages load properly" do
+  test "mandatory legal pages for Stripe and ACL load successfully" do
+    # Refund & Returns Policy
+    get refund_policy_path
+    assert_response :success
+    assert_select "h1", text: /Refund & Returns Policy/i
+    assert_includes response.body, "56 700 841 550"
+    assert_includes response.body, "Australian Consumer Law"
+
+    # Terms & Conditions
+    get terms_path
+    assert_response :success
+    assert_select "h1", text: /Terms & Conditions/i
+    assert_includes response.body, "Muchea Trading Pty Ltd"
+    assert_includes response.body, "56 700 841 550"
+
+    # Privacy Policy
+    get privacy_path
+    assert_response :success
+    assert_select "h1", text: /Privacy Policy/i
+    assert_includes response.body, "Australian Privacy Principles"
+    assert_includes response.body, "Stripe Australia Pty Ltd"
+  end
+
+  test "category and product pages load with public pricing for Stripe approval" do
     cat = Category.find_by!(slug: "equine-feed-nutrition")
     get category_path(cat)
     assert_response :success
     assert_select "h1", text: cat.name
-    assert_includes response.body, "Activate Account to View Prices"
+    # In public mode, visitors see prices
+    assert_includes response.body, "From AU$"
 
     prod = cat.products.first
     get product_path(prod)
     assert_response :success
     assert_select "h1", text: prod.name
     assert_includes response.body, "schema.org"
-    assert_match(/Activate your account to view prices/i, response.body)
-
-    # Now verify that when signed in as an approved member, prices and GST are visible
-    sign_in_customer("approved_tester@farm.com.au")
-    get product_path(prod)
-    assert_response :success
     assert_includes response.body, "inc. 10% GST"
-    assert_includes response.body, "$"
+    assert_includes response.body, "Add to Cart"
   end
 
   test "complete cart, checkout, inventory deduction, and tax invoice flow" do
@@ -77,7 +96,8 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     get tax_invoice_path(order.order_number)
     assert_response :success
     assert_includes response.body, "TAX INVOICE"
-    assert_includes response.body, "48 619 284 921"
+    assert_includes response.body, "56 700 841 550"
+    assert_includes response.body, "17b Edwards Pl, Muchea WA 6501"
 
     # 5. Check Live Tracking Portal
     get tracking_path(order.tracking_code)
@@ -262,16 +282,21 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_equal "#d49b28", ApplicationController.helpers.brand_palette[:accent]
   end
 
-  test "guest visitor cannot view prices and cannot add to cart" do
-    get root_path
-    assert_response :success
-    assert_includes response.body, "Activate Account to View Prices"
+  test "when price gating is enabled, guest visitor cannot view prices and cannot add to cart" do
+    begin
+      ENV["REQUIRE_PRICE_GATE"] = "true"
+      get root_path
+      assert_response :success
+      assert_includes response.body, "Activate Account to View Prices"
 
-    variant = ProductVariant.first
-    post add_to_cart_path, params: { variant_id: variant.id, quantity: 1 }
-    assert_redirected_to customer_login_path(return_to: add_to_cart_path)
-    follow_redirect!
-    assert_includes response.body, "Please log in to your approved member account to view prices and order."
+      variant = ProductVariant.first
+      post add_to_cart_path, params: { variant_id: variant.id, quantity: 1 }
+      assert_redirected_to customer_login_path(return_to: add_to_cart_path)
+      follow_redirect!
+      assert_includes response.body, "Please log in to your approved member account to view prices and order."
+    ensure
+      ENV.delete("REQUIRE_PRICE_GATE")
+    end
   end
 
   test "customer registration creates pending profile, triggers super admin email, and keeps prices locked" do
@@ -322,12 +347,17 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_not_nil customer_mail, "Customer must receive welcome pending confirmation"
     assert_includes customer_mail.subject, "Pending Activation"
 
-    # Verify pending customer visiting storefront cannot see prices
-    get root_path
-    assert_response :success
-    assert_includes response.body, "Sarah (Pending)"
-    assert_includes response.body, "Price Pending Approval"
-    assert_includes response.body, "Awaiting Super Admin review"
+    # When price gating is enabled, verify pending customer visiting storefront cannot see prices
+    begin
+      ENV["REQUIRE_PRICE_GATE"] = "true"
+      get root_path
+      assert_response :success
+      assert_includes response.body, "Sarah (Pending)"
+      assert_includes response.body, "Price Pending Approval"
+      assert_includes response.body, "Awaiting Super Admin review"
+    ensure
+      ENV.delete("REQUIRE_PRICE_GATE")
+    end
   end
 
   test "super admin approval workflow unlocks pricing and notifies customer" do
@@ -399,19 +429,24 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Your cart is currently empty"
   end
 
-  test "logged in admin browsing public storefront does not bypass member price gate" do
-    sign_in_admin("neshmapatel1399@gmail.com", "neshma1331", role_slug: "super_admin", name: "Neshma Patel")
-    
-    # Staff navigates to public storefront without an approved customer session
-    get root_path
-    assert_response :success
-    assert_includes response.body, "Activate Account to View Prices"
-    assert_not_includes response.body, "From AU$"
+  test "when price gating is enabled, logged in admin browsing public storefront does not bypass member price gate" do
+    begin
+      ENV["REQUIRE_PRICE_GATE"] = "true"
+      sign_in_admin("neshmapatel1399@gmail.com", "neshma1331", role_slug: "super_admin", name: "Neshma Patel")
+      
+      # Staff navigates to public storefront without an approved customer session
+      get root_path
+      assert_response :success
+      assert_includes response.body, "Activate Account to View Prices"
+      assert_not_includes response.body, "From AU$"
 
-    cat = Category.first
-    get category_path(cat)
-    assert_response :success
-    assert_includes response.body, "Activate Account to View Prices"
+      cat = Category.first
+      get category_path(cat)
+      assert_response :success
+      assert_includes response.body, "Activate Account to View Prices"
+    ensure
+      ENV.delete("REQUIRE_PRICE_GATE")
+    end
   end
 
   test "contact enquiry form submission creates record, sends email, and is viewable in admin portal" do

@@ -18,6 +18,15 @@ class StorefrontController < ApplicationController
   def about
   end
 
+  def refund_policy
+  end
+
+  def terms
+  end
+
+  def privacy
+  end
+
   def contact
     @inquiry = ContactInquiry.new
   end

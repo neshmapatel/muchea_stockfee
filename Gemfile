@@ -64,3 +64,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "stripe", "~> 21.1"
+
+gem "dotenv-rails", "~> 3.2", groups: [:development, :test]

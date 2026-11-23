@@ -398,5 +398,39 @@ admin.active = true
 admin.password = "neshma1331" if admin.new_record?
 admin.save!
 
+puts "== Seeding Pre-Approved Test Member Accounts for Staging =="
+mama_customer = Customer.find_or_initialize_by(email: "mama@mucheastockfeed.com.au")
+mama_customer.first_name = "Mama"
+mama_customer.last_name = "Patel"
+mama_customer.phone = "0412 345 678"
+mama_customer.business_name = "Muchea Pastoral & Equine"
+mama_customer.abn = "56 700 841 550"
+mama_customer.property_address = "17b Edwards Pl"
+mama_customer.suburb = "Muchea"
+mama_customer.postcode = "6501"
+mama_customer.state = "WA"
+mama_customer.primary_interest = "Equine Feed & Nutrition"
+mama_customer.status = "approved"
+mama_customer.approved_at = Time.current
+mama_customer.approved_by = admin
+mama_customer.password = "muchea1331" if mama_customer.new_record?
+mama_customer.save!
+
+murray_customer = Customer.find_or_initialize_by(email: "murray@gmail.com")
+murray_customer.first_name = "Murray"
+murray_customer.last_name = "Campbell"
+murray_customer.phone = "0418 901 234"
+murray_customer.business_name = "Campbell Station WA"
+murray_customer.property_address = "Lot 88 Chittering Road"
+murray_customer.suburb = "Lower Chittering"
+murray_customer.postcode = "6084"
+murray_customer.state = "WA"
+murray_customer.primary_interest = "Hay, Chaff & Bedding"
+murray_customer.status = "approved"
+murray_customer.approved_at = Time.current
+murray_customer.approved_by = admin
+murray_customer.password = "murray@1331" if murray_customer.new_record?
+murray_customer.save!
+
 puts "== Seed Data Completed Successfully =="
 puts "Created #{Category.count} categories, #{Product.count} products, #{ProductVariant.count} variants, #{DeliveryZone.count} delivery zones, #{Order.count} sample orders, #{Role.count} roles, and #{AdminUser.count} admin(s)."

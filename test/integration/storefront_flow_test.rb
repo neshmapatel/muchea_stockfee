@@ -39,21 +39,44 @@ class StorefrontFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Stripe Australia Pty Ltd"
   end
 
-  test "category and product pages load with public pricing for Stripe approval" do
+  test "category and product pages gate prices for guests and unlock for approved members" do
     cat = Category.find_by!(slug: "equine-feed-nutrition")
+    prod = cat.products.first
+
+    # 1. Unauthenticated guest visitor sees member price gates
     get category_path(cat)
     assert_response :success
     assert_select "h1", text: cat.name
-    # In public mode, visitors see prices
-    assert_includes response.body, "From AU$"
+    assert_includes response.body, "Activate Account to View Prices"
 
-    prod = cat.products.first
     get product_path(prod)
     assert_response :success
     assert_select "h1", text: prod.name
     assert_includes response.body, "schema.org"
+    assert_match(/Activate Your Account to View Prices/i, response.body)
+
+    # 2. Approved member signs in and sees live prices and Add to Cart
+    sign_in_customer("mama@mucheastockfeed.com.au", "muchea1331")
+    get category_path(cat)
+    assert_response :success
+    assert_includes response.body, "From AU$"
+
+    get product_path(prod)
+    assert_response :success
     assert_includes response.body, "inc. 10% GST"
     assert_includes response.body, "Add to Cart"
+
+    # 3. When price gating is explicitly disabled (production Stripe mode), guests can see prices
+    delete customer_logout_path
+    begin
+      ENV["REQUIRE_PRICE_GATE"] = "false"
+      get product_path(prod)
+      assert_response :success
+      assert_includes response.body, "inc. 10% GST"
+      assert_includes response.body, "Add to Cart"
+    ensure
+      ENV.delete("REQUIRE_PRICE_GATE")
+    end
   end
 
   test "complete cart, checkout, inventory deduction, and tax invoice flow" do

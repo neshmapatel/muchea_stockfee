@@ -58,11 +58,11 @@ class ApplicationController < ActionController::Base
   end
 
   # Price gating toggle:
-  # When false (default), prices and online checkout are publicly viewable (required for initial Stripe merchant verification).
+  # In Staging: defaults to true so authenticated viewing of prices can be tested.
   # When true, prices and checkout are strictly gated for approved member accounts.
-  # Can be toggled at any time via ENV['REQUIRE_PRICE_GATE'] or by changing this method.
+  # Can be toggled at any time via ENV['REQUIRE_PRICE_GATE'].
   def self.price_gating_enabled?
-    ENV.fetch("REQUIRE_PRICE_GATE", "false") == "true"
+    ENV.fetch("REQUIRE_PRICE_GATE", "true") == "true"
   end
 
   def can_view_prices?

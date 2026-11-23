@@ -20,6 +20,26 @@ class AdminRbacTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "super admin can edit and update customer profile" do
+    sign_in_admin
+    customer = Customer.first
+    get edit_admin_customer_path(customer)
+    assert_response :success
+    assert_select "h1", text: /Edit Member Profile/
+
+    patch admin_customer_path(customer), params: {
+      customer: {
+        first_name: "Rajesh",
+        last_name: "Patel",
+        email: "rajesh.patel@mucheastockfeed.com.au"
+      }
+    }
+    assert_redirected_to admin_customer_path(customer)
+    customer.reload
+    assert_equal "Rajesh", customer.first_name
+    assert_equal "rajesh.patel@mucheastockfeed.com.au", customer.email
+  end
+
   test "super admin can create another super admin and role-based admins" do
     sign_in_admin
 

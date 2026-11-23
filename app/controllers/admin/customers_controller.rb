@@ -1,6 +1,6 @@
 module Admin
   class CustomersController < BaseController
-    before_action :require_super_admin!, only: [ :approve, :reject ]
+    before_action :require_super_admin!, only: [ :approve, :reject, :edit, :update ]
 
     def index
       @customers = Customer.includes(:approved_by).order(created_at: :desc)
@@ -25,6 +25,22 @@ module Admin
 
     def show
       @customer = Customer.includes(:approved_by).find(params[:id])
+    end
+
+    def edit
+      @customer = Customer.find(params[:id])
+    end
+
+    def update
+      @customer = Customer.find(params[:id])
+      clean_params = customer_params
+      clean_params.delete(:password) if clean_params[:password].blank?
+
+      if @customer.update(clean_params)
+        redirect_to admin_customer_path(@customer), notice: "✅ Customer profile for #{@customer.name} (#{@customer.email}) was successfully updated."
+      else
+        render :edit, status: :unprocessable_entity
+      end
     end
 
     def approve
@@ -54,6 +70,17 @@ module Admin
 
       redirect_back fallback_location: admin_customers_path,
                     alert: "Account activation request for #{@customer.name} has been DECLINED."
+    end
+
+    private
+
+    def customer_params
+      params.require(:customer).permit(
+        :first_name, :last_name, :email, :phone,
+        :business_name, :abn, :property_address,
+        :suburb, :postcode, :state, :primary_interest,
+        :status, :password
+      )
     end
   end
 end

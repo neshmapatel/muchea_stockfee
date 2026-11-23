@@ -81,7 +81,7 @@ Rails.application.routes.draw do
     end
     resources :products
     resources :categories, except: [:show]
-    resources :customers, only: [:index, :show] do
+    resources :customers, only: [:index, :show, :edit, :update] do
       member do
         patch :approve
         patch :reject
